@@ -1,0 +1,46 @@
+{
+    "name": "aiida-mlip",
+    "author": "Federica Zanca, Elliott Kasoar, Jacob Wilkins, Alin Elena",
+    "author_email": "federica.zanca@stfc.ac.uk",
+    "description": "AiiDA plugin for machine learnt interatomic potentials",
+    "url": "https://github.com/stfc/aiida-mlip",
+    "license": "TBD",
+    "classifiers": [
+        "Programming Language :: Python"
+    ],
+    "version": "0.0.1",
+    "entry_points": {
+        "aiida.calculations": [
+            "template.multiply = aiida_plugin_template.calculations.multiply:MultiplyCalculation"
+        ],
+        "aiida.parsers": [
+            "template.product = aiida_plugin_template.parsers.multiply:MultiplyParser"
+        ],
+        "aiida.data": [
+            "template.factors = aiida_plugin_template.data.multiply:MultiplyParameters"
+        ],
+        "aiida.cmdline.data": [
+            "template.factors = aiida_plugin_template.data.data_cli:cli"
+        ]
+    },
+    "scripts": ["examples/cli.py"],
+    "setup_requires": ["reentry"],
+    "reentry_register": true,
+    "install_requires": [
+        "aiida >= 0.11.0"
+    ],
+    "extras_require": {
+        "testing": [
+            "aiida-core[testing]"
+        ],
+        "pre-commit": [
+            "pre-commit",
+            "yapf",
+            "prospector",
+            "pylint"
+        ],
+        "docs": [
+            "sphinx"
+        ]
+    }
+}
