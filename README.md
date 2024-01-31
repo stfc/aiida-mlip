@@ -1,2 +1,2 @@
 # aiida-mlip
-machine larning interatomic potentials aiida plugin
+machine learning interatomic potentials aiida plugin
