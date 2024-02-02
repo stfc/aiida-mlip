@@ -14,7 +14,6 @@ import os
 import sys
 import time
 
-
 from aiida import load_profile
 from aiida.storage.sqlite_temp import SqliteTempBackend
 
@@ -120,7 +119,7 @@ html_theme_options = {
     "source_repository": "https://github.com/stfc/aiida-mlip/",
     "source_branch": "main",
     "source_directory": "docs/",
-    }
+}
 
 
 # Add any paths that contain custom themes here, relative to this directory.
@@ -143,7 +142,7 @@ html_theme_options = {
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = "%b %d, %Y"
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
