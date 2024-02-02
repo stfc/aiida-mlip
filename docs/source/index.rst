@@ -23,7 +23,7 @@ If you use AiiDA for your research, please cite the following work:
   for computational science*, Comp. Mat. Sci 111, 218-230 (2016);
   https://doi.org/10.1016/j.commatsci.2015.09.013; http://www.aiida.net.
 
-``aiida-mlip`` is released under the MIT license.
+``aiida-mlip`` is released under the BSD 3-Clause license.
 
 
 

@@ -1,0 +1,15 @@
+*.pyc
+*.swo
+*.swp
+~*
+*~
+.project
+*.egg*
+.DS_Store
+.coverage
+.pytest_cache
+.vscode
+build/
+dist/
+pip-wheel-metadata/
+.tox/
