@@ -109,7 +109,7 @@ pre-commit install  # install pre-commit hooks
 pytest -v  # discover and run all tests
 ```
 
-See the [developer guide](http://aiida-mlip.readthedocs.io/en/latest/developer_guide/index.html) for more information.
+See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/index.html) for more information.
 
 ## License
 
@@ -121,6 +121,6 @@ BSD 3-Clause License
 [cov-badge]: https://coveralls.io/repos/github/aiidateam/aiida-mlip/badge.svg?branch=master
 [cov-link]: https://coveralls.io/github/aiidateam/aiida-mlip?branch=master
 [docs-badge]: https://readthedocs.org/projects/aiida-mlip/badge
-[docs-link]: http://aiida-mlip.readthedocs.io/
+[docs-link]: https://stfc.github.io/aiida-mlip/
 [pypi-badge]: https://badge.fury.io/py/aiida-mlip.svg
 [pypi-link]: https://badge.fury.io/py/aiida-mlip
