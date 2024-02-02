@@ -113,7 +113,7 @@ See the [developer guide](http://aiida-mlip.readthedocs.io/en/latest/developer_g
 
 ## License
 
-
+BSD 3-Clause License
 
 
 [ci-badge]: https://github.com/aiidateam/aiida-mlip/workflows/ci/badge.svg?branch=master
