@@ -1,0 +1,45 @@
+name: aiida-mlip documentation publish
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  docs-deploy:
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    container: sphinxdoc/sphinx
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: sphinx
+      run: |
+        pip install sphinxcontrib-contentui furo aiida-core
+        # temp fix install the package
+        python -m pip install .
+        cd docs
+        make html
+    - name: upload
+      uses: actions/upload-pages-artifact@v1
+      with:
+        # Upload entire repository
+        path: './docs/build/html/.'
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v1

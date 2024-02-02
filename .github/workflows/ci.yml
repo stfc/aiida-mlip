@@ -43,8 +43,8 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
         # Change plugin_name to test we're not specific to "aiida-diff"
-        cookiecutter --no-input . plugin_name=${PLUGIN_NAME}
-        pip install -e ${PLUGIN_NAME}[testing]
+        #cookiecutter --no-input . plugin_name=${PLUGIN_NAME}
+        #pip install -e ${PLUGIN_NAME}[testing]
       env:
         PLUGIN_NAME: aiida-mlip
 
@@ -73,8 +73,8 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
         # Change plugin_name to test we're not specific to "aiida-diff"
-        cookiecutter --no-input . plugin_name=${PLUGIN_NAME}
-        pip install -e ${PLUGIN_NAME}[docs]
+        #cookiecutter --no-input . plugin_name=${PLUGIN_NAME}
+        #pip install -e ${PLUGIN_NAME}[docs]
     - name: Build docs
       env:
         PLUGIN_NAME: aiida-mlip
@@ -96,8 +96,8 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
         # Change plugin_name to test we're not specific to "aiida-diff"
-        cookiecutter --no-input . plugin_name=${PLUGIN_NAME}
-        pip install -e ${PLUGIN_NAME}[pre-commit,docs,testing]
+        #cookiecutter --no-input . plugin_name=${PLUGIN_NAME}
+        #pip install -e ${PLUGIN_NAME}[pre-commit,docs,testing]
     - name: Run pre-commit
       env:
         PLUGIN_NAME: aiida-mlip

@@ -14,6 +14,7 @@ import os
 import sys
 import time
 
+
 from aiida import load_profile
 from aiida.storage.sqlite_temp import SqliteTempBackend
 
@@ -81,6 +82,7 @@ copyright = f"{copyright_year_string}, {copyright_owners}. All rights reserved"
 #
 # The full version, including alpha/beta/rc tags.
 release = aiida_mlip.__version__
+
 # The short X.Y version.
 version = ".".join(release.split(".")[:2])
 
@@ -114,7 +116,12 @@ pygments_style = "sphinx"
 html_theme = "furo"
 html_logo = "images/AiiDA_transparent_logo.png"
 html_title = f"aiida-mlip v{release}"
-html_theme_options = {}
+html_theme_options = {
+    "source_repository": "https://github.com/stfc/aiida-mlip/",
+    "source_branch": "main",
+    "source_directory": "docs/",
+    }
+
 
 # Add any paths that contain custom themes here, relative to this directory.
 # ~ html_theme_path = ["."]
@@ -136,14 +143,14 @@ html_theme_options = {}
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-# html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = '%b %d, %Y'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
 # html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-# html_sidebars = {}
+html_sidebars = {}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -162,7 +169,7 @@ html_theme_options = {}
 html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
-# html_show_sphinx = True
+html_show_sphinx = True
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
 # ~ html_show_copyright = False
@@ -170,7 +177,7 @@ html_show_sourcelink = False
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
 # base URL from which the finished HTML is served.
-html_use_opensearch = "https://aiida-mlip.readthedocs.io"
+html_use_opensearch = "https://stfc.github.io/aiida-mlip/"
 
 # This is the file name suffix for HTML files (e.g. ".xhtml").
 # html_file_suffix = None

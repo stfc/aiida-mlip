@@ -1,1 +1,1 @@
-cookiecutter
+#keep it empty
