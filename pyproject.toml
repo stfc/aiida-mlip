@@ -8,7 +8,7 @@ build-backend = "flit_core.buildapi"
 name = "aiida-mlip"
 dynamic = ["version"]  # read from aiida_mlip/__init__.py
 description = "machine learning interatomic potentials aiida plugin"
-authors = [{name = "Alin M. Elena, Elliot Kasoar, Federica Zanca, Jacob Wilkins"}]
+authors = [{name = "Federica Zanca, Elliott Kasoar, Jacob Wilkins, Alin M. Elena"}]
 readme = "README.md"
 license = {file = "LICENSE"}
 classifiers = [
@@ -20,7 +20,7 @@ classifiers = [
     "Framework :: AiiDA"
 ]
 keywords = ["aiida", "plugin"]
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 dependencies = [
     "aiida-core>=2.5,<3",
     "voluptuous"
