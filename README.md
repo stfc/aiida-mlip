@@ -117,7 +117,7 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
 
 ## Funding
 
-Contributors to this projects were funded by
+Contributors to this project were funded by
 
 - [![PSDI](docs/source/images/psdi-100.webp)](https://www.psdi.ac.uk/)
 - [![ALC](docs/source/images/alc-100.webp)](https://adalovelacecentre.ac.uk/)
