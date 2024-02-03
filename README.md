@@ -116,10 +116,10 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
 BSD 3-Clause License
 
 
-[ci-badge]: https://github.com/aiidateam/aiida-mlip/workflows/ci/badge.svg?branch=master
-[ci-link]: https://github.com/aiidateam/aiida-mlip/actions
-[cov-badge]: https://coveralls.io/repos/github/aiidateam/aiida-mlip/badge.svg?branch=master
-[cov-link]: https://coveralls.io/github/aiidateam/aiida-mlip?branch=master
+[ci-badge]: https://github.com/stfc/aiida-mlip/workflows/ci/badge.svg?branch=main
+[ci-link]: https://github.com/stfc/aiida-mlip/actions
+[cov-badge]: https://coveralls.io/repos/github/stfc/aiida-mlip/badge.svg?branch=main
+[cov-link]: https://coveralls.io/github/stfc/aiida-mlip?branch=main
 [docs-badge]: https://readthedocs.org/projects/aiida-mlip/badge
 [docs-link]: https://stfc.github.io/aiida-mlip/
 [pypi-badge]: https://badge.fury.io/py/aiida-mlip.svg
