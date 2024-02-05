@@ -101,11 +101,15 @@ verdi data mlip export <PK>
 
 ## Development
 
+1. Install [poetry](https://python-poetry.org/docs/#installation)
+2. (Optional) Create a virtual environment
+3. Install `aiida-mlip` with dependencies:
+
 ```shell
-git clone https://github.com/aiidateam/aiida-mlip .
+git clone https://github.com/stfc/aiida-mlip
 cd aiida-mlip
 pip install --upgrade pip
-pip install -e .[pre-commit,testing]  # install extra dependencies
+poetry install --with pre-commit,dev,docs  # install extra dependencies
 pre-commit install  # install pre-commit hooks
 pytest -v  # discover and run all tests
 ```
