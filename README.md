@@ -119,9 +119,9 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
 
 Contributors to this project were funded by
 
-- [![PSDI](docs/source/images/psdi-100.webp)](https://www.psdi.ac.uk/)
-- [![ALC](docs/source/images/alc-100.webp)](https://adalovelacecentre.ac.uk/)
-- [![CoSeC](docs/source/images/cosec-100.webp)](https://www.scd.stfc.ac.uk/Pages/CoSeC.aspx)
+[![PSDI](docs/source/images/psdi-100.webp)](https://www.psdi.ac.uk/)
+[![ALC](docs/source/images/alc-100.webp)](https://adalovelacecentre.ac.uk/)
+[![CoSeC](docs/source/images/cosec-100.webp)](https://www.scd.stfc.ac.uk/Pages/CoSeC.aspx)
 
 
 [ci-badge]: https://github.com/stfc/aiida-mlip/workflows/ci/badge.svg?branch=main
