@@ -30,7 +30,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: sphinx
       run: |
-        pip install sphinxcontrib-contentui furo aiida-core
+        python -m pip install sphinxcontrib-contentui furo aiida-core
         # temp fix install the package
         python -m pip install .
         cd docs
