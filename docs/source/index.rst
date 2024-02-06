@@ -23,7 +23,24 @@ If you use AiiDA for your research, please cite the following work:
   for computational science*, Comp. Mat. Sci 111, 218-230 (2016);
   https://doi.org/10.1016/j.commatsci.2015.09.013; http://www.aiida.net.
 
-``aiida-mlip`` is released under the BSD 3-Clause license.
+``aiida-mlip`` is released under the [BSD 3-Clause license](https://opensource.org/license/bsd-3-clause/).
+
+Funding
+=======
+
+Contributors to ``aiida-mlip`` were supported by
+
+.. image::  images/psdi-100.webp
+   :height: 100px
+   :target: https://www.psdi.ac.uk/
+
+.. image:: images/alc-100.webp
+   :height: 100px
+   :target: https://adalovelacecentre.ac.uk/
+
+.. image:: images/cosec-100.webp
+   :height: 100px
+   :target: https://www.scd.stfc.ac.uk/Pages/CoSeC.aspx
 
 
 
