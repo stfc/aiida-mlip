@@ -61,10 +61,10 @@ jobs:
     - name: Install poetry
       run: pipx install poetry
 
-    - name: Set up Python 3.12
+    - name: Set up Python 3.11
       uses: actions/setup-python@v5
       with:
-        python-version: 3.12
+        python-version: 3.11
 
     - name: Install python dependencies
       run: poetry install --with docs
@@ -81,10 +81,10 @@ jobs:
     - name: Install poetry
       run: pipx install poetry
 
-    - name: Set up Python 3.12
+    - name: Set up Python 3.11
       uses: actions/setup-python@v5
       with:
-        python-version: "3.12"
+        python-version: 3.11
 
     - name: Install python dependencies
       run: poetry install --with pre-commit,docs,dev

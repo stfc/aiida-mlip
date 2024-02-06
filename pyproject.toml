@@ -107,12 +107,12 @@ known_aiida = ['aiida']
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py38
+envlist = py39
 
 [testenv]
 usedevelop=True
 
-[testenv:py{38,39,310}]
+[testenv:py{39,310,311,312}]
 description = Run the test suite against a python version
 extras = testing
 commands = pytest {posargs}
