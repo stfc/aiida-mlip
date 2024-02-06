@@ -2,6 +2,7 @@
 [![Coverage Status][cov-badge]][cov-link]
 [![Docs status][docs-badge]][docs-link]
 [![PyPI version][pypi-badge]][pypi-link]
+[![License][license-badge]][license-link]
 
 # aiida-mlip
 
@@ -113,14 +114,24 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
 
 ## License
 
-BSD 3-Clause License
+[BSD 3-Clause License](LICENSE)
+
+## Funding
+
+Contributors to this project were funded by
+
+[![PSDI](docs/source/images/psdi-100.webp)](https://www.psdi.ac.uk/)
+[![ALC](docs/source/images/alc-100.webp)](https://adalovelacecentre.ac.uk/)
+[![CoSeC](docs/source/images/cosec-100.webp)](https://www.scd.stfc.ac.uk/Pages/CoSeC.aspx)
 
 
-[ci-badge]: https://github.com/stfc/aiida-mlip/workflows/ci/badge.svg?branch=main
+[ci-badge]: https://github.com/stfc/aiida-mlip/workflows/ci/badge.svg
 [ci-link]: https://github.com/stfc/aiida-mlip/actions
 [cov-badge]: https://coveralls.io/repos/github/stfc/aiida-mlip/badge.svg?branch=main
 [cov-link]: https://coveralls.io/github/stfc/aiida-mlip?branch=main
-[docs-badge]: https://readthedocs.org/projects/aiida-mlip/badge
+[docs-badge]: https://github.com/stfc/aiida-mlip/actions/workflows/pages/pages-build-deployment/badge.svg
 [docs-link]: https://stfc.github.io/aiida-mlip/
 [pypi-badge]: https://badge.fury.io/py/aiida-mlip.svg
 [pypi-link]: https://badge.fury.io/py/aiida-mlip
+[license-badge]: https://img.shields.io/badge/License-BSD_3--Clause-blue.svg
+[license-link]: https://opensource.org/licenses/BSD-3-Clause
