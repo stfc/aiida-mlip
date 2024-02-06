@@ -27,19 +27,28 @@ jobs:
     container: sphinxdoc/sphinx
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+
+    - name: Install poetry
+      run: |
+        apt update
+        apt upgrade -y
+        apt install -y pipx
+        pipx install poetry
+
     - name: sphinx
       run: |
-        python -m pip install sphinxcontrib-contentui furo aiida-core
-        # temp fix install the package
-        python -m pip install .
+        export PATH="$HOME/.local/bin:$PATH"
+        poetry install --with docs
         cd docs
-        make html
+        poetry run make html
+
     - name: upload
-      uses: actions/upload-pages-artifact@v1
+      uses: actions/upload-pages-artifact@v3
       with:
         # Upload entire repository
         path: './docs/build/html/.'
+
     - name: Deploy to GitHub Pages
       id: deployment
-      uses: actions/deploy-pages@v1
+      uses: actions/deploy-pages@v4
