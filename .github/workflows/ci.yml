@@ -41,8 +41,8 @@ jobs:
 
     - name: Install python dependencies
       run: |
-        pip install --upgrade pip
-        pip install -e .[testing]
+        python -m pip install --upgrade pip
+        python -m pip install -e .[testing]
 
     - name: Run test suite
       env:
@@ -61,8 +61,8 @@ jobs:
         python-version: 3.11
     - name: Install python dependencies
       run: |
-        pip install --upgrade pip
-        pip install -e .[docs]
+        python -m pip install --upgrade pip
+        python -m pip install -e .[docs]
     - name: Build docs
       run: cd docs && make
 
@@ -77,8 +77,8 @@ jobs:
         python-version: "3.11"
     - name: Install python dependencies
       run: |
-        pip install --upgrade pip
-        pip install -e .[pre-commit,docs,testing]
+        python -m pip install --upgrade pip
+        python -m pip install -e .[pre-commit,docs,testing]
     - name: Run pre-commit
       run: |
         pre-commit install
