@@ -3,6 +3,7 @@
 [![Docs status][docs-badge]][docs-link]
 [![PyPI version][pypi-badge]][pypi-link]
 [![License][license-badge]][license-link]
+[![DOI](https://zenodo.org/badge/750834002.svg)](https://zenodo.org/badge/latestdoi/750834002)
 
 # aiida-mlip
 
