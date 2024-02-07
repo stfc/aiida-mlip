@@ -14,7 +14,7 @@ packages = [{include = "aiida_mlip"}]
 classifiers = [
     "Programming Language :: Python",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: BSD 3-Clause License",
+    "License :: OSI Approved :: BSD-3-Clause",
     "Natural Language :: English",
     "Development Status :: 3 - Alpha",
     "Framework :: AiiDA"
