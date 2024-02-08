@@ -8,7 +8,6 @@ authors = [
     "Jacob Wilkins",
     "Alin M. Elena",
 ]
-license = "LICENSE"
 readme = "README.md"
 packages = [{include = "aiida_mlip"}]
 classifiers = [
