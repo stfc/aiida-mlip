@@ -134,7 +134,7 @@ Contributors to this project were funded by
 [ci-link]: https://github.com/stfc/aiida-mlip/actions
 [cov-badge]: https://coveralls.io/repos/github/stfc/aiida-mlip/badge.svg?branch=main
 [cov-link]: https://coveralls.io/github/stfc/aiida-mlip?branch=main
-[docs-badge]: https://github.com/stfc/aiida-mlip/actions/workflows/pages/pages-build-deployment/badge.svg
+[docs-badge]: https://github.com/stfc/aiida-mlip/actions/workflows/docs.yml/badge.svg
 [docs-link]: https://stfc.github.io/aiida-mlip/
 [pypi-badge]: https://badge.fury.io/py/aiida-mlip.svg
 [pypi-link]: https://badge.fury.io/py/aiida-mlip
