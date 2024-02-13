@@ -1,3 +1,4 @@
+*.lock
 *.pyc
 *.swo
 *.swp
