@@ -53,7 +53,7 @@ def test_download_fresh_file():
 def test_no_download_cached_file():
     """Test if the caching work for avoiding double download"""
     # Ensure file is not already downloaded
-    cached_file_path = Path("./tests/data/tmp/test_modell.txt")
+    cached_file_path = Path("./tests/data/tmp/test_model.txt")
     if cached_file_path.exists():
         cached_file_path.unlink()
 
