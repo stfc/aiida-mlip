@@ -64,7 +64,7 @@ class ModelData(SinglefileData):
 
     @classmethod
     def local_file(cls, file: str, filename: str = None, architecture: str = None):
-        """Sve a local file as ModelData"""
+        """Save a local file as ModelData"""
         file_path = Path(file).resolve()
         return cls(file=str(file_path), filename=filename, architecture=architecture)
 
