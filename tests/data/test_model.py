@@ -9,11 +9,11 @@ from aiida_mlip.data.model import ModelData
 def test_local_file():
     """Testing that the local file function works"""
     # Construct a ModelData instance with the local file
-    model = ModelData.local_file("./tests/input_files/model_local_file.txt")
+    model_path = Path("./tests/input_files/model_local_file.txt")
+    model = ModelData.local_file(model_path)
     # Assert the ModelData contains the content we expect
     content = model.get_content()
-    with open("./tests/input_files/model_local_file.txt", encoding="utf-8") as f:
-        assert content == f.read()
+    assert content == model_path.read_text(encoding="utf-8")
 
 
 def test_architecture():
@@ -30,8 +30,7 @@ def test_download_fresh_file():
     """Test if download works"""
     # Ensure we do not have the file cached already
     path_test = Path("./tests/data/tmp/mace/test_download.txt")
-    if path_test.exists():
-        path_test.unlink()
+    path_test.unlink(missing_ok=True)
 
     # Construct a ModelData instance downloading a non-cached file
     model = ModelData.download(
@@ -45,7 +44,7 @@ def test_download_fresh_file():
     content = model.get_content()
     assert content == "file with content\ncontent2\n"
     file_path = Path("./tests/data/tmp/mace/test_download.txt")
-    assert file_path.exists(), f"File {file_path} does not exists."
+    assert file_path.exists(), f"File {file_path} does not exist."
     # Clear test cache
     shutil.rmtree(Path("./tests/data/tmp/mace/"))
 
@@ -60,26 +59,24 @@ def test_no_download_cached_file():
     # Ensure we have the file cached already
     testdir = Path("./tests/data/tmp/mace/")
     testdir.mkdir(parents=True, exist_ok=False)
-    with open("./tests/data/tmp/mace/test.txt", "w", encoding="utf-8") as f:
-        f.write("file with content\ncontent2\n")
+    (testdir / "test.txt").write_text("file with content\ncontent2\n", encoding="utf-8")
 
     # Construct a ModelData instance that should use the cached file
     model = ModelData.download(
         url="https://raw.githubusercontent.com/stfc/aiida-mlip/main/tests/input_files/file2.txt",
         cache_dir="./tests/data/tmp/",
-        filename="test_modell.txt",
-        # architecture = "mace"
+        filename="test_model.txt",
     )
 
     # Assert the ModelData contains the content we expect
     content = model.get_content()
     assert content == "file with content\ncontent2\n"
-    file_path = Path("./tests/data/tmp/mace/test_modell.txt")
+    file_path = Path("./tests/data/tmp/mace/test_model.txt")
     assert file_path.exists() is False, f"File {file_path} exists but it shouldn't."
-    file_path2 = Path("./tests/data/tmp/test_modell.txt")
+    file_path2 = Path("./tests/data/tmp/test_model.txt")
     assert file_path2.exists() is False, f"File {file_path2} exists but it shouldn't."
     file_path3 = Path("./tests/data/tmp/mace/test.txt")
-    assert file_path3.exists() is True, f"File {file_path3} should exists"
+    assert file_path3.exists() is True, f"File {file_path3} should exist"
     assert model.architecture == "mace"
 
     # Clear test cache
