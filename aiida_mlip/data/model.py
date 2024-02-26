@@ -126,7 +126,7 @@ class ModelData(SinglefileData):
         architecture : Optional[str], optional
             Architecture.
 
-              Other Parameters
+        Other Parameters
         ----------------
         kwargs : Any
             Additional keyword arguments.
@@ -153,11 +153,13 @@ class ModelData(SinglefileData):
             Name to be used for the file (defaults to the name of provided file).
         architecture : Optional[str], optional
             Architecture.
+
         Returns
         -------
         ModelData
             A ModelData instance.
         """
+
         file_path = Path(file).resolve()
         return cls(file=file_path, filename=filename, architecture=architecture)
 
@@ -191,6 +193,7 @@ class ModelData(SinglefileData):
         ModelData
             A ModelData instance.
         """
+
         cache_dir = Path(cache_dir if cache_dir else "~/.cache/mlips/")
         arch_dir = cache_dir / architecture if architecture else cache_dir
 
@@ -236,4 +239,5 @@ class ModelData(SinglefileData):
         str
             Architecture.
         """
+
         return self.base.attributes.get("architecture")
