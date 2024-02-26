@@ -58,11 +58,11 @@ def _check_existing_file(
         A tuple containing the path of the file of interest and its architecture.
     """
     file_hash = _calculate_hash(file)
-    for existing_file in (
-        ex_file
-        for ex_file in arch_path.rglob("*")
-        if ex_file.is_file() and not ex_file.samefile(file)
-    ):
+
+    def is_diff_file(curr_path: Path):
+        return curr_path.is_file() and not curr_path.samefile(file)
+
+    for existing_file in filter(is_diff_file, arch_path.rglob("*")):
         if _calculate_hash(existing_file) == file_hash:
             ex_file_path = Path(existing_file).parent
             if arch_path == ex_file_path:
@@ -148,7 +148,7 @@ class ModelData(SinglefileData):
         Parameters
         ----------
         file : Union[str, Path]
-            Absolute path to the file.
+            Path to the file.
         filename : Optional[str], optional
             Name to be used for the file (defaults to the name of provided file).
         architecture : Optional[str], optional
