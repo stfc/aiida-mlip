@@ -2,15 +2,25 @@
 
 import hashlib
 from pathlib import Path
+from typing import Any, Optional, Union
 from urllib import request
 from urllib.parse import urlparse
 
 from aiida.orm import SinglefileData
 
 
-def _calculate_hash(file: str | Path) -> str:
-    """Function to calculate file hashes
-    param: file: path to the file you want to calculate the hash for (str)
+def _calculate_hash(file: Union[str, Path]) -> str:
+    """Calculate the hash of a file.
+
+    Parameters
+    ----------
+    file : Union[str, Path]
+        Path to the file for which hash needs to be calculated.
+
+    Returns
+    -------
+    str
+        The SHA-256 hash of the file.
     """
     # Calculate hash
     buf_size = 65536  # reading 64kB (arbitrary) at a time
@@ -24,14 +34,28 @@ def _calculate_hash(file: str | Path) -> str:
 
 
 def _check_existing_file(
-    arch_path: str | Path, file: str | Path, architecture: str, cache_path: str | Path
+    arch_path: Union[str, Path],
+    file: Union[str, Path],
+    cache_path: Union[str, Path],
+    architecture: Optional[str] = None,
 ) -> tuple[Path, str]:
-    """Function to check if a file already exists and return a file path and architecture
-    param arch_path: Path to the folder in which the file is stored (str or pathlib.Path).
-    param file: Path to the file (str or pathlib.Path)
-    param architecture: mlip architecture of the model
-    param cache_path: Path to the parent folder of arch_path (str or pathlib.Path)
-    return: A tuple of a PAth and a str containing the path of the file of interest and the architecture
+    """Check if a file already exists and return its path and architecture.
+
+    Parameters
+    ----------
+    arch_path : Union[str, Path]
+        Path to the folder containing the file.
+    file : Union[str, Path]
+        Path to the file.
+    cache_path : Union[str, Path]
+        Path to the parent folder of arch_path.
+    architecture : Optional[str]
+        MLIP architecture of the model.
+
+    Returns
+    -------
+    tuple[Path, str]
+        A tuple containing the path of the file of interest and its architecture.
     """
     file_hash = _calculate_hash(file)
     for existing_file in (
@@ -58,26 +82,54 @@ class ModelData(SinglefileData):
     """
 
     def __init__(
-        self, file: str | Path, filename: str = None, architecture: str = None, **kwargs
-    ):
-        """Construct a new instance and set the contents to that of the file.
+        self,
+        file: Union[str, Path],
+        filename: Optional[str] = None,
+        architecture: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Initialize the ModelData object.
 
-        :param file: absolute path to the file
-        :param filename: specify filename to use (defaults to name of provided file).
-        :param architecture: specify architecture
+        Parameters
+        ----------
+        file : Union[str, Path]
+            Absolute path to the file.
+        filename : Optional[str], optional
+            Name to be used for the file (defaults to the name of provided file).
+        architecture : Optional[str], optional
+            Architecture information.
+
+        Other Parameters
+        ----------------
+        kwargs : Any
+            Additional keyword arguments.
         """
 
         super().__init__(file, filename, **kwargs)
         self.base.attributes.set("architecture", architecture)
 
     def set_file(
-        self, file: str | Path, filename: str = None, architecture: str = None, **kwargs
-    ):
-        """Add a file to the node, parse it and set the attributes found.
+        self,
+        file: Union[str, Path],
+        filename: Optional[str] = None,
+        architecture: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Set the file for the node.
 
-        :param file: absolute path to the file (str or pathlib.Path)
-        :param filename: specify filename to use (defaults to name of provided file)
-        :param architecture: specify architecture in which the model is used (default = None)
+        Parameters
+        ----------
+        file : Union[str, Path]
+            Absolute path to the file.
+        filename : Optional[str], optional
+            Name to be used for the file (defaults to the name of provided file).
+        architecture : Optional[str], optional
+            Architecture.
+
+              Other Parameters
+        ----------------
+        kwargs : Any
+            Additional keyword arguments.
         """
 
         super().set_file(file, filename, **kwargs)
@@ -86,33 +138,58 @@ class ModelData(SinglefileData):
 
     @classmethod
     def local_file(
-        cls, file: str | Path, filename: str = None, architecture: str = None
+        cls,
+        file: Union[str, Path],
+        filename: Optional[str] = None,
+        architecture: Optional[str] = None,
     ):
-        """Save a local file as ModelData
-        :param file: path to the file (str or pathlib.Path)
-        :param filename: specify filename to use (defaults to name of provided file)
-        :param architecture: specify architecture in which the model is used (default = None)
+        """Create a ModelData instance from a local file.
+
+        Parameters
+        ----------
+        file : Union[str, Path]
+            Absolute path to the file.
+        filename : Optional[str], optional
+            Name to be used for the file (defaults to the name of provided file).
+        architecture : Optional[str], optional
+            Architecture.
+        Returns
+        -------
+        ModelData
+            A ModelData instance.
         """
         file_path = Path(file).resolve()
         return cls(file=file_path, filename=filename, architecture=architecture)
 
     @classmethod
-    # pylint: disable=R0913
+    # pylint: disable=too-many-arguments
     def download(
         cls,
         url: str,
-        filename: str = None,
-        cache_dir: str | Path = None,
-        architecture: str = None,
-        force_download: bool = False,
+        filename: Optional[str] = None,
+        cache_dir: Optional[Union[str, Path]] = None,
+        architecture: Optional[str] = None,
+        force_download: Optional[bool] = False,
     ):
-        """Download a file from a URL and save it as a ModelData
-        :param url: url of the file to download
-        :param filename: specify filename to use (defaults to name of provided file)
-        :param cache_dir: path (str or pathlib.Path) to the folder where the file has to be saved (default "~/.cache/mlips/")
-        :param architecture: specify architecture in which the model is used (default = None)
-        :param force_download: True to keep the downloaded model even if there are duplicates (default: False)
+        """Download a file from a URL and save it as ModelData.
 
+        Parameters
+        ----------
+        url : str
+            URL of the file to download.
+        filename : Optional[str], optional
+            Name to be used for the file (defaults to the name of provided file).
+        cache_dir : Optional[Union[str, Path]], optional
+            Path to the folder where the file has to be saved (defaults to "~/.cache/mlips/").
+        architecture : Optional[str], optional
+            Architecture.
+        force_download : Optional[bool], optional
+            True to keep the downloaded model even if there are duplicates (default: False).
+
+        Returns
+        -------
+        ModelData
+            A ModelData instance.
         """
         cache_dir = Path(cache_dir if cache_dir else "~/.cache/mlips/")
         arch_dir = cache_dir / architecture if architecture else cache_dir
@@ -145,15 +222,18 @@ class ModelData(SinglefileData):
 
         # Check if the hash of the just downloaded file matches any other file in the directory
         filepath, architecture = _check_existing_file(
-            arch_path, file, architecture, cache_path
+            arch_path, file, cache_path, architecture
         )
 
         return cls.local_file(file=filepath, architecture=architecture)
 
     @property
     def architecture(self) -> str:
-        """Return architecture
+        """Return the architecture.
 
-        :return: a string
+        Returns
+        -------
+        str
+            Architecture.
         """
         return self.base.attributes.get("architecture")
