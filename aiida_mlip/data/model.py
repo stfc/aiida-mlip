@@ -78,7 +78,8 @@ def _check_existing_file(
 
 class ModelData(SinglefileData):
     """Class to save a model file as an AiiDA data type.
-    The file can be an existing one or a file to download
+
+    The file can be an existing one or a file to download.
     """
 
     def __init__(
