@@ -30,7 +30,6 @@ def test_download_fresh_file(tmp_path):
     """Test if download works"""
     # Ensure we do not have the file cached already
     path_test = tmp_path / "mace" / "test_download.txt"
-    # path_test = Path("./tests/data/tmp/mace/test_download.txt")
     path_test.unlink(missing_ok=True)
 
     # Construct a ModelData instance downloading a non-cached file
