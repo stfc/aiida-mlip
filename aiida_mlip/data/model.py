@@ -1,4 +1,4 @@
-"""Define Model Data type in AiiDA"""
+"""Define Model Data type in AiiDA."""
 
 import hashlib
 from pathlib import Path
