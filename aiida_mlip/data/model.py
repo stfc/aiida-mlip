@@ -69,7 +69,7 @@ def _check_existing_file(
                 file.unlink()
                 return existing_file, architecture
 
-            if arch_path == cache_path and arch_path != ex_file_path:
+            if arch_path == cache_path
                 architecture = ex_file_path.name
                 file.unlink()
                 return Path(existing_file), architecture
