@@ -132,7 +132,6 @@ class ModelData(SinglefileData):
         kwargs : Any
             Additional keyword arguments.
         """
-
         super().set_file(file, filename, **kwargs)
 
         self.base.attributes.set("architecture", architecture)
