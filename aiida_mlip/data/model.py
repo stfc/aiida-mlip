@@ -40,9 +40,7 @@ class ModelData(SinglefileData):
         return file_hash
 
     @staticmethod
-    def _check_existing_file(
-        file: Union[str, Path],
-    ) -> Path:
+    def _check_existing_file(file: Union[str, Path]) -> Path:
         """Check if a file already exists and return the path of the existing file if it does.
 
         Parameters
