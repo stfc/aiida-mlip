@@ -160,7 +160,6 @@ class ModelData(SinglefileData):
         ModelData
             A ModelData instance.
         """
-
         file_path = Path(file).resolve()
         return cls(file=file_path, filename=filename, architecture=architecture)
 
