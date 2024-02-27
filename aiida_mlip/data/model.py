@@ -9,84 +9,71 @@ from urllib.parse import urlparse
 from aiida.orm import SinglefileData
 
 
-def _calculate_hash(file: Union[str, Path]) -> str:
-    """Calculate the hash of a file.
-
-    Parameters
-    ----------
-    file : Union[str, Path]
-        Path to the file for which hash needs to be calculated.
-
-    Returns
-    -------
-    str
-        The SHA-256 hash of the file.
-    """
-    # Calculate hash
-    buf_size = 65536  # reading 64kB (arbitrary) at a time
-    sha256 = hashlib.sha256()
-    with open(file, "rb") as f:
-        # calculating sha in chunks rather than 1 large pass
-        while data := f.read(buf_size):
-            sha256.update(data)
-    file_hash = sha256.hexdigest()
-    return file_hash
-
-
-def _check_existing_file(
-    arch_path: Union[str, Path],
-    file: Union[str, Path],
-    cache_path: Union[str, Path],
-    architecture: Optional[str] = None,
-) -> tuple[Path, str]:
-    """Check if a file already exists and return its path and architecture.
-
-    Parameters
-    ----------
-    arch_path : Union[str, Path]
-        Path to the folder containing the file.
-    file : Union[str, Path]
-        Path to the file.
-    cache_path : Union[str, Path]
-        Path to the parent folder of arch_path.
-    architecture : Optional[str]
-        MLIP architecture of the model.
-
-    Returns
-    -------
-    tuple[Path, str]
-        A tuple containing the path of the file of interest and its architecture.
-    """
-    file_hash = _calculate_hash(file)
-
-    def is_diff_file(curr_path: Path):
-        return curr_path.is_file() and not curr_path.samefile(file)
-
-    for existing_file in filter(is_diff_file, arch_path.rglob("*")):
-        if _calculate_hash(existing_file) == file_hash:
-            ex_file_path = Path(existing_file).parent
-            if arch_path == ex_file_path:
-                file.unlink()
-                return existing_file, architecture
-
-            if arch_path == cache_path
-                architecture = ex_file_path.name
-                file.unlink()
-                return Path(existing_file), architecture
-    return Path(file), architecture
-
-
 class ModelData(SinglefileData):
     """Class to save a model file as an AiiDA data type.
 
-    The file can be an existing one or a file to download.
+    The file can be a file that is stored locally or a new file to download.
     """
+
+    @staticmethod
+    def _calculate_hash(file: Union[str, Path]) -> str:
+        """Calculate the hash of a file.
+
+        Parameters
+        ----------
+        file : Union[str, Path]
+            Path to the file for which hash needs to be calculated.
+
+        Returns
+        -------
+        str
+            The SHA-256 hash of the file.
+        """
+        # Calculate hash
+        buf_size = 65536  # reading 64kB (arbitrary) at a time
+        sha256 = hashlib.sha256()
+        with open(file, "rb") as f:
+            # calculating sha in chunks rather than 1 large pass
+            while data := f.read(buf_size):
+                sha256.update(data)
+        file_hash = sha256.hexdigest()
+        return file_hash
+
+    @staticmethod
+    def _check_existing_file(
+        file: Union[str, Path],
+    ) -> Path:
+        """Check if a file already exists and return the path of the existing file if it does.
+
+        Parameters
+        ----------
+        file : Union[str, Path]
+            Path to the downloaded model file.
+
+        Returns
+        -------
+        Path
+            The path of the model file of interest (same as input path if no duplicates were found).
+        """
+        file_hash = ModelData._calculate_hash(file)
+
+        def is_diff_file(curr_path: Path):
+            return curr_path.is_file() and not curr_path.samefile(file)
+
+        file_folder = Path(file).parent
+        for existing_file in filter(is_diff_file, file_folder.rglob("*")):
+            if ModelData._calculate_hash(existing_file) == file_hash:
+                ex_file_folder = Path(existing_file).parent
+                if file_folder == ex_file_folder:
+                    file.unlink()
+                    return Path(existing_file)
+        return Path(file)
 
     def __init__(
         self,
         file: Union[str, Path],
+        architecture: str,
         filename: Optional[str] = None,
-        architecture: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the ModelData object.
@@ -95,10 +82,10 @@ class ModelData(SinglefileData):
         ----------
         file : Union[str, Path]
             Absolute path to the file.
+        architecture : [str]
+            Architecture of the mlip model.
         filename : Optional[str], optional
             Name to be used for the file (defaults to the name of provided file).
-        architecture : Optional[str], optional
-            Architecture information.
 
         Other Parameters
         ----------------
@@ -121,10 +108,11 @@ class ModelData(SinglefileData):
         ----------
         file : Union[str, Path]
             Absolute path to the file.
+        architecture : [str]
+            Architecture of the mlip model.
         filename : Optional[str], optional
             Name to be used for the file (defaults to the name of provided file).
-        architecture : Optional[str], optional
-            Architecture.
+
 
         Other Parameters
         ----------------
@@ -132,15 +120,14 @@ class ModelData(SinglefileData):
             Additional keyword arguments.
         """
         super().set_file(file, filename, **kwargs)
-
         self.base.attributes.set("architecture", architecture)
 
     @classmethod
     def local_file(
         cls,
         file: Union[str, Path],
+        architecture: str,
         filename: Optional[str] = None,
-        architecture: Optional[str] = None,
     ):
         """Create a ModelData instance from a local file.
 
@@ -148,10 +135,10 @@ class ModelData(SinglefileData):
         ----------
         file : Union[str, Path]
             Path to the file.
+        architecture : [str]
+            Architecture of the mlip model.
         filename : Optional[str], optional
             Name to be used for the file (defaults to the name of provided file).
-        architecture : Optional[str], optional
-            Architecture.
 
         Returns
         -------
@@ -159,16 +146,16 @@ class ModelData(SinglefileData):
             A ModelData instance.
         """
         file_path = Path(file).resolve()
-        return cls(file=file_path, filename=filename, architecture=architecture)
+        return cls(file=file_path, architecture=architecture, filename=filename)
 
     @classmethod
     # pylint: disable=too-many-arguments
     def download(
         cls,
         url: str,
+        architecture: str,
         filename: Optional[str] = None,
         cache_dir: Optional[Union[str, Path]] = None,
-        architecture: Optional[str] = None,
         force_download: Optional[bool] = False,
     ):
         """Download a file from a URL and save it as ModelData.
@@ -177,12 +164,12 @@ class ModelData(SinglefileData):
         ----------
         url : str
             URL of the file to download.
+        architecture : [str]
+            Architecture of the mlip model.
         filename : Optional[str], optional
             Name to be used for the file (defaults to the name of provided file).
         cache_dir : Optional[Union[str, Path]], optional
             Path to the folder where the file has to be saved (defaults to "~/.cache/mlips/").
-        architecture : Optional[str], optional
-            Architecture.
         force_download : Optional[bool], optional
             True to keep the downloaded model even if there are duplicates (default: False).
 
@@ -194,7 +181,7 @@ class ModelData(SinglefileData):
         cache_dir = Path(cache_dir if cache_dir else "~/.cache/mlips/")
         arch_dir = cache_dir / architecture if architecture else cache_dir
 
-        cache_path = cache_dir.resolve()
+        # cache_path = cache_dir.resolve()
         arch_path = arch_dir.resolve()
         arch_path.mkdir(parents=True, exist_ok=True)
 
@@ -221,9 +208,7 @@ class ModelData(SinglefileData):
             return cls.local_file(file=file, architecture=architecture)
 
         # Check if the hash of the just downloaded file matches any other file in the directory
-        filepath, architecture = _check_existing_file(
-            arch_path, file, cache_path, architecture
-        )
+        filepath = cls._check_existing_file(file)
 
         return cls.local_file(file=filepath, architecture=architecture)
 
@@ -234,6 +219,6 @@ class ModelData(SinglefileData):
         Returns
         -------
         str
-            Architecture.
+            Architecture of the mlip model.
         """
         return self.base.attributes.get("architecture")

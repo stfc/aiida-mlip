@@ -9,7 +9,7 @@ def test_local_file():
     """Testing that the local file function works"""
     # Construct a ModelData instance with the local file
     model_path = Path(__file__).parent / "input_files/model_local_file.txt"
-    model = ModelData.local_file(model_path)
+    model = ModelData.local_file(file=model_path, architecture="mace")
     # Assert the ModelData contains the content we expect
     content = model.get_content()
     assert content == model_path.read_text(encoding="utf-8")
@@ -64,6 +64,7 @@ def test_no_download_cached_file(tmp_path):
         url="https://raw.githubusercontent.com/stfc/aiida-mlip/main/tests/input_files/file2.txt",
         cache_dir=tmp_path,
         filename="test_model.txt",
+        architecture="mace",
     )
 
     # Assert the ModelData contains the content we expect
