@@ -236,5 +236,4 @@ class ModelData(SinglefileData):
         str
             Architecture.
         """
-
         return self.base.attributes.get("architecture")
