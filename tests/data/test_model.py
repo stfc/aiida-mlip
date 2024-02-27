@@ -44,7 +44,6 @@ def test_download_fresh_file(tmp_path):
     content = model.get_content()
     assert content == "file with content\ncontent2\n"
     file_path = tmp_path / "mace" / "test_download.txt"
-    # file_path = Path("./tests/data/tmp/mace/test_download.txt")
     assert file_path.exists(), f"File {file_path} does not exist."
 
 
