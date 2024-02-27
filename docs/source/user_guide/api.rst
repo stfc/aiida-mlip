@@ -13,7 +13,6 @@ Additional features compared to `SinglefileData`:
 
 - if given a URL it will download the file, save it in a folder of choice (default = ./cache/mlips, if given an architecture it will create a subfolder with that name), and save the file as AiiDA data type.  If the file is downloaded twice it will be canceled if there are duplicates in the same folder (unless specified diffeerently with the keyword "force_download=True"). However this is not related with AiiDA caching for its own database. For that, enable the caching for the ModelData class, or the whole aiida-mlip plugin (https://aiida.readthedocs.io/projects/aiida-core/en/latest/topics/provenance/caching.html)
 
-- *other features to be added possibly*
 
 Usage
 ^^^^^
