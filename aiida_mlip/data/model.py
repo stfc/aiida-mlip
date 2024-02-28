@@ -185,7 +185,7 @@ class ModelData(SinglefileData):
 
         file = arch_path / filename if filename else arch_path / model_name
 
-        # Check if there is already a file named that way and rename it
+        # If file already exists, use next indexed name
         stem = file.stem
         i = 1
         while file.exists():
