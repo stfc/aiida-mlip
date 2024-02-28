@@ -51,8 +51,7 @@ def test_no_download_cached_file(tmp_path):
     """Test if the caching work for avoiding double download"""
     # Ensure file is not already downloaded
     cached_file_path = tmp_path / "test_model.txt"
-    if cached_file_path.exists():
-        cached_file_path.unlink()
+    cached_file_path.unlink(missing_ok=True)
 
     # Ensure we have the file cached already
     testdir = tmp_path / "mace"

@@ -183,11 +183,7 @@ class ModelData(SinglefileData):
 
         model_name = urlparse(url).path.split("/")[-1]
 
-        file = arch_path
-        if filename:
-            file /= filename
-        else:
-            file /= model_name
+        file = arch_path / filename if filename else arch_path / model_name
 
         # Check if there is already a file named that way and rename it
         stem = file.stem
