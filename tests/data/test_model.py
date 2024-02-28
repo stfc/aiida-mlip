@@ -8,7 +8,7 @@ from aiida_mlip.data.model import ModelData
 def test_local_file():
     """Testing that the local file function works"""
     # Construct a ModelData instance with the local file
-    model_path = Path(__file__).parent / "input_files/model_local_file.txt"
+    model_path = Path(__file__).parent / "input_files" / "model_local_file.txt"
     model = ModelData.local_file(file=model_path, architecture="mace")
     # Assert the ModelData contains the content we expect
     content = model.get_content()
