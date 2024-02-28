@@ -39,8 +39,8 @@ class ModelData(SinglefileData):
         file_hash = sha256.hexdigest()
         return file_hash
 
-    @staticmethod
-    def _check_existing_file(file: Union[str, Path]) -> Path:
+    @classmethod
+    def _check_existing_file(cls, file: Union[str, Path]) -> Path:
         """Check if a file already exists and return the path of the existing file if it does.
 
         Parameters
@@ -53,18 +53,16 @@ class ModelData(SinglefileData):
         Path
             The path of the model file of interest (same as input path if no duplicates were found).
         """
-        file_hash = ModelData._calculate_hash(file)
+        file_hash = cls._calculate_hash(file)
 
         def is_diff_file(curr_path: Path):
             return curr_path.is_file() and not curr_path.samefile(file)
 
         file_folder = Path(file).parent
         for existing_file in filter(is_diff_file, file_folder.rglob("*")):
-            if ModelData._calculate_hash(existing_file) == file_hash:
-                ex_file_folder = Path(existing_file).parent
-                if file_folder == ex_file_folder:
-                    file.unlink()
-                    return Path(existing_file)
+            if cls._calculate_hash(existing_file) == file_hash:
+                file.unlink()
+                return Path(existing_file)
         return Path(file)
 
     def __init__(
