@@ -62,7 +62,7 @@ class ModelData(SinglefileData):
         for existing_file in filter(is_diff_file, file_folder.rglob("*")):
             if cls._calculate_hash(existing_file) == file_hash:
                 file.unlink()
-                return Path(existing_file)
+                return existing_file
         return Path(file)
 
     def __init__(

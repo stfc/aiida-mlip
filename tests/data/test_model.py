@@ -9,10 +9,22 @@ def test_local_file():
     """Testing that the local file function works"""
     # Construct a ModelData instance with the local file
     model_path = Path(__file__).parent / "input_files" / "model_local_file.txt"
-    model = ModelData.local_file(file=model_path, architecture="mace")
+    absolute_path = model_path.resolve()
+    model = ModelData.local_file(file=absolute_path, architecture="mace")
     # Assert the ModelData contains the content we expect
     content = model.get_content()
     assert content == model_path.read_text(encoding="utf-8")
+
+
+def test_relativepath():
+    """Testing that the local file function works"""
+    # Construct a ModelData instance with the local file
+    model_path = Path(__file__).parent / "input_files" / "model_local_file.txt"
+    relative_path = model_path.relative_to(Path.cwd())
+    model = ModelData.local_file(file=relative_path, architecture="mace")
+    # Assert the ModelData contains the content we expect
+    content = model.get_content()
+    assert content == relative_path.read_text(encoding="utf-8")
 
 
 def test_architecture():
