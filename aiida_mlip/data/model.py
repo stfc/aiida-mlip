@@ -175,7 +175,7 @@ class ModelData(SinglefileData):
             A ModelData instance.
         """
         cache_dir = Path(cache_dir if cache_dir else "~/.cache/mlips/")
-        arch_dir = cache_dir / architecture if architecture else cache_dir
+        arch_dir = (cache_dir / architecture) if architecture else cache_dir
 
         # cache_path = cache_dir.resolve()
         arch_path = arch_dir.resolve()
