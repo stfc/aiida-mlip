@@ -70,7 +70,7 @@ def test_no_download_cached_file(tmp_path):
     content = model.get_content()
     assert content == "file with content\ncontent2\n"
     file_path = tmp_path / "mace" / "test_model.txt"
-    assert file_path.exists() is False, f"File {file_path} exists but it shouldn't."
+    assert not file_path.exists(), f"File {file_path} exists but it shouldn't."
     file_path2 = tmp_path / "test_model.txt"
     assert not file_path2.exists(), f"File {file_path2} exists but it shouldn't."
     file_path3 = tmp_path / "mace" / "test.txt"
