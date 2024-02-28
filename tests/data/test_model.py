@@ -72,7 +72,7 @@ def test_no_download_cached_file(tmp_path):
     file_path = tmp_path / "mace" / "test_model.txt"
     assert file_path.exists() is False, f"File {file_path} exists but it shouldn't."
     file_path2 = tmp_path / "test_model.txt"
-    assert file_path2.exists() is False, f"File {file_path2} exists but it shouldn't."
+    assert not file_path2.exists(), f"File {file_path2} exists but it shouldn't."
     file_path3 = tmp_path / "mace" / "test.txt"
     assert file_path3.exists(), f"File {file_path3} should exist"
     assert model.architecture == "mace"
