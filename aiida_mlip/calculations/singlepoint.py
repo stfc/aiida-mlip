@@ -10,7 +10,8 @@ from aiida_mlip.data.model import ModelData
 class Singlepoint(CalcJob):
     "Calcjob implementation to run single point calculations using mlips"
 
-    _DEFAULT_OUTPUT_FILE = "aiida.out"
+    _DEFAULT_INPUT_FILE = "aiida.cif"
+    _DEFAULT_OUTPUT_FILE = "aiida.xyz"
     _DEFAULT_LOG_FILE = "aiida.log"
 
     @classmethod
@@ -26,7 +27,16 @@ class Singlepoint(CalcJob):
         spec.input("structure", valid_type=StructureData, help="The inputs structure.")
         spec.input("precision", valid_type=Str)
         spec.input("device", valid_type=Str)
-
+        spec.input(
+            "metadata.options.input_filename",
+            valid_type=str,
+            default=cls._DEFAULT_INPUT_FILE,
+        )
+        spec.input(
+            "metadata.options.output_filename",
+            valid_type=str,
+            default=cls._DEFAULT_OUTPUT_FILE,
+        )
         spec.inputs.validator = cls.validate_inputs
 
         # Outputs, in this case it would just be a dictionary with energy etc
@@ -83,24 +93,36 @@ class Singlepoint(CalcJob):
         device = self.inputs.device
 
         with folder.open(
-            "aiida.cif", "w"
+            "cls._DEFAULT_INPUT_FILE", "w"
         ) as inputfile:  # check better how the folder thing works
             inputfile.write(cif_structure.get_content())
 
         cif_file_path = folder / "aiida.cif"
 
-        with folder.open("config", "w") as config:
-            config.write(f"architecture:{architecture}")
-            config.write(f"model:{model_path}")
-            config.write(f"structure:{cif_file_path}")
-            config.write(f"device:{device}")
+        cmd_line = {
+            "architecture": architecture,
+            "model": model_path,
+            "structure": cif_file_path,
+            "device": device,
+        }
+
+        codeinfo = datastructures.CodeInfo()
+
+        # adding command line params for when we run janus
+        codeinfo.cmdline_params = []
+        for flag in cmd_line.items():
+            codeinfo.cmdline_params += [f"--{flag[0]}", flag[1]]
+
+        # node where the code is saved
+        codeinfo.code_uuid = self.inputs.code.uuid
+        # save name of output as you need it for running the code
+        codeinfo.stdout_name = self.metadata.options.output_filename
 
         calcinfo = datastructures.CalcInfo()
-
+        calcinfo.codes_info = [codeinfo]
         # Save the info about the node where the calc is stored
         calcinfo.uuid = str(self.uuid)
-
-        # Retrieve by default the output file, need to check about output_filename_kw and also input
+        # Retrieve by default the output file, need to check about output_filename kw and also input
         calcinfo.retrieve_list = []
         calcinfo.retrieve_list.append(self.metadata.options.output_filename)
 
