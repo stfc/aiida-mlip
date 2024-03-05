@@ -56,7 +56,7 @@ class Singlepoint(CalcJob):
             help="Filename to which the content of stdout of the scheduler is written.",
         )
 
-        spec.inputs.validator = cls.validate_inputs
+        # cls.validate_inputs
 
         # Outputs, in this case it would just be a dictionary with energy etc
         spec.output(

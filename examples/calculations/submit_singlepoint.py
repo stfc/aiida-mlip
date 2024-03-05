@@ -9,7 +9,7 @@ from ase.io import read
 import click
 
 from aiida.common import NotExistent
-from aiida.engine import submit
+from aiida.engine import run_get_node
 from aiida.orm import Code, Str, StructureData, load_node
 from aiida.plugins import CalculationFactory, DataFactory
 
@@ -21,6 +21,7 @@ StructureData = DataFactory("structure")
 def load_model(string, architecture):
     """Given a string for the model, if the string is a path use that model otherwise download"""
     file_path = Path(string)
+    print(file_path)
     if file_path.is_file():
         model = ModelData.local_file(file_path, architecture=architecture)
         return model
@@ -56,9 +57,10 @@ def singlepoint(params):
     model = load_model(params["model"], params["architecture"])
 
     # Select calculation to use
-    Singlepointcalc = CalculationFactory("aiida_mlip.calculations.singlepoint")
+    Singlepointcalc = CalculationFactory("janus.sp")
 
     inputs = {
+        "metadata": {"options": {"resources": {"num_machines": 1}}},  # doublecheck this
         "code": params["code"],
         "structure": structure,
         "calctype": Str(params["calctype"]),
@@ -68,7 +70,9 @@ def singlepoint(params):
     }
 
     # Submit calculation
-    submit(Singlepointcalc, **inputs)
+    r, s = run_get_node(Singlepointcalc, **inputs)
+    print(r)
+    print(s)
 
 
 # Arguments and options to give to the cli when running the script
@@ -108,7 +112,7 @@ def cli(
     }
 
     # Submit single point to aiida
-    submit(singlepoint(params))
+    singlepoint(params)
 
 
 if __name__ == "__main__":
