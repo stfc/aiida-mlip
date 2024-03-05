@@ -62,10 +62,10 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.plugins] # Optional super table
 
 [tool.poetry.plugins."aiida.data"]
-"mlip" = "aiida_mlip.data:DiffParameters"
+"modeldata" = "aiida_mlip.data:ModelData"
 
 [tool.poetry.plugins."aiida.calculations"]
-"mlip" = "aiida_mlip.calculations:DiffCalculation"
+"janus.sp" = "aiida_mlip.calculations:Singlepoint"
 
 [tool.poetry.plugins."aiida.parsers"]
 "mlip" = "aiida_mlip.parsers:DiffParser"

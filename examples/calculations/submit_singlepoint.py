@@ -59,12 +59,12 @@ def singlepoint(params):
     Singlepointcalc = CalculationFactory("aiida_mlip.calculations.singlepoint")
 
     inputs = {
+        "code": params["code"],
         "structure": structure,
         "calctype": Str(params["calctype"]),
         "model": model,
         "precision": Str(params["precision"]),
         "device": Str(params["device"]),
-        "code": params["code"],
     }
 
     # Submit calculation
@@ -108,7 +108,7 @@ def cli(
     }
 
     # Submit single point to aiida
-    singlepoint(params)
+    submit(singlepoint(params))
 
 
 if __name__ == "__main__":
