@@ -90,6 +90,7 @@ class ModelData(SinglefileData):
         """
         super().__init__(file, filename, **kwargs)
         self.base.attributes.set("architecture", architecture)
+        self.base.attributes.set("filepath", file)
 
     def set_file(
         self,
@@ -174,7 +175,9 @@ class ModelData(SinglefileData):
         ModelData
             A ModelData instance.
         """
-        cache_dir = Path(cache_dir if cache_dir else "~/.cache/mlips/")
+        cache_dir = (
+            Path(cache_dir) if cache_dir else Path("~/.cache/mlips/").expanduser()
+        )
         arch_dir = (cache_dir / architecture) if architecture else cache_dir
 
         # cache_path = cache_dir.resolve()
@@ -214,3 +217,14 @@ class ModelData(SinglefileData):
             Architecture of the mlip model.
         """
         return self.base.attributes.get("architecture")
+
+    @property
+    def filepath(self) -> str:
+        """Return the filepath.
+
+        Returns
+        -------
+        str
+            Path of the mlip model.
+        """
+        return self.base.attributes.get("filepath")
