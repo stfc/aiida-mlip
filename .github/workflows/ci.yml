@@ -58,6 +58,8 @@ jobs:
       with:
         parallel: true
         flag-name: run-${{ matrix.python-version }}
+        file: coverage.xml
+        base-path: aiida_mlip
 
   coverage:
     needs: tests

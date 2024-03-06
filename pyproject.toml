@@ -85,6 +85,7 @@ disable = [
 [tool.pytest.ini_options]
 # Configuration for [pytest](https://docs.pytest.org)
 python_files = "test_*.py example_*.py"
+addopts = '--cov-report xml'
 filterwarnings = [
     "ignore::DeprecationWarning:aiida:",
     "ignore:Creating AiiDA configuration folder:",
