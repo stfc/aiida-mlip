@@ -10,10 +10,10 @@ from aiida.orm import SinglefileData
 from aiida.parsers.parser import Parser
 from aiida.plugins import CalculationFactory
 
-DiffCalculation = CalculationFactory("mlip")
+Singlepointcalc = CalculationFactory("janus.sp")
 
 
-class DiffParser(Parser):
+class SPParser(Parser):
     """
     Parser class for parsing output of calculation.
     """
@@ -22,14 +22,14 @@ class DiffParser(Parser):
         """
         Initialize Parser instance
 
-        Checks that the ProcessNode being passed was produced by a DiffCalculation.
+        Checks that the ProcessNode being passed was produced by a Singlepointcalc.
 
         :param node: ProcessNode of calculation
         :param type node: :class:`aiida.orm.nodes.process.process.ProcessNode`
         """
         super().__init__(node)
-        if not issubclass(node.process_class, DiffCalculation):
-            raise exceptions.ParsingError("Can only parse DiffCalculation")
+        if not issubclass(node.process_class, Singlepointcalc):
+            raise exceptions.ParsingError("Can only parse Singlepointcalc")
 
     def parse(self, **kwargs):
         """
@@ -53,6 +53,6 @@ class DiffParser(Parser):
         self.logger.info(f"Parsing '{output_filename}'")
         with self.retrieved.open(output_filename, "rb") as handle:
             output_node = SinglefileData(file=handle)
-        self.out("mlip", output_node)
+        self.out("results", output_node)
 
         return ExitCode(0)

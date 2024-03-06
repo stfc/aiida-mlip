@@ -2,7 +2,7 @@
 
 from aiida.common import datastructures
 from aiida.engine import CalcJob, CalcJobProcessSpec
-from aiida.orm import Dict, SinglefileData, Str, StructureData
+from aiida.orm import SinglefileData, Str, StructureData
 
 from aiida_mlip.data.model import ModelData
 
@@ -28,7 +28,16 @@ class Singlepoint(CalcJob):
             help="calculation type (single point or geom opt)",
         )
         spec.input(
-            "model", valid_type=ModelData, help="mlip model used for calculation"
+            "architecture",
+            valid_type=Str,
+            default=lambda: Str("mace_mp"),
+            help="Architecture to use for calculation, if use default, it will use the default model too",
+        )
+        spec.input(
+            "model",
+            valid_type=ModelData,
+            required=False,
+            help="mlip model used for calculation",
         )
         spec.input("structure", valid_type=StructureData, help="The input structure.")
         spec.input("precision", valid_type=Str, help="Precision level for calculation")
@@ -59,11 +68,11 @@ class Singlepoint(CalcJob):
         # cls.validate_inputs
 
         # Outputs, in this case it would just be a dictionary with energy etc
-        spec.output(
-            "output_parameters",
-            valid_type=Dict,
-            help="The `output_parameters` output node of the successful calculation.",
-        )
+        # spec.output(
+        #     "output_parameters",
+        #     valid_type=Dict,
+        #     help="The `output_parameters` output node of the successful calculation.",
+        # )
         spec.output(cls._DEFAULT_OUTPUT_FILE, valid_type=SinglefileData)
         # Input errors
         spec.exit_code(300, "INPUT_ERROR", message="Some problems reading the input")
@@ -86,7 +95,7 @@ class Singlepoint(CalcJob):
         """Check if the inputs are valid"""
 
         # Check if model and structure were given as they are required
-        for key in ("model", "structure"):
+        for key in "structure":
             if key not in value:
                 return f"required value was not provided for the `{key}` namespace."
 
@@ -107,36 +116,45 @@ class Singlepoint(CalcJob):
             An instance of `aiida.common.datastructures.CalcInfo`.
         """
         # Input parameters
-        calctype = self.inputs.calctype
-        architecture = self.inputs.model.architecture
-        model_path = self.inputs.model.file
-        structure = self.inputs.structure
-        precision = self.inputs.precision
-        cif_structure = structure.get_cif()
-        device = self.inputs.device
+        # Define architecture from model if model is given
+        if self.inputs.model:
+            # pylint: disable=unused-variable
+            model_path = str((self.inputs.model).filepath)
+            architecture = str((self.inputs.model).architecture)
+        else:
+            architecture = str((self.inputs.architecture).value)
+            model_path = None
 
+        # The inputs are saved in the node, but we want their value as a string
+        calctype = str((self.inputs.calctype).value)
+        # pylint: disable=unused-variable
+        precision = str((self.inputs.precision).value)
+        device = str((self.inputs.device).value)
+        filename = self.inputs.metadata.options.input_filename
+
+        # Transform the structure data in cif file called input_filename
+        structure = self.inputs.structure
+        cif_structure = structure.get_cif()
         with folder.open(
             self._DEFAULT_INPUT_FILE, "w"
         ) as inputfile:  # check better how the folder thing works
             inputfile.write(cif_structure.get_content())
 
-        cif_file_path = folder / "aiida.cif"
-
-        # In future sp and opt, and kwargs?
+        # Fix kwargs
         cmd_line = {
-            "architecture": architecture,
-            "model": model_path,
-            "structure": cif_file_path,
-            "device": device,
-            "precision": precision,
+            "arch": str(architecture),
+            # "model": model_path,
+            "structure": str(filename),
+            "device": str(device),
+            # "precision": precision,
         }
 
         codeinfo = datastructures.CodeInfo()
 
         # adding command line params for when we run janus
-        codeinfo.cmdline_params = [f" {calctype} "]
+        codeinfo.cmdline_params = [f"{calctype}"]
         for flag in cmd_line.items():
-            codeinfo.cmdline_params += [f"--{flag[0]}", flag[1]]
+            codeinfo.cmdline_params += [f"--{flag[0]}", f"{flag[1]}"]
 
         # node where the code is saved
         codeinfo.code_uuid = self.inputs.code.uuid

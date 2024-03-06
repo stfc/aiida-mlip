@@ -90,7 +90,7 @@ class ModelData(SinglefileData):
         """
         super().__init__(file, filename, **kwargs)
         self.base.attributes.set("architecture", architecture)
-        self.base.attributes.set("filepath", file)
+        self.base.attributes.set("filepath", str(file))
 
     def set_file(
         self,
@@ -118,6 +118,7 @@ class ModelData(SinglefileData):
         """
         super().set_file(file, filename, **kwargs)
         self.base.attributes.set("architecture", architecture)
+        self.base.attributes.set("filepath", str(file))
 
     @classmethod
     def local_file(

@@ -15,11 +15,14 @@ from aiida.plugins import CalculationFactory, DataFactory
 
 from aiida_mlip.data.model import ModelData
 
-StructureData = DataFactory("structure")
+StructureData = DataFactory("core.structure")
 
 
 def load_model(string, architecture):
     """Given a string for the model, if the string is a path use that model otherwise download"""
+    if string is None:
+        model = None
+        return model
     file_path = Path(string)
     print(file_path)
     if file_path.is_file():
@@ -55,13 +58,15 @@ def singlepoint(params):
 
     # Select model to use
     model = load_model(params["model"], params["architecture"])
-
+    print(model)
     # Select calculation to use
     Singlepointcalc = CalculationFactory("janus.sp")
+    print(Singlepointcalc)
 
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},  # doublecheck this
         "code": params["code"],
+        "architecture": Str(params["architecture"]),
         "structure": structure,
         "calctype": Str(params["calctype"]),
         "model": model,
