@@ -71,8 +71,8 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.plugins."aiida.parsers"]
 "janus.parser" = "aiida_mlip.parsers:SPParser"
 
-[tool.poetry.plugins."aiida.cmdline.data"]
-"mlip" = "aiida_mlip.cli:data_cli"
+#[tool.poetry.plugins."aiida.cmdline.data"]
+#"mlip" = "aiida_mlip.cli:data_cli"
 
 [tool.black]
 line-length = 88
