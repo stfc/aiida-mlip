@@ -4,9 +4,12 @@ Parsers provided by aiida_mlip.
 Register parsers via the "aiida.parsers" entry point in setup.json.
 """
 
+from ase.io import read
+from numpy import ndarray
+
 from aiida.common import exceptions
 from aiida.engine import ExitCode
-from aiida.orm import SinglefileData
+from aiida.orm import Dict, SinglefileData
 from aiida.parsers.parser import Parser
 from aiida.plugins import CalculationFactory
 
@@ -38,10 +41,12 @@ class SPParser(Parser):
         :returns: an exit code, if parsing fails (or nothing if parsing succeeds)
         """
         output_filename = self.node.get_option("output_filename")
+        xyzoutput = self.node.get_option("xyzoutput")
 
         # Check that folder content is as expected
         files_retrieved = self.retrieved.list_object_names()
-        files_expected = [output_filename]
+        print(files_retrieved)
+        files_expected = [output_filename, xyzoutput]
         # Note: set(A) <= set(B) checks whether A is a subset of B
         if not set(files_expected) <= set(files_retrieved):
             self.logger.error(
@@ -51,8 +56,16 @@ class SPParser(Parser):
 
         # add output file
         self.logger.info(f"Parsing '{output_filename}'")
-        with self.retrieved.open(output_filename, "rb") as handle:
-            output_node = SinglefileData(file=handle)
-        self.out("results", output_node)
+
+        with self.retrieved.open(output_filename, "r") as file:
+            content = read(file)
+            results = content.todict()
+            with self.retrieved.open(output_filename, "rb") as handle:
+                print(handle)
+                output_node = SinglefileData(file=handle)
+
+        self.out("outputfile", output_node)
+
+        self.out("results_dict", Dict(results))
 
         return ExitCode(0)

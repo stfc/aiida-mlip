@@ -1,8 +1,11 @@
 """Class to run single point calculations"""
 
+from typing import Union
+
 from aiida.common import datastructures
 from aiida.engine import CalcJob, CalcJobProcessSpec
-from aiida.orm import SinglefileData, Str, StructureData
+from aiida.orm import Dict, SinglefileData, Str, StructureData
+from aiida.plugins import ParserFactory
 
 from aiida_mlip.data.model import ModelData
 
@@ -11,7 +14,8 @@ class Singlepoint(CalcJob):
     "Calcjob implementation to run single point calculations using mlips"
 
     _DEFAULT_INPUT_FILE = "aiida.cif"
-    _DEFAULT_OUTPUT_FILE = "aiida.xyz"
+    _DEFAULT_OUTPUT_FILE = "aiida.log"
+    _XYZ_OUTPUT = Str("aiida.xyz")
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec):
@@ -44,7 +48,16 @@ class Singlepoint(CalcJob):
         spec.input(
             "device",
             valid_type=Str,
-            help="Device where to run calculation(cpu, gpu...)",
+            required=False,
+            default=lambda: Str("cpu"),
+            help="Device in which to run calculation(cpu, gpu...)",
+        )
+        spec.input(
+            "xyzoutput",
+            valid_type=Union[Str, str],
+            required=False,
+            default=cls._DEFAULT_INPUT_FILE,
+            help="Device in which to run calculation(cpu, gpu...)",
         )
         # additional arguments?
         spec.input(
@@ -64,16 +77,19 @@ class Singlepoint(CalcJob):
             default="_scheduler-stdout.txt",
             help="Filename to which the content of stdout of the scheduler is written.",
         )
-
+        spec.inputs["metadata"]["options"]["parser_name"].default = "janus.parser"
         # cls.validate_inputs
 
         # Outputs, in this case it would just be a dictionary with energy etc
-        # spec.output(
-        #     "output_parameters",
-        #     valid_type=Dict,
-        #     help="The `output_parameters` output node of the successful calculation.",
-        # )
+        spec.output(
+            "results_dict",
+            valid_type=Dict,
+            help="The `results_dict` output node of the successful calculation.",
+        )
+
         spec.output(cls._DEFAULT_OUTPUT_FILE, valid_type=SinglefileData)
+
+        spec.default_output_node = "results_dict"
         # Input errors
         spec.exit_code(300, "INPUT_ERROR", message="Some problems reading the input")
         # Warnings
@@ -86,8 +102,18 @@ class Singlepoint(CalcJob):
         )
         spec.exit_code(
             305,
-            "ERROR_OUTPUT_FILES",
+            "ERROR_MISSING_OUTPUT_FILES",
             message="Some output files missing or cannot be read",
+        )
+        spec.exit_code(
+            306,
+            "ERROR_EMPTY_OUTPUT_FILES",
+            message="File.xyz is empty",
+        )
+        spec.exit_code(
+            307,
+            "ERROR_CONTENT_OUTPUT_FILES",
+            message="The output file does not contain the right content",
         )
 
     @classmethod
@@ -118,19 +144,20 @@ class Singlepoint(CalcJob):
         # Input parameters
         # Define architecture from model if model is given
         if self.inputs.model:
-            # pylint: disable=unused-variable
             model_path = str((self.inputs.model).filepath)
             architecture = str((self.inputs.model).architecture)
         else:
             architecture = str((self.inputs.architecture).value)
-            model_path = None
+            model = ModelData.download("http://tinyurl.com/46jrkm3v", architecture)
+            model_path = model.filepath
 
         # The inputs are saved in the node, but we want their value as a string
         calctype = str((self.inputs.calctype).value)
         # pylint: disable=unused-variable
         precision = str((self.inputs.precision).value)
         device = str((self.inputs.device).value)
-        filename = self.inputs.metadata.options.input_filename
+        xyz_filename = self.inputs.xyzoutput
+        input_filename = self.inputs.metadata.options.input_filename
 
         # Transform the structure data in cif file called input_filename
         structure = self.inputs.structure
@@ -143,18 +170,27 @@ class Singlepoint(CalcJob):
         # Fix kwargs
         cmd_line = {
             "arch": str(architecture),
-            # "model": model_path,
-            "structure": str(filename),
+            "structure": str(input_filename),
             "device": str(device),
-            # "precision": precision,
+            "calc_kwargs": {"model": str(model_path), "default_dtype": str(precision)},
+            "write_kwargs": {"filename": str(xyz_filename)},
         }
 
         codeinfo = datastructures.CodeInfo()
 
-        # adding command line params for when we run janus
-        codeinfo.cmdline_params = [f"{calctype}"]
-        for flag in cmd_line.items():
-            codeinfo.cmdline_params += [f"--{flag[0]}", f"{flag[1]}"]
+        # Initialize cmdline_params as an empty list
+        codeinfo.cmdline_params = []
+        # Adding command line params for when we run janus
+        codeinfo.cmdline_params.append(calctype)
+        for flag, value in cmd_line.items():
+            if isinstance(value, dict):
+                # If the value is a dictionary, format it properly
+                formatted_value = (
+                    "{" + ", ".join([f"'{k}': '{v}'" for k, v in value.items()]) + "}"
+                )
+                codeinfo.cmdline_params += [f"--{flag}", formatted_value]
+            else:
+                codeinfo.cmdline_params += [f"--{flag}", str(value)]
 
         # node where the code is saved
         codeinfo.code_uuid = self.inputs.code.uuid
@@ -168,5 +204,7 @@ class Singlepoint(CalcJob):
         # Retrieve by default the output file, need to check about output_filename kw and also input
         calcinfo.retrieve_list = []
         calcinfo.retrieve_list.append(self.metadata.options.output_filename)
+        calcinfo.retrieve_list.append(self.inputs.xyzoutput)
+        calcinfo.retrieve_list.append(self.uuid)
 
         return calcinfo
