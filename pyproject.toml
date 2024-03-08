@@ -28,6 +28,7 @@ documentation = "https://stfc.github.io/aiida-mlip/"
 [tool.poetry.dependencies]
 python = "^3.9"
 aiida-core = "^2.5"
+ase = "^3.22.1"
 voluptuous = "^0.14"
 PyCifRW = "^4.4.6"
 

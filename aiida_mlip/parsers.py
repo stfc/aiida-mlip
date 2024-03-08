@@ -4,8 +4,10 @@ Parsers provided by aiida_mlip.
 Register parsers via the "aiida.parsers" entry point in setup.json.
 """
 
+from pathlib import Path
+
 from ase.io import read
-from numpy import ndarray
+import numpy as np
 
 from aiida.common import exceptions
 from aiida.engine import ExitCode
@@ -14,6 +16,25 @@ from aiida.parsers.parser import Parser
 from aiida.plugins import CalculationFactory
 
 Singlepointcalc = CalculationFactory("janus.sp")
+
+
+def convert_numpy(dictionary: dict) -> dict:
+    """A function to convert numpy arrays in lists as the nodes won't store the otherwise
+
+    Parameters
+    ----------
+    dictionary : dict
+            A dictionary.
+
+    Returns
+    -------
+    dict
+
+    """
+    for key, value in dictionary.items():
+        if isinstance(value, np.ndarray):
+            dictionary[key] = value.tolist()
+    return dictionary
 
 
 class SPParser(Parser):
@@ -27,8 +48,10 @@ class SPParser(Parser):
 
         Checks that the ProcessNode being passed was produced by a Singlepointcalc.
 
-        :param node: ProcessNode of calculation
-        :param type node: :class:`aiida.orm.nodes.process.process.ProcessNode`
+        Parameters
+        ----------
+        node : aiida.orm.nodes.process.process.ProcessNode
+            ProcessNode of calculation
         """
         super().__init__(node)
         if not issubclass(node.process_class, Singlepointcalc):
@@ -36,12 +59,18 @@ class SPParser(Parser):
 
     def parse(self, **kwargs):
         """
-        Parse outputs, store results in database.
+        Parse outputs, store results in the database.
 
-        :returns: an exit code, if parsing fails (or nothing if parsing succeeds)
+        Returns
+        -------
+        int
+            An exit code
         """
         output_filename = self.node.get_option("output_filename")
-        xyzoutput = self.node.get_option("xyzoutput")
+        xyzoutput_node = self.node.inputs.xyzoutput
+        xyzoutput = xyzoutput_node.value
+
+        remote_folder = self.node.get_remote_workdir()
 
         # Check that folder content is as expected
         files_retrieved = self.retrieved.list_object_names()
@@ -55,17 +84,28 @@ class SPParser(Parser):
             return self.exit_codes.ERROR_MISSING_OUTPUT_FILES
 
         # add output file
-        self.logger.info(f"Parsing '{output_filename}'")
+        # self.logger.info(f"Parsing '{xyzoutput}'")
 
-        with self.retrieved.open(output_filename, "r") as file:
-            content = read(file)
-            results = content.todict()
-            with self.retrieved.open(output_filename, "rb") as handle:
-                print(handle)
-                output_node = SinglefileData(file=handle)
+        print("reading outputs")
+        with self.retrieved.open(output_filename, "rb") as handle:
+            print(handle)
+            output_node = SinglefileData(file=handle)
 
-        self.out("outputfile", output_node)
+        self.out("log_output", output_node)
 
-        self.out("results_dict", Dict(results))
+        print("reading outputs 2")
+
+        with self.retrieved.open(xyzoutput, "rb") as handle:
+            print(handle)
+            output_2 = SinglefileData(file=handle)
+
+        self.out("xyz_output", output_2)
+
+        output_path = Path(remote_folder, xyzoutput)
+        content = read(output_path)
+        results = content.todict()
+        results = convert_numpy(results)
+        results_node = Dict(results)
+        self.out("results_dict", results_node)
 
         return ExitCode(0)
