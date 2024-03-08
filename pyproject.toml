@@ -50,6 +50,7 @@ optional = true
 [tool.poetry.group.docs.dependencies]
 furo = "^2024.1.29"
 markupsafe = "<2.1"
+numpydoc = "^1.6.0"
 sphinx = "^7.2.6"
 sphinxcontrib-contentui = "^0.2.5"
 sphinxcontrib-details-directive = "^0.1"
@@ -108,3 +109,17 @@ line_length = 88
 profile = "black"
 sections = ['FUTURE', 'STDLIB', 'THIRDPARTY', 'AIIDA', 'FIRSTPARTY', 'LOCALFOLDER']
 known_aiida = ['aiida']
+
+[tool.numpydoc_validation]
+# report on all checks, except the below
+checks = [
+    "all",
+    "EX01",
+    "SA01",
+    "ES01",
+]
+# Don't report on objects that match any of these regex
+exclude = [
+    ".__weakref__$",
+    ".__repr__$",
+]
