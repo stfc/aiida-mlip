@@ -61,7 +61,7 @@ class Singlepoint(CalcJob):
             default=lambda: Str(cls._XYZ_OUTPUT),
             help="Name of the xyz output file",
         )
-        # additional arguments?
+
         spec.input(
             "metadata.options.input_filename",
             valid_type=str,
@@ -80,9 +80,8 @@ class Singlepoint(CalcJob):
             help="Filename to which the content of stdout of the scheduler is written.",
         )
         spec.inputs["metadata"]["options"]["parser_name"].default = "janus.parser"
-        # cls.validate_inputs ---> need to work on this
 
-        # Outputs, in this case it would be a dictionary with energy etc and the output files
+        # Define outputs. The default output is a dictionary with the content of the xyz file as a dict
         spec.output(
             "results_dict",
             valid_type=Dict,
@@ -94,7 +93,7 @@ class Singlepoint(CalcJob):
         print("defining outputnode")
         spec.default_output_node = "results_dict"
 
-        # Exit codes, some are already in the parser, some need to fix
+        # Exit codes
         spec.exit_code(300, "INPUT_ERROR", message="Some problems reading the input")
 
         spec.exit_code(
@@ -157,7 +156,7 @@ class Singlepoint(CalcJob):
         aiida.common.datastructures.CalcInfo
             An instance of `aiida.common.datastructures.CalcInfo`.
         """
-        # Input parameters
+        # Create needed inputs
         # Define architecture from model if model is given, otherwise get architecture from inputs and download default model
         architecture = (
             str((self.inputs.model).architecture)
@@ -182,13 +181,9 @@ class Singlepoint(CalcJob):
         # Transform the structure data in cif file called input_filename
         structure = self.inputs.structure
         cif_structure = structure.get_cif()
-        with folder.open(
-            self._DEFAULT_INPUT_FILE, "w"
-        ) as inputfile:  # check better how the folder thing works
+        with folder.open(self._DEFAULT_INPUT_FILE, "w") as inputfile:
             inputfile.write(cif_structure.get_content())
 
-        # Fix kwargs
-        # Fix kwargs
         cmd_line = {
             "arch": architecture,
             "structure": str(input_filename),
@@ -213,16 +208,16 @@ class Singlepoint(CalcJob):
             else:
                 codeinfo.cmdline_params += [f"--{flag}", str(value)]
 
-        # node where the code is saved
+        # Node where the code is saved
         codeinfo.code_uuid = self.inputs.code.uuid
-        # save name of output as you need it for running the code
+        # Save name of output as you need it for running the code
         codeinfo.stdout_name = self.metadata.options.output_filename
 
         calcinfo = datastructures.CalcInfo()
         calcinfo.codes_info = [codeinfo]
         # Save the info about the node where the calc is stored
         calcinfo.uuid = str(self.uuid)
-        # Retrieve by default the output file, need to check about output_filename kw and also input
+        # Retrieve output files
         calcinfo.retrieve_list = []
         calcinfo.retrieve_list.append(self.metadata.options.output_filename)
         calcinfo.retrieve_list.append(xyz_filename)
