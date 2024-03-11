@@ -11,11 +11,11 @@ import click
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
 from aiida.orm import Code, Str, StructureData, load_node
-from aiida.plugins import CalculationFactory, DataFactory
+from aiida.plugins import CalculationFactory
 
 from aiida_mlip.data.model import ModelData
 
-StructureData = DataFactory("core.structure")
+# StructureData = DataFactory("core.structure")
 
 
 def load_model(string: Union[str, None], architecture: str) -> ModelData:
@@ -39,17 +39,14 @@ def load_model(string: Union[str, None], architecture: str) -> ModelData:
     """
     if string is None:
         model = None
-        return model
-    file_path = Path(string)
-    print(file_path)
-    if file_path.is_file():
+    elif (file_path := Path(string)).is_file():
         model = ModelData.local_file(file_path, architecture=architecture)
-        return model
-    model = ModelData.download(string, architecture=architecture)
+    else:
+        model = ModelData.download(string, architecture=architecture)
     return model
 
 
-def load_structure(value: Union[str, int, None]):
+def load_structure(value: Union[str, int, None]) -> StructureData:
     """
     Load a StructureData instance from the given input.
 
@@ -75,21 +72,16 @@ def load_structure(value: Union[str, int, None]):
     """
     if value is None:
         structure = StructureData(ase=bulk("NaCl", "rocksalt", 5.63))
-        return structure
-    try:
-        # We try to convert the given value to an int, which should be the number of a node
+    elif isinstance(value, int) or (isinstance(value, str) and value.isdigit()):
         structure_pk = int(value)
         structure = load_node(structure_pk)
-        return structure
-    except ValueError as exc:
-        # If conversion to int fails, it should be a string
-        if Path.exists(value):
-            structure = StructureData(ase=read(value))
-            return structure
-        # If it's none, return error
+    elif Path.exists(value):
+        structure = StructureData(ase=read(value))
+    else:
         raise click.BadParameter(
             f"Invalid input: {value}. Must be either node PK (int) or a valid path to a structure file."
-        ) from exc
+        )
+    return structure
 
 
 def singlepoint(params: dict):
@@ -110,14 +102,13 @@ def singlepoint(params: dict):
 
     # Select model to use
     model = load_model(params["model"], params["architecture"])
-    print(model)
+
     # Select calculation to use
     Singlepointcalc = CalculationFactory("janus.sp")
-    print(Singlepointcalc)
 
     # Define inputs
     inputs = {
-        "metadata": {"options": {"resources": {"num_machines": 1}}},  # doublecheck this
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": params["code"],
         "architecture": Str(params["architecture"]),
         "structure": structure,
@@ -127,10 +118,10 @@ def singlepoint(params: dict):
         "device": Str(params["device"]),
     }
 
-    # Submit calculation to aiida
-    r, s = run_get_node(Singlepointcalc, **inputs)
-    print(r)
-    print(s)
+    # Run calculation
+    result, node = run_get_node(Singlepointcalc, **inputs)
+    print(f"Printing results from calculation: {result}")
+    print(f"Printing node of calculation: {node}")
 
 
 # Arguments and options to give to the cli when running the script

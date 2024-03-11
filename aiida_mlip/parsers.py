@@ -19,7 +19,7 @@ Singlepointcalc = CalculationFactory("janus.sp")
 
 
 def convert_numpy(dictionary: dict) -> dict:
-    """A function to convert numpy arrays in lists as the nodes won't store the otherwise
+    """A function to convert numpy `ndarrays` in `dictionary` into `list`s as the nodes won't store them otherwise
 
     Parameters
     ----------

@@ -1,5 +1,10 @@
 """Class to run single point calculations"""
 
+# from functools import partial
+# import operator
+
+from typing import Union
+
 from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
@@ -30,6 +35,7 @@ class Singlepoint(CalcJob):
         spec.input(
             "calctype",
             valid_type=Str,
+            # validator= partial(operator.contains, ("singlepoint", "geom opt")),
             help="calculation type (single point or geom opt)",
         )
         spec.input(
@@ -80,7 +86,7 @@ class Singlepoint(CalcJob):
             help="Filename to which the content of stdout of the scheduler is written.",
         )
         spec.inputs["metadata"]["options"]["parser_name"].default = "janus.parser"
-
+        # cls.validate_inputs
         # Define outputs. The default output is a dictionary with the content of the xyz file as a dict
         spec.output(
             "results_dict",
@@ -94,7 +100,7 @@ class Singlepoint(CalcJob):
         spec.default_output_node = "results_dict"
 
         # Exit codes
-        spec.exit_code(300, "INPUT_ERROR", message="Some problems reading the input")
+        spec.exit_code(200, "INPUT_ERROR", message="Some problems reading the input")
 
         spec.exit_code(
             340,
@@ -118,7 +124,8 @@ class Singlepoint(CalcJob):
         )
 
     @classmethod
-    def validate_inputs(cls, value: dict) -> str:  # Need to work on this
+    # pylint: disable=inconsistent-return-statements
+    def validate_inputs(cls, value: dict) -> Union[str, None]:
         """Check if the inputs are valid.
 
         Parameters
@@ -133,11 +140,8 @@ class Singlepoint(CalcJob):
         """
 
         # Check if  structure is given as it is required
-        for key in "structure":
-            if key not in value:
-                return f"required value was not provided for the `{key}` namespace."
-
-        return None
+        if any(key not in value for key in ["structure", "calctype"]):
+            return "required value was not provided for the namespace."
 
     # pylint: disable=too-many-locals
     def prepare_for_submission(
@@ -167,7 +171,8 @@ class Singlepoint(CalcJob):
             str((self.inputs.model).filepath)
             if self.inputs.model
             else ModelData.download(
-                "http://tinyurl.com/46jrkm3v", architecture
+                "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
+                architecture,
             ).filepath
         )
 
@@ -199,14 +204,7 @@ class Singlepoint(CalcJob):
         # Adding command line params for when we run janus
         codeinfo.cmdline_params.append(calctype)
         for flag, value in cmd_line.items():
-            if isinstance(value, dict):
-                # If the value is a dictionary, format it properly
-                formatted_value = (
-                    "{" + ", ".join([f"'{k}': '{v}'" for k, v in value.items()]) + "}"
-                )
-                codeinfo.cmdline_params += [f"--{flag}", formatted_value]
-            else:
-                codeinfo.cmdline_params += [f"--{flag}", str(value)]
+            codeinfo.cmdline_params += [f"--{flag}", str(value)]
 
         # Node where the code is saved
         codeinfo.code_uuid = self.inputs.code.uuid
@@ -218,9 +216,10 @@ class Singlepoint(CalcJob):
         # Save the info about the node where the calc is stored
         calcinfo.uuid = str(self.uuid)
         # Retrieve output files
-        calcinfo.retrieve_list = []
-        calcinfo.retrieve_list.append(self.metadata.options.output_filename)
-        calcinfo.retrieve_list.append(xyz_filename)
-        calcinfo.retrieve_list.append(self.uuid)
+        calcinfo.retrieve_list = [
+            self.metadata.options.output_filename,
+            xyz_filename,
+            self.uuid,
+        ]
 
         return calcinfo
