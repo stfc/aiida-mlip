@@ -19,11 +19,13 @@ repos:
   rev: 5.13.2
   hooks:
     - id: isort
+      args: ["--profile=black"]
 
 - repo: https://github.com/psf/black
   rev: 24.1.1
   hooks:
     - id: black
+      args: [--line-length=88]
 
 - repo: local
   hooks:
@@ -37,3 +39,9 @@ repos:
           docs/.*|
       )$
     entry: pylint
+
+- repo: https://github.com/numpy/numpydoc
+  rev: v1.6.0
+  hooks:
+    - id: numpydoc-validation
+      files: ^aiida_mlip/
