@@ -1,20 +1,18 @@
-"""Class to run single point calculations"""
-
-# from functools import partial
-# import operator
-
-from typing import Union
+"""Class to run single point calculations."""
 
 from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
+import aiida.engine.processes
 from aiida.orm import Dict, SinglefileData, Str, StructureData
 
 from aiida_mlip.data.model import ModelData
 
 
 class Singlepoint(CalcJob):
-    "Calcjob implementation to run single point calculations using mlips"
+    """
+    Calcjob implementation to run single point calculations using mlips.
+    """
 
     _DEFAULT_INPUT_FILE = "aiida.cif"
     _DEFAULT_OUTPUT_FILE = "aiida.log"
@@ -22,12 +20,13 @@ class Singlepoint(CalcJob):
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec):
-        """Define the process specification, including its inputs, outputs and known exit codes.
+        """
+        Define the process specification, its inputs, outputs and exit codes.
 
         Parameters
         ----------
-        spec : aiida.engine.CalcJobProcessSpec
-            the calculation job process spec to define.
+        spec : `aiida.engine.CalcJobProcessSpec`
+            The calculation job process spec to define.
         """
         super().define(spec)
 
@@ -35,14 +34,14 @@ class Singlepoint(CalcJob):
         spec.input(
             "calctype",
             valid_type=Str,
-            # validator= partial(operator.contains, ("singlepoint", "geom opt")),
+            default=lambda: Str("singlepoint"),
             help="calculation type (single point or geom opt)",
         )
         spec.input(
             "architecture",
             valid_type=Str,
             default=lambda: Str("mace_mp"),
-            help="Architecture to use for calculation, if use default, it will use the default model too",
+            help="Architecture to use for calculation, defaults to mace_mp",
         )
         spec.input(
             "model",
@@ -86,8 +85,8 @@ class Singlepoint(CalcJob):
             help="Filename to which the content of stdout of the scheduler is written.",
         )
         spec.inputs["metadata"]["options"]["parser_name"].default = "janus.parser"
-        # cls.validate_inputs
-        # Define outputs. The default output is a dictionary with the content of the xyz file as a dict
+        spec.inputs.validator = cls.validate_inputs
+        # Define outputs. The default is a dictionary with the content of the xyz file
         spec.output(
             "results_dict",
             valid_type=Dict,
@@ -100,13 +99,7 @@ class Singlepoint(CalcJob):
         spec.default_output_node = "results_dict"
 
         # Exit codes
-        spec.exit_code(200, "INPUT_ERROR", message="Some problems reading the input")
 
-        spec.exit_code(
-            340,
-            "ERROR_OUT_OF_WALLTIME_INTERRUPTED",
-            message="The calculation stopped prematurely because it ran out of walltime",
-        )
         spec.exit_code(
             305,
             "ERROR_MISSING_OUTPUT_FILES",
@@ -124,31 +117,49 @@ class Singlepoint(CalcJob):
         )
 
     @classmethod
-    # pylint: disable=inconsistent-return-statements
-    def validate_inputs(cls, value: dict) -> Union[str, None]:
-        """Check if the inputs are valid.
+    def validate_inputs(
+        cls, value: dict, port_namespace: aiida.engine.processes.ports.PortNamespace
+    ):
+        """
+        Check if the inputs are valid.
 
         Parameters
         ----------
         value : dict
             The inputs dictionary.
 
+        port_namespace : `aiida.engine.processes.ports.PortNamespace`
+            An instance of aiida's `PortNameSpace`.
+
         Returns
         -------
         str or None
             Error message if validation fails, None otherwise.
         """
+        # Wrapping processes may choose to exclude certain input ports
+        # If the ports have been excluded, skip the validation.
+        if any(key not in port_namespace for key in ("calctype", "structure")):
+            return None
 
-        # Check if  structure is given as it is required
-        if any(key not in value for key in ["structure", "calctype"]):
-            return "required value was not provided for the namespace."
+        for key in ("calctype", "structure"):
+            if key not in value:
+                return f"required value was not provided for the `{key}` namespace."
+
+        valid_calctypes = {"singlepoint", "geom opt"}
+        if "calctype" in value:
+            if str(value["calctype"].value) not in valid_calctypes:
+                return f"The 'calctype' must be one of {valid_calctypes}, \
+                    but got '{value['calctype']}'."
+
+        # If both structure and calctype are provided, return None
+        return None
 
     # pylint: disable=too-many-locals
     def prepare_for_submission(
         self, folder: aiida.common.folders.Folder
     ) -> datastructures.CalcInfo:
         """
-        Create the input files from the input nodes passed to this instance of the `CalcJob`.
+        Create the input files for the `Calcjob`.
 
         Parameters
         ----------
@@ -161,7 +172,8 @@ class Singlepoint(CalcJob):
             An instance of `aiida.common.datastructures.CalcInfo`.
         """
         # Create needed inputs
-        # Define architecture from model if model is given, otherwise get architecture from inputs and download default model
+        # Define architecture from model if model is given,
+        # otherwise get architecture from inputs and download default model
         architecture = (
             str((self.inputs.model).architecture)
             if self.inputs.model
@@ -171,7 +183,7 @@ class Singlepoint(CalcJob):
             str((self.inputs.model).filepath)
             if self.inputs.model
             else ModelData.download(
-                "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
+                "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",  # pylint:disable=line-too-long
                 architecture,
             ).filepath
         )
@@ -186,7 +198,7 @@ class Singlepoint(CalcJob):
         # Transform the structure data in cif file called input_filename
         structure = self.inputs.structure
         cif_structure = structure.get_cif()
-        with folder.open(self._DEFAULT_INPUT_FILE, "w") as inputfile:
+        with folder.open(self._DEFAULT_INPUT_FILE, "w", encoding="utf-8") as inputfile:
             inputfile.write(cif_structure.get_content())
 
         cmd_line = {
