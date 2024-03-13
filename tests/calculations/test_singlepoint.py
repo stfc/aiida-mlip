@@ -36,19 +36,27 @@ def test_singlepoint(
         "singlepoint",
         "--arch",
         "mace_mp",
-        "--structure",
+        "--struct",
         "aiida.cif",
         "--device",
         "cpu",
+        "--log",
+        "aiida.log",
         "--calc-kwargs",
-        f"{{'model': '{tmp_path}/mace_mp/mace_mp_small.model', 'default_dtype': 'float64'}}",
+        f"{{'model_paths': '{tmp_path}/mace_mp/mace_mp_small.model', 'default_dtype': 'float64'}}",
         "--write-kwargs",
-        f"{{'filename': 'aiida-results.xyz'}}",
-        ]
+        "{'filename': 'aiida-results.xyz'}",
+    ]
 
-    retrieve_list = [calc_info.uuid, "aiida.log", "aiida-results.xyz"]
+    retrieve_list = [
+        calc_info.uuid,
+        "aiida.log",
+        "aiida-results.xyz",
+        "aiida-stdout.txt",
+    ]
 
-
+    print(sorted(cmdline_params))
+    print(sorted(calc_info.codes_info[0].cmdline_params))
     # Check the attributes of the returned `CalcInfo`
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
@@ -75,7 +83,7 @@ def test_sp_error(fixture_sandbox, generate_calc_job, tmp_path, janus_code):
         "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "calctype": Str("wrong_type"),
         "model": ModelData.download(
-            "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model", 
+            "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
             architecture="mace_mp",
             cache_dir=tmp_path,
         ),

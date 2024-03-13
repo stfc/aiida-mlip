@@ -14,9 +14,10 @@ class Singlepoint(CalcJob):
     Calcjob implementation to run single point calculations using mlips.
     """
 
+    _DEFAULT_OUTPUT_FILE = "aiida-stdout.txt"
     _DEFAULT_INPUT_FILE = "aiida.cif"
-    _DEFAULT_OUTPUT_FILE = "aiida.log"
     _XYZ_OUTPUT = "aiida-results.xyz"
+    _LOG_FILE = "aiida.log"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec):
@@ -68,16 +69,22 @@ class Singlepoint(CalcJob):
         )
 
         spec.input(
-            "metadata.options.input_filename",
-            valid_type=str,
-            default=cls._DEFAULT_INPUT_FILE,
+            "log_file",
+            valid_type=Str,
+            required=False,
+            default=lambda: Str(cls._LOG_FILE),
+            help="Name of the log output file",
         )
         spec.input(
             "metadata.options.output_filename",
             valid_type=str,
             default=cls._DEFAULT_OUTPUT_FILE,
         )
-
+        spec.input(
+            "metadata.options.input_filename",
+            valid_type=str,
+            default=cls._DEFAULT_INPUT_FILE,
+        )
         spec.input(
             "metadata.options.scheduler_stdout",
             valid_type=str,
@@ -93,6 +100,7 @@ class Singlepoint(CalcJob):
             help="The `results_dict` output node of the successful calculation.",
         )
         print("defining outputs")
+        spec.output("std_output", valid_type=SinglefileData)
         spec.output("log_output", valid_type=SinglefileData)
         spec.output("xyz_output", valid_type=SinglefileData)
         print("defining outputnode")
@@ -151,6 +159,10 @@ class Singlepoint(CalcJob):
                 return f"The 'calctype' must be one of {valid_calctypes}, \
                     but got '{value['calctype']}'."
 
+        if "input_filename" in value:
+            if not str(value["input_filename"].value).endswith(".cif"):
+                return "The parameter 'input_filename' must end with '.cif'"
+
         # If both structure and calctype are provided, return None
         return None
 
@@ -194,7 +206,7 @@ class Singlepoint(CalcJob):
         device = str((self.inputs.device).value)
         xyz_filename = str((self.inputs.xyzoutput).value)
         input_filename = self.inputs.metadata.options.input_filename
-
+        log_filename = str((self.inputs.log_file).value)
         # Transform the structure data in cif file called input_filename
         structure = self.inputs.structure
         cif_structure = structure.get_cif()
@@ -203,9 +215,10 @@ class Singlepoint(CalcJob):
 
         cmd_line = {
             "arch": architecture,
-            "structure": str(input_filename),
+            "struct": input_filename,
             "device": device,
-            "calc-kwargs": {"model": model_path, "default_dtype": precision},
+            "log": log_filename,
+            "calc-kwargs": {"model_paths": model_path, "default_dtype": precision},
             "write-kwargs": {"filename": xyz_filename},
         }
 
@@ -232,6 +245,7 @@ class Singlepoint(CalcJob):
             self.metadata.options.output_filename,
             xyz_filename,
             self.uuid,
+            log_filename,
         ]
 
         return calcinfo

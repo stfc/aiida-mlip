@@ -61,6 +61,7 @@ class SPParser(Parser):
         if not issubclass(node.process_class, Singlepointcalc):
             raise exceptions.ParsingError("Can only parse Singlepointcalc")
 
+    # pylint: disable=too-many-locals
     def parse(self, **kwargs):
         """
         Parse outputs, store results in the database.
@@ -76,15 +77,15 @@ class SPParser(Parser):
             An exit code.
         """
         output_filename = self.node.get_option("output_filename")
-        xyzoutput_node = self.node.inputs.xyzoutput
-        xyzoutput = xyzoutput_node.value
+        xyzoutput = (self.node.inputs.xyzoutput).value
+        logoutput = (self.node.inputs.log_file).value
 
         remote_folder = self.node.get_remote_workdir()
 
         # Check that folder content is as expected
         files_retrieved = self.retrieved.list_object_names()
-        print(files_retrieved)
-        files_expected = [output_filename, xyzoutput]
+
+        files_expected = [xyzoutput, logoutput]
         # Note: set(A) <= set(B) checks whether A is a subset of B
         if not set(files_expected) <= set(files_retrieved):
             self.logger.error(
@@ -95,25 +96,24 @@ class SPParser(Parser):
         # Add output file to the outpus
         self.logger.info(f"Parsing '{xyzoutput}'")
 
-        print("reading outputs")
-        with self.retrieved.open(output_filename, "rb") as handle:
-            print(handle)
-            output_node = SinglefileData(file=handle)
+        with self.retrieved.open(logoutput, "rb") as handle:
+            log_node = SinglefileData(file=handle)
 
-        self.out("log_output", output_node)
-
-        print("reading outputs 2")
+        self.out("log_output", log_node)
 
         with self.retrieved.open(xyzoutput, "rb") as handle:
-            print(handle)
-            output_2 = SinglefileData(file=handle)
+            xyz_node = SinglefileData(file=handle)
 
-        self.out("xyz_output", output_2)
+        self.out("xyz_output", xyz_node)
+
+        with self.retrieved.open(output_filename, "rb") as handle:
+            stdout_node = SinglefileData(file=handle)
+
+        self.out("std_output", stdout_node)
 
         output_path = Path(remote_folder, xyzoutput)
         content = read(output_path)
-        results = content.todict()
-        results = convert_numpy(results)
+        results = convert_numpy(content.todict())
         results_node = Dict(results)
         self.out("results_dict", results_node)
 

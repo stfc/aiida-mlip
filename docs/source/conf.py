@@ -44,6 +44,9 @@ extensions = [
     "sphinxcontrib.contentui",
 ]
 
+# Add the numpydoc_show_inherited_class_members option
+numpydoc_show_inherited_class_members = False
+
 numpydoc_validation_checks = {"all", "EX01", "SA01", "ES01"}
 numpydoc_validation_exclude = {r"\.__weakref__$", r"\.__repr__$"}
 
