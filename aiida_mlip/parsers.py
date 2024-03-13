@@ -19,7 +19,8 @@ Singlepointcalc = CalculationFactory("janus.sp")
 
 
 def convert_numpy(dictionary: dict) -> dict:
-    """A function to convert numpy `ndarrays` in `dictionary` into `list`s as the nodes won't store them otherwise
+    """
+    A function to convert numpy `ndarrays` in `dictionary` into `list`s.
 
     Parameters
     ----------
@@ -29,7 +30,7 @@ def convert_numpy(dictionary: dict) -> dict:
     Returns
     -------
     dict
-
+        A dictionary.
     """
     for key, value in dictionary.items():
         if isinstance(value, np.ndarray):
@@ -40,18 +41,21 @@ def convert_numpy(dictionary: dict) -> dict:
 class SPParser(Parser):
     """
     Parser class for parsing output of calculation.
+
+    Parameters
+    ----------
+    node : aiida.orm.nodes.process.process.ProcessNode
+        ProcessNode of calculation.
     """
 
     def __init__(self, node):
         """
-        Initialize Parser instance
-
-        Checks that the ProcessNode being passed was produced by a Singlepointcalc.
+        Check that the ProcessNode being passed was produced by a Singlepointcalc.
 
         Parameters
         ----------
         node : aiida.orm.nodes.process.process.ProcessNode
-            ProcessNode of calculation
+            ProcessNode of calculation.
         """
         super().__init__(node)
         if not issubclass(node.process_class, Singlepointcalc):
@@ -61,10 +65,15 @@ class SPParser(Parser):
         """
         Parse outputs, store results in the database.
 
+        Parameters
+        ----------
+        **kwargs : Any
+            Other arguments.
+
         Returns
         -------
         int
-            An exit code
+            An exit code.
         """
         output_filename = self.node.get_option("output_filename")
         xyzoutput_node = self.node.inputs.xyzoutput

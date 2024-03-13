@@ -10,14 +10,30 @@ from aiida.orm import SinglefileData
 
 
 class ModelData(SinglefileData):
-    """Class to save a model file as an AiiDA data type.
+    """
+    Class to save a model file as an AiiDA data type.
 
     The file can be a file that is stored locally or a new file to download.
+
+    Parameters
+    ----------
+    file : Union[str, Path]
+        Absolute path to the file.
+    architecture : [str]
+        Architecture of the mlip model.
+    filename : Optional[str], optional
+        Name to be used for the file (defaults to the name of provided file).
+
+    Other Parameters
+    ----------------
+    **kwargs : Any
+        Additional keyword arguments.
     """
 
     @staticmethod
     def _calculate_hash(file: Union[str, Path]) -> str:
-        """Calculate the hash of a file.
+        """
+        Calculate the hash of a file.
 
         Parameters
         ----------
@@ -41,7 +57,8 @@ class ModelData(SinglefileData):
 
     @classmethod
     def _check_existing_file(cls, file: Union[str, Path]) -> Path:
-        """Check if a file already exists and return the path of the existing file if it does.
+        """
+        Check if a file already exists and return the path of the existing file.
 
         Parameters
         ----------
@@ -51,11 +68,25 @@ class ModelData(SinglefileData):
         Returns
         -------
         Path
-            The path of the model file of interest (same as input path if no duplicates were found).
+            The path of the model file of interest (same as input path if no duplicates
+            were found).
         """
         file_hash = cls._calculate_hash(file)
 
-        def is_diff_file(curr_path: Path):
+        def is_diff_file(curr_path: Path) -> bool:
+            """
+            Filter to check if two files are different.
+
+            Parameters
+            ----------
+            curr_path : Path
+                Path to the file to compare with.
+
+            Returns
+            -------
+            bool
+                True if the files are different, False otherwise.
+            """
             return curr_path.is_file() and not curr_path.samefile(file)
 
         file_folder = Path(file).parent
@@ -72,7 +103,8 @@ class ModelData(SinglefileData):
         filename: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        """Initialize the ModelData object.
+        """
+        Initialize the ModelData object.
 
         Parameters
         ----------
@@ -85,7 +117,7 @@ class ModelData(SinglefileData):
 
         Other Parameters
         ----------------
-        kwargs : Any
+        **kwargs : Any
             Additional keyword arguments.
         """
         super().__init__(file, filename, **kwargs)
@@ -99,21 +131,21 @@ class ModelData(SinglefileData):
         architecture: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        """Set the file for the node.
+        """
+        Set the file for the node.
 
         Parameters
         ----------
         file : Union[str, Path]
             Absolute path to the file.
-        architecture : [str]
-            Architecture of the mlip model.
         filename : Optional[str], optional
             Name to be used for the file (defaults to the name of provided file).
-
+        architecture : Optional[str], optional
+            Architecture of the mlip model.
 
         Other Parameters
         ----------------
-        kwargs : Any
+        **kwargs : Any
             Additional keyword arguments.
         """
         super().set_file(file, filename, **kwargs)
@@ -127,7 +159,8 @@ class ModelData(SinglefileData):
         architecture: str,
         filename: Optional[str] = None,
     ):
-        """Create a ModelData instance from a local file.
+        """
+        Create a ModelData instance from a local file.
 
         Parameters
         ----------
@@ -156,7 +189,8 @@ class ModelData(SinglefileData):
         cache_dir: Optional[Union[str, Path]] = None,
         force_download: Optional[bool] = False,
     ):
-        """Download a file from a URL and save it as ModelData.
+        """
+        Download a file from a URL and save it as ModelData.
 
         Parameters
         ----------
@@ -167,9 +201,11 @@ class ModelData(SinglefileData):
         filename : Optional[str], optional
             Name to be used for the file (defaults to the name of provided file).
         cache_dir : Optional[Union[str, Path]], optional
-            Path to the folder where the file has to be saved (defaults to "~/.cache/mlips/").
+            Path to the folder where the file has to be saved
+            (defaults to "~/.cache/mlips/").
         force_download : Optional[bool], optional
-            True to keep the downloaded model even if there are duplicates (default: False).
+            True to keep the downloaded model even if there are duplicates
+            (default: False).
 
         Returns
         -------
@@ -203,14 +239,15 @@ class ModelData(SinglefileData):
             print(f"filename changed to {file}")
             return cls.local_file(file=file, architecture=architecture)
 
-        # Check if the hash of the just downloaded file matches any other file in the directory
+        # Check if the hash of the just downloaded file matches any other file
         filepath = cls._check_existing_file(file)
 
         return cls.local_file(file=filepath, architecture=architecture)
 
     @property
     def architecture(self) -> str:
-        """Return the architecture.
+        """
+        Return the architecture.
 
         Returns
         -------
@@ -221,7 +258,8 @@ class ModelData(SinglefileData):
 
     @property
     def filepath(self) -> str:
-        """Return the filepath.
+        """
+        Return the filepath.
 
         Returns
         -------
