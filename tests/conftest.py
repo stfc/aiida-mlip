@@ -5,7 +5,6 @@ from pathlib import Path
 
 import pytest
 
-from collections.abc import Mapping
 from aiida.common import exceptions
 from aiida.common.folders import SandboxFolder
 from aiida.engine.utils import instantiate_process
@@ -111,4 +110,3 @@ def generate_calc_job():
         return calc_info
 
     return _generate_calc_job
-

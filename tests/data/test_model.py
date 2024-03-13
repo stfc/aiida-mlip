@@ -45,6 +45,7 @@ def test_download_fresh_file(tmp_path):
     path_test.unlink(missing_ok=True)
 
     # Construct a ModelData instance downloading a non-cached file
+    # pylint:disable=line-too-long
     model = ModelData.download(
         url="https://raw.githubusercontent.com/stfc/aiida-mlip/main/tests/input_files/file2.txt",
         filename="test_download.txt",
@@ -71,6 +72,7 @@ def test_no_download_cached_file(tmp_path):
     (testdir / "test.txt").write_text("file with content\ncontent2\n", encoding="utf-8")
 
     # Construct a ModelData instance that should use the cached file
+    # pylint:disable=line-too-long
     model = ModelData.download(
         url="https://raw.githubusercontent.com/stfc/aiida-mlip/main/tests/input_files/file2.txt",
         cache_dir=tmp_path,

@@ -12,6 +12,33 @@ from aiida_mlip.data.model import ModelData
 class Singlepoint(CalcJob):
     """
     Calcjob implementation to run single point calculations using mlips.
+
+    Parameters
+    ----------
+    *args : Any
+        Any argument.
+    **kwargs : Any
+        Any keyword argument.
+
+    Attributes
+    ----------
+    _DEFAULT_OUTPUT_FILE : str
+        Default stdout file name.
+    _DEFAULT_INPUT_FILE : str
+        Default input file name.
+    _XYZ_OUTPUT : str
+        Default xyz output file name.
+    _LOG_FILE : str
+        Default log file name.
+
+    Methods
+    -------
+    define(spec: CalcJobProcessSpec) -> None:
+        Define the process specification, its inputs, outputs and exit codes.
+    validate_inputs(value: dict, port_namespace: PortNamespace) -> Optional[str]:
+        Check if the inputs are valid.
+    prepare_for_submission(folder: Folder) -> CalcInfo:
+        Create the input files for the `Calcjob`.
     """
 
     _DEFAULT_OUTPUT_FILE = "aiida-stdout.txt"
@@ -61,7 +88,7 @@ class Singlepoint(CalcJob):
         )
 
         spec.input(
-            "xyzoutput",
+            "xyz_output_name",
             valid_type=Str,
             required=False,
             default=lambda: Str(cls._XYZ_OUTPUT),
@@ -69,7 +96,7 @@ class Singlepoint(CalcJob):
         )
 
         spec.input(
-            "log_file",
+            "log_filename",
             valid_type=Str,
             required=False,
             default=lambda: Str(cls._LOG_FILE),
@@ -204,9 +231,9 @@ class Singlepoint(CalcJob):
         calctype = str((self.inputs.calctype).value)
         precision = str((self.inputs.precision).value)
         device = str((self.inputs.device).value)
-        xyz_filename = str((self.inputs.xyzoutput).value)
+        xyz_filename = str((self.inputs.xyz_output_name).value)
         input_filename = self.inputs.metadata.options.input_filename
-        log_filename = str((self.inputs.log_file).value)
+        log_filename = str((self.inputs.log_filename).value)
         # Transform the structure data in cif file called input_filename
         structure = self.inputs.structure
         cif_structure = structure.get_cif()

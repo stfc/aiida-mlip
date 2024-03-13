@@ -9,20 +9,46 @@ from urllib.parse import urlparse
 from aiida.orm import SinglefileData
 
 
+# pylint : disable = line-too-long
 class ModelData(SinglefileData):
     """
-    Class to save a model file as an AiiDA data type.
-
-    The file can be a file that is stored locally or a new file to download.
+    Define Model Data type in AiiDA.
 
     Parameters
     ----------
     file : Union[str, Path]
         Absolute path to the file.
-    architecture : [str]
+    architecture : str
         Architecture of the mlip model.
     filename : Optional[str], optional
         Name to be used for the file (defaults to the name of provided file).
+
+    Attributes
+    ----------
+    architecture : str
+        Architecture of the mlip model.
+    filepath : str
+        Path of the mlip model.
+
+    Methods
+    -------
+    _calculate_hash(file: Union[str, Path]) -> str:
+        Calculate the hash of a file.
+    _check_existing_file(file: Union[str, Path]) -> Path:
+        Check if a file already exists and return the path of the existing file.
+    __init__(file: Union[str, Path], architecture: str, \
+        filename: Optional[str] = None, **kwargs: Any) -> None:
+        Initialize the ModelData object.
+    set_file(file: Union[str, Path], filename: Optional[str] = None, \
+        architecture: Optional[str] = None, **kwargs: Any) -> None:
+        Set the file for the node.
+    local_file(file: Union[str, Path], architecture: str, \
+        filename: Optional[str] = None) -> 'ModelData':
+        Create a ModelData instance from a local file.
+    download(url: str, architecture: str, filename: Optional[str] = None, \
+        cache_dir: Optional[Union[str, Path]] = None, \
+            force_download: Optional[bool] = False) -> 'ModelData':
+        Download a file from a URL and save it as ModelData.
 
     Other Parameters
     ----------------

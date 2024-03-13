@@ -46,7 +46,7 @@ def load_model(string: Union[str, None], architecture: str) -> ModelData:
     return model
 
 
-def load_structure(value: Union[str, int, None]) -> StructureData:
+def load_structure(value: Union[str, Path, int, None]) -> StructureData:
     """
     Load a StructureData instance from the given input.
 
@@ -79,7 +79,8 @@ def load_structure(value: Union[str, int, None]) -> StructureData:
         structure = StructureData(ase=read(value))
     else:
         raise click.BadParameter(
-            f"Invalid input: {value}. Must be either node PK (int) or a valid path to a structure file."
+            f"Invalid input: {value}. Must be either node PK (int) or a valid \
+                path to a structure file."
         )
     return structure
 
@@ -131,7 +132,7 @@ def singlepoint(params: dict):
 @click.option(
     "--file",
     default=None,
-    type=Union[str, int],
+    type=Union[str, Path, int],
     help="Specify the structure (aiida node or path to a structure file)",
 )
 @click.option(

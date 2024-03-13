@@ -34,6 +34,7 @@ PyCifRW = "^4.4.6"
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "^7.4.1"}
+janus-core = "^0.1.0a1"
 pgtest = "^1.3.2"
 pytest = "^8.0"
 pytest-cov = "^4.1.0"
@@ -73,8 +74,6 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.plugins."aiida.parsers"]
 "janus.parser" = "aiida_mlip.parsers:SPParser"
 
-#[tool.poetry.plugins."aiida.cmdline.data"]
-#"mlip" = "aiida_mlip.cli:data_cli"
 
 [tool.black]
 line-length = 88

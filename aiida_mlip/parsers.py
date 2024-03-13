@@ -1,7 +1,5 @@
 """
 Parsers provided by aiida_mlip.
-
-Register parsers via the "aiida.parsers" entry point in setup.json.
 """
 
 from pathlib import Path
@@ -20,12 +18,12 @@ Singlepointcalc = CalculationFactory("janus.sp")
 
 def convert_numpy(dictionary: dict) -> dict:
     """
-    A function to convert numpy `ndarrays` in `dictionary` into `list`s.
+    A function to convert numpy ndarrays in dictionary into lists.
 
     Parameters
     ----------
     dictionary : dict
-            A dictionary.
+        A dictionary.
 
     Returns
     -------
@@ -46,6 +44,24 @@ class SPParser(Parser):
     ----------
     node : aiida.orm.nodes.process.process.ProcessNode
         ProcessNode of calculation.
+
+    Methods
+    -------
+    __init__(node: aiida.orm.nodes.process.process.ProcessNode)
+        Initialize the SPParser instance.
+
+    parse(**kwargs: Any) -> int:
+        Parse outputs, store results in the database.
+
+    Returns
+    -------
+    int
+        An exit code.
+
+    Raises
+    ------
+    exceptions.ParsingError
+        If the ProcessNode being passed was not produced by a Singlepointcalc.
     """
 
     def __init__(self, node):
@@ -69,7 +85,7 @@ class SPParser(Parser):
         Parameters
         ----------
         **kwargs : Any
-            Other arguments.
+            Any keyword argument.
 
         Returns
         -------
