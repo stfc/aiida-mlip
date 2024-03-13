@@ -47,10 +47,24 @@ jobs:
         poetry env use ${{ matrix.python-version }}
         poetry install --with dev
 
+
+    - name: Find janus executable path
+      run: |
+        JANUS_PATH=$(which janus)
+        echo "::set-output name=JANUS_PATH::$JANUS_PATH"
+
     - name: Run test suite
+
+      env:
+
+      run: |
+        # Pass JANUS_PATH to your code, either as an environment variable or a configuration parameter
+        python your_test_script.py --janus-path $JANUS_PATH
+
       env:
         # show timings of tests
         PYTEST_ADDOPTS: "--durations=0"
+        JANUS_PATH: ${{ env.JANUS_PATH }}
       run: poetry run pytest --cov aiida_mlip --cov-append .
 
     - name: Report coverage to Coveralls

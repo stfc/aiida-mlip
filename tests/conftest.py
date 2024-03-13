@@ -1,6 +1,7 @@
 # pylint: disable=redefined-outer-name,too-many-statements
 """Initialise a text database and profile for pytest."""
 
+import os
 from pathlib import Path
 
 import pytest
@@ -58,7 +59,8 @@ def fixture_localhost(aiida_localhost):
 @pytest.fixture(scope="function")
 def janus_code(aiida_local_code_factory):
     """Get the janus code."""
-    return aiida_local_code_factory(executable="janus", entry_point="janus.sp")
+    janus_path = os.environ.get("JANUS_PATH")
+    return aiida_local_code_factory(executable=janus_path, entry_point="janus.sp")
 
 
 @pytest.fixture
@@ -78,7 +80,7 @@ def fixture_code(fixture_localhost):
             return InstalledCode(
                 label=label,
                 computer=fixture_localhost,
-                filepath_executable="/bin/true",
+                filepath_executable="",
                 default_calc_job_plugin=entry_point_name,
             )
 

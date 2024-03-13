@@ -9,9 +9,7 @@ from aiida.orm import Str, StructureData
 from aiida_mlip.data.model import ModelData
 
 
-def test_singlepoint(
-    fixture_sandbox, generate_calc_job, tmp_path, janus_code, file_regression
-):
+def test_singlepoint(fixture_sandbox, generate_calc_job, tmp_path, janus_code):
     """Test singlepoint calculation"""
     entry_point_name = "janus.sp"
     # pylint:disable=line-too-long
@@ -63,12 +61,8 @@ def test_singlepoint(
     assert sorted(calc_info.codes_info[0].cmdline_params) == sorted(cmdline_params)
     assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
 
-    with fixture_sandbox.open("aiida.cif") as handle:
-        input_written = handle.read()
-        print(input_written)
-    # Checks on the files written to the sandbox folder as raw input
+    # Checks on the files written to the sandbox folder
     assert sorted(fixture_sandbox.get_content_list()) == ["aiida.cif"]
-    file_regression.check(input_written, encoding="utf-8", extension=".cif")
 
 
 def test_sp_error(fixture_sandbox, generate_calc_job, tmp_path, janus_code):

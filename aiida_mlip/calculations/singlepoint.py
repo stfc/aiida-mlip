@@ -13,13 +13,6 @@ class Singlepoint(CalcJob):
     """
     Calcjob implementation to run single point calculations using mlips.
 
-    Parameters
-    ----------
-    *args : Any
-        Any argument.
-    **kwargs : Any
-        Any keyword argument.
-
     Attributes
     ----------
     _DEFAULT_OUTPUT_FILE : str
