@@ -15,8 +15,6 @@ from aiida.plugins import CalculationFactory
 
 from aiida_mlip.data.model import ModelData
 
-# StructureData = DataFactory("core.structure")
-
 
 def load_model(string: Union[str, None], architecture: str) -> ModelData:
     """
