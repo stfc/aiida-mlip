@@ -82,7 +82,7 @@ def load_structure(struct: Union[str, Path, int, None]) -> StructureData:
     return structure
 
 
-def singlepoint(params: dict) -> None :
+def singlepoint(params: dict) -> None:
     """
     Prepare inputs and run a single point calculation.
 
@@ -142,7 +142,7 @@ def singlepoint(params: dict) -> None :
 @click.option("--precision", default="float64", type=str)
 def cli(
     codelabel, calctype, file, model, architecture, device, precision
-):  # pylint: disable=too-many-arguments
+) -> None:  # pylint: disable=too-many-arguments
     """Click interface."""
     try:
         code = load_code(codelabel)
