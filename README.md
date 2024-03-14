@@ -18,60 +18,36 @@ intended to help developers get started with their AiiDA plugins.
 * [`.github/`](.github/): [Github Actions](https://github.com/features/actions) configuration
   * [`ci.yml`](.github/workflows/ci.yml): runs tests, checks test coverage and builds documentation at every new commit
   * [`publish-on-pypi.yml`](.github/workflows/publish-on-pypi.yml): automatically deploy git tags to PyPI - just generate a [PyPI API token](https://pypi.org/help/#apitoken) for your PyPI account and add it to the `pypi_token` secret of your github repository
-  * [`docs.yml`](.github/workflows/docs.yml): 
+  * [`docs.yml`](.github/workflows/docs.yml): builds and deploys the documentasion
 * [`aiida_mlip/`](aiida_mlip/): The main source code of the plugin package
-  * [`data/`](aiida_mlip/data/): Plugin `Data` classes: `ModelData`
-  * [`calculations/`](aiida_mlip/calculations/): Plugin `Calcjob` classes: `Singlepoint`
+  * [`data/`](aiida_mlip/data/): Plugin `Data` classes
+    * [`model.py/`](aiida_mlip/data/model.py) `ModelData` class to save mlip models as AiiDA data types
+  * [`calculations/`](aiida_mlip/calculations/): Plugin `Calcjob` classes
+    * [`singlepoint.py](aiida_mlip/calculations/singlepoint.py ): `Calcjob` class to run single point calculations using mlips
   * [`parsers.py`](aiida_mlip/parsers.py): `Parser` for the `Singlepoint` calculation
-* [`docs/`](docs/source/): A documentation template ready for publication on [Read the Docs](http://aiida-diff.readthedocs.io/en/latest/)
-  * []
-* [`examples/`](examples/): An example of how to submit a calculation using this plugin
+* [`docs/`](docs/source/): Code documentation
+  * [`apidoc/`](docs/source/apidoc/): API documentation
+  * [`developer_guide/`](docs/source/developer_guide/): Documentation for developers
+  * [`user_guide`](docs/source/user_guide/): Documentation for users
+  * [`images`](docs/source/images/): Logos etc used in the documentation
+* [`examples/`](examples/): Examples for submitting calculations using this plugin
+  *[`calculations/submit_singlepoint.py`](examples/calculations/submit_singlepoint.py): Script for submitting a singlepoint calculation
 * [`tests/`](tests/): Basic regression tests using the [pytest](https://docs.pytest.org/en/latest/) framework (submitting a calculation, ...). Install `pip install -e .[testing]` and run `pytest`.
+  * [`conftest.py`](conftest.py): Configuration of fixtures for [pytest](https://docs.pytest.org/en/latest/)
+  * [`tests/calculations`](tests/calculations/test_singlepoint.py): Test `SinglePoint` calculation
+  * [`tests/data`](tests/data/test_model.py): Test `ModelData` type
 * [`.gitignore`](.gitignore): Telling git which files to ignore
 * [`.pre-commit-config.yaml`](.pre-commit-config.yaml): Configuration of [pre-commit hooks](https://pre-commit.com/) that sanitize coding style and check for syntax errors. Enable via `pip install -e .[pre-commit] && pre-commit install`
-* [`.readthedocs.yml`](.readthedocs.yml): Configuration of documentation build for [Read the Docs](https://readthedocs.org/)
-* [`LICENSE`](LICENSE): License for your plugin
+* [`LICENSE`](LICENSE): License for the plugin
 * [`README.md`](README.md): This file
-* [`conftest.py`](conftest.py): Configuration of fixtures for [pytest](https://docs.pytest.org/en/latest/)
+* [`toc.ini`](tox.ini): File to set up tox
 * [`pyproject.toml`](setup.json): Python package metadata for registration on [PyPI](https://pypi.org/) and the [AiiDA plugin registry](https://aiidateam.github.io/aiida-registry/) (including entry points)
 
-See also the following video sequences from the 2019-05 AiiDA tutorial:
-
- * [run aiida-diff example calculation](https://www.youtube.com/watch?v=2CxiuiA1uVs&t=403s)
- * [aiida-diff CalcJob plugin](https://www.youtube.com/watch?v=2CxiuiA1uVs&t=685s)
- * [aiida-diff Parser plugin](https://www.youtube.com/watch?v=2CxiuiA1uVs&t=936s)
- * [aiida-diff computer/code helpers](https://www.youtube.com/watch?v=2CxiuiA1uVs&t=1238s)
- * [aiida-diff input data (with validation)](https://www.youtube.com/watch?v=2CxiuiA1uVs&t=1353s)
- * [aiida-diff cli](https://www.youtube.com/watch?v=2CxiuiA1uVs&t=1621s)
- * [aiida-diff tests](https://www.youtube.com/watch?v=2CxiuiA1uVs&t=1931s)
- * [Adding your plugin to the registry](https://www.youtube.com/watch?v=760O2lDB-TM&t=112s)
- * [pre-commit hooks](https://www.youtube.com/watch?v=760O2lDB-TM&t=333s)
-
-For more information, see the [developer guide](https://aiida-diff.readthedocs.io/en/latest/developer_guide) of your plugin.
 
 
 ## Features
 
- * Add input files using `SinglefileData`:
-   ```python
-   SinglefileData = DataFactory('core.singlefile')
-   inputs['file1'] = SinglefileData(file='/path/to/file1')
-   inputs['file2'] = SinglefileData(file='/path/to/file2')
-   ```
-
- * Specify command line options via a python dictionary and `DiffParameters`:
-   ```python
-   d = { 'ignore-case': True }
-   DiffParameters = DataFactory('mlip')
-   inputs['parameters'] = DiffParameters(dict=d)
-   ```
-
- * `DiffParameters` dictionaries are validated using [voluptuous](https://github.com/alecthomas/voluptuous).
-   Find out about supported options:
-   ```python
-   DiffParameters = DataFactory('mlip')
-   print(DiffParameters.schema.schema)
-   ```
+ * Save MLIP models using `ModelData`
 
 ## Installation
 
