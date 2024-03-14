@@ -44,7 +44,7 @@ def load_model(string: Union[str, None], architecture: str) -> ModelData:
     return model
 
 
-def load_structure(value: Union[str, Path, int, None]) -> StructureData:
+def load_structure(struct: Union[str, Path, int, None]) -> StructureData:
     """
     Load a StructureData instance from the given input.
 
@@ -54,7 +54,7 @@ def load_structure(value: Union[str, Path, int, None]) -> StructureData:
 
     Parameters
     ----------
-    value : Union[str, Path, int, None]
+    struct : Union[str, Path, int, None]
         The input value representing either a path to a structure file, a node PK,
         or None.
 
@@ -68,16 +68,16 @@ def load_structure(value: Union[str, Path, int, None]) -> StructureData:
     click.BadParameter
         If the input is not a valid path to a structure file or a node PK.
     """
-    if value is None:
+    if struct is None:
         structure = StructureData(ase=bulk("NaCl", "rocksalt", 5.63))
-    elif isinstance(value, int) or (isinstance(value, str) and value.isdigit()):
-        structure_pk = int(value)
+    elif isinstance(struct, int) or (isinstance(struct, str) and struct.isdigit()):
+        structure_pk = int(struct)
         structure = load_node(structure_pk)
-    elif Path.exists(value):
+    elif Path.exists(struct):
         structure = StructureData(ase=read(value))
     else:
         raise click.BadParameter(
-            f"Invalid input: {value}. Must be either node PK (int) or a valid \
+            f"Invalid input: {struct}. Must be either node PK (int) or a valid \
                 path to a structure file."
         )
     return structure
