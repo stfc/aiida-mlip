@@ -1,7 +1,6 @@
 """Example code for submitting single point calculation"""
 
 from pathlib import Path
-import sys
 from typing import Union
 
 from ase.build import bulk
@@ -149,7 +148,7 @@ def cli(
         code = load_code(codelabel)
     except NotExistent:
         print(f"The code '{codelabel}' does not exist.")
-        sys.exit(1)
+        raise SystemExit 
 
     params = {
         "code": code,
