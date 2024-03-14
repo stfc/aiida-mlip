@@ -142,13 +142,14 @@ def singlepoint(params: dict) -> None:
 @click.option("--precision", default="float64", type=str)
 def cli(
     codelabel, calctype, file, model, architecture, device, precision
-) -> None:  # pylint: disable=too-many-arguments
+) -> None:
+    # pylint: disable=too-many-arguments
     """Click interface."""
     try:
         code = load_code(codelabel)
-    except NotExistent:
+    except NotExistent as exc:
         print(f"The code '{codelabel}' does not exist.")
-        raise SystemExit 
+        raise SystemExit from exc
 
     params = {
         "code": code,
