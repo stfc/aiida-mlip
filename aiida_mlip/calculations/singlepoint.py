@@ -5,6 +5,7 @@ import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
 import aiida.engine.processes
 from aiida.orm import Dict, SinglefileData, Str, StructureData
+from typing import Union
 
 from aiida_mlip.data.model import ModelData
 
@@ -40,7 +41,7 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
     _LOG_FILE = "aiida.log"
 
     @classmethod
-    def define(cls, spec: CalcJobProcessSpec):
+    def define(cls, spec: CalcJobProcessSpec) -> None:
         """
         Define the process specification, its inputs, outputs and exit codes.
 
@@ -146,14 +147,14 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
 
     @classmethod
     def validate_inputs(
-        cls, value: dict, port_namespace: aiida.engine.processes.ports.PortNamespace
-    ):
+        cls, inputs: dict, port_namespace: aiida.engine.processes.ports.PortNamespace
+    ) -> Union[str, None]:
         """
         Check if the inputs are valid.
 
         Parameters
         ----------
-        value : dict
+        inputs : dict
             The inputs dictionary.
 
         port_namespace : `aiida.engine.processes.ports.PortNamespace`
@@ -170,17 +171,17 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
             return None
 
         for key in ("calctype", "structure"):
-            if key not in value:
+            if key not in inputs:
                 return f"required value was not provided for the `{key}` namespace."
 
         valid_calctypes = {"singlepoint", "geom opt"}
-        if "calctype" in value:
-            if str(value["calctype"].value) not in valid_calctypes:
+        if "calctype" in inputs:
+            if str(inputs["calctype"].value) not in valid_calctypes:
                 return f"The 'calctype' must be one of {valid_calctypes}, \
-                    but got '{value['calctype']}'."
+                    but got '{inputs['calctype']}'."
 
-        if "input_filename" in value:
-            if not str(value["input_filename"].value).endswith(".cif"):
+        if "input_filename" in inputs:
+            if not str(inputs["input_filename"].value).endswith(".cif"):
                 return "The parameter 'input_filename' must end with '.cif'"
 
         # If both structure and calctype are provided, return None
