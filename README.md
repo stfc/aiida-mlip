@@ -34,8 +34,10 @@ intended to help developers get started with their AiiDA plugins.
   *[`calculations/submit_singlepoint.py`](examples/calculations/submit_singlepoint.py): Script for submitting a singlepoint calculation
 * [`tests/`](tests/): Basic regression tests using the [pytest](https://docs.pytest.org/en/latest/) framework (submitting a calculation, ...). Install `pip install -e .[testing]` and run `pytest`.
   * [`conftest.py`](conftest.py): Configuration of fixtures for [pytest](https://docs.pytest.org/en/latest/)
-  * [`tests/calculations`](tests/calculations/test_singlepoint.py): Test `SinglePoint` calculation
-  * [`tests/data`](tests/data/test_model.py): Test `ModelData` type
+  * [`calculations/`](tests/calculations): Test `SinglePoint` calculation
+    * [`test_singlepoint.py`](tests/calculations/test_singlepoint.py): Calculations
+  * [`data/`](tests/data): `ModelData`
+    * [`test_model.py`](tests/data/test_model.py): Test `ModelData` type
 * [`.gitignore`](.gitignore): Telling git which files to ignore
 * [`.pre-commit-config.yaml`](.pre-commit-config.yaml): Configuration of [pre-commit hooks](https://pre-commit.com/) that sanitize coding style and check for syntax errors. Enable via `pip install -e .[pre-commit] && pre-commit install`
 * [`LICENSE`](LICENSE): License for the plugin
