@@ -40,7 +40,7 @@ intended to help developers get started with their AiiDA plugins.
 * [`.pre-commit-config.yaml`](.pre-commit-config.yaml): Configuration of [pre-commit hooks](https://pre-commit.com/) that sanitize coding style and check for syntax errors. Enable via `pip install -e .[pre-commit] && pre-commit install`
 * [`LICENSE`](LICENSE): License for the plugin
 * [`README.md`](README.md): This file
-* [`toc.ini`](tox.ini): File to set up tox
+* [`tox.ini`](tox.ini): File to set up tox
 * [`pyproject.toml`](pyproject.toml): Python package metadata for registration on [PyPI](https://pypi.org/) and the [AiiDA plugin registry](https://aiidateam.github.io/aiida-registry/) (including entry points)
 
 
