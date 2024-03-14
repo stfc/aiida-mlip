@@ -137,7 +137,7 @@ def singlepoint(params: dict):
     "--model",
     default=None,
     type=Union[str, Path],
-    help="Specify path or url of the model to use"
+    help="Specify path or url of the model to use",
 )
 @click.option("--architecture", default="mace_mp", type=str)
 @click.option("--device", default="cpu", type=str)
