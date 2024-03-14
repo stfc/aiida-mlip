@@ -31,7 +31,7 @@ intended to help developers get started with their AiiDA plugins.
   * [`user_guide`](docs/source/user_guide/): Documentation for users
   * [`images`](docs/source/images/): Logos etc used in the documentation
 * [`examples/`](examples/): Examples for submitting calculations using this plugin
-  *[`calculations/submit_singlepoint.py`](examples/calculations/submit_singlepoint.py): Script for submitting a singlepoint calculation
+  * [`calculations/submit_singlepoint.py`](examples/calculations/submit_singlepoint.py): Script for submitting a singlepoint calculation
 * [`tests/`](tests/): Basic regression tests using the [pytest](https://docs.pytest.org/en/latest/) framework (submitting a calculation, ...). Install `pip install -e .[testing]` and run `pytest`.
   * [`conftest.py`](conftest.py): Configuration of fixtures for [pytest](https://docs.pytest.org/en/latest/)
   * [`calculations/`](tests/calculations): Test `SinglePoint` calculation
