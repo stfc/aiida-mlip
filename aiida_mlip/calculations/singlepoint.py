@@ -31,7 +31,7 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
     validate_inputs(value: dict, port_namespace: PortNamespace) -> Optional[str]:
         Check if the inputs are valid.
     prepare_for_submission(folder: Folder) -> CalcInfo:
-        Create the input files for the `Calcjob`.
+        Create the input files for the `CalcJob`.
     """
 
     _DEFAULT_OUTPUT_FILE = "aiida-stdout.txt"
