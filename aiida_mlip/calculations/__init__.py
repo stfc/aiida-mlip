@@ -1,3 +1,3 @@
 """
-Init file for calculations.
+Calculations using MLIPs.
 """

@@ -1,3 +1,3 @@
 """
-Init file for data.
+Data types for MLIPs calculations.
 """

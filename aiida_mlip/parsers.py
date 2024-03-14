@@ -93,8 +93,8 @@ class SPParser(Parser):
             An exit code.
         """
         output_filename = self.node.get_option("output_filename")
-        xyzoutput = (self.node.inputs.xyzoutput).value
-        logoutput = (self.node.inputs.log_file).value
+        xyzoutput = (self.node.inputs.xyz_output_name).value
+        logoutput = (self.node.inputs.log_filename).value
 
         remote_folder = self.node.get_remote_workdir()
 

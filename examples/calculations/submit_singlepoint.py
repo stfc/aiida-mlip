@@ -9,8 +9,8 @@ from ase.io import read
 import click
 
 from aiida.common import NotExistent
-from aiida.engine import run_get_node
-from aiida.orm import Code, Str, StructureData, load_node
+from aiida.engine import run_get_node, run
+from aiida.orm import Str, StructureData, load_node, load_code
 from aiida.plugins import CalculationFactory
 
 from aiida_mlip.data.model import ModelData
@@ -117,7 +117,7 @@ def singlepoint(params: dict):
         "device": Str(params["device"]),
     }
 
-    # Run calculation
+    #Run calculation
     result, node = run_get_node(Singlepointcalc, **inputs)
     print(f"Printing results from calculation: {result}")
     print(f"Printing node of calculation: {node}")
@@ -144,7 +144,7 @@ def cli(
 ):  # pylint: disable=too-many-arguments
     """Click interface."""
     try:
-        code = Code.get_from_string(codelabel)
+        code = load_code(codelabel)
     except NotExistent:
         print(f"The code '{codelabel}' does not exist.")
         sys.exit(1)
