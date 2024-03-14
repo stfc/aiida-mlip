@@ -43,7 +43,7 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, tmp_path, janus_code):
         "--log",
         "aiida.log",
         "--calc-kwargs",
-        f"{{'model_paths': '{tmp_path}/mace_mp/mace_mp_small.model', 'default_dtype': 'float64'}}",
+        f"{{'model': '{tmp_path}/mace_mp/mace_mp_small.model', 'default_dtype': 'float64'}}",
         "--write-kwargs",
         "{'filename': 'aiida-results.xyz'}",
     ]
