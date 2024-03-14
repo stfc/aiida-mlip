@@ -28,7 +28,7 @@ def convert_numpy(dictionary: dict) -> dict:
     Returns
     -------
     dict
-        A dictionary.
+        Converted dictionary.
     """
     for key, value in dictionary.items():
         if isinstance(value, np.ndarray):
