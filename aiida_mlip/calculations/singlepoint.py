@@ -1,11 +1,12 @@
 """Class to run single point calculations."""
 
+from typing import Union
+
 from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
 import aiida.engine.processes
 from aiida.orm import Dict, SinglefileData, Str, StructureData
-from typing import Union
 
 from aiida_mlip.data.model import ModelData
 
