@@ -238,7 +238,7 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
             "struct": input_filename,
             "device": device,
             "log": log_filename,
-            "calc-kwargs": {"model_paths": model_path, "default_dtype": precision},
+            "calc-kwargs": {"model": model_path, "default_dtype": precision},
             "write-kwargs": {"filename": xyz_filename},
         }
 
