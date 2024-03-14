@@ -50,7 +50,7 @@ jobs:
     - name: Run test suite
 
       env:
-        # show timings of tests
+        # show timings of test
         PYTEST_ADDOPTS: "--durations=0"
         JANUS_PATH: $(which janus)
       run: |
