@@ -53,7 +53,10 @@ jobs:
         # show timings of tests
         PYTEST_ADDOPTS: "--durations=0"
         JANUS_PATH: $(which janus)
-      run: poetry run pytest --cov aiida_mlip --cov-append .
+      run: |
+        pip list 
+        which janus 
+        poetry run pytest --cov aiida_mlip --cov-append .
 
     - name: Report coverage to Coveralls
       uses: coverallsapp/github-action@v2
