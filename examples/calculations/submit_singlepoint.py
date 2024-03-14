@@ -54,7 +54,7 @@ def load_structure(value: Union[str, Path, int, None]) -> StructureData:
 
     Parameters
     ----------
-    value : str, int or None
+    value : Union[str, Path, int, None]
         The input value representing either a path to a structure file, a node PK,
         or None.
 
