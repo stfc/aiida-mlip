@@ -112,7 +112,6 @@ sections = ['FUTURE', 'STDLIB', 'THIRDPARTY', 'AIIDA', 'FIRSTPARTY', 'LOCALFOLDE
 known_aiida = ['aiida']
 
 [tool.numpydoc_validation]
-
 # report on all checks, except the below
 checks = [
     "all",
