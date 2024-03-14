@@ -41,7 +41,7 @@ intended to help developers get started with their AiiDA plugins.
 * [`LICENSE`](LICENSE): License for the plugin
 * [`README.md`](README.md): This file
 * [`toc.ini`](tox.ini): File to set up tox
-* [`pyproject.toml`](setup.json): Python package metadata for registration on [PyPI](https://pypi.org/) and the [AiiDA plugin registry](https://aiidateam.github.io/aiida-registry/) (including entry points)
+* [`pyproject.toml`](pyproject.toml): Python package metadata for registration on [PyPI](https://pypi.org/) and the [AiiDA plugin registry](https://aiidateam.github.io/aiida-registry/) (including entry points)
 
 
 
