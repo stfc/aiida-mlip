@@ -140,9 +140,7 @@ def singlepoint(params: dict) -> None:
 @click.option("--architecture", default="mace_mp", type=str)
 @click.option("--device", default="cpu", type=str)
 @click.option("--precision", default="float64", type=str)
-def cli(
-    codelabel, calctype, file, model, architecture, device, precision
-) -> None:
+def cli(codelabel, calctype, file, model, architecture, device, precision) -> None:
     # pylint: disable=too-many-arguments
     """Click interface."""
     try:
