@@ -66,14 +66,8 @@ A quick demo of how to submit a calculation:
 ```shell
 verdi daemon start     # make sure the daemon is running
 cd examples
-./example_01.py        # run test calculation
+verdi run submit_singlepoint.py "janus@localhost" --calctype "singlepoint"  --architecture mace_mp --model "~./cache/mlips/mace_mp/46jrkm3v"       # run test calculation
 verdi process list -a  # check record of calculation
-```
-
-The plugin also includes verdi commands to inspect its data types:
-```shell
-verdi data mlip list
-verdi data mlip export <PK>
 ```
 
 ## Development

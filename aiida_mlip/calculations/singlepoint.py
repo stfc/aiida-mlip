@@ -9,7 +9,7 @@ from aiida.orm import Dict, SinglefileData, Str, StructureData
 from aiida_mlip.data.model import ModelData
 
 
-class Singlepoint(CalcJob):
+class Singlepoint(CalcJob):  # numpydoc ignore=PR01
     """
     Calcjob implementation to run single point calculations using mlips.
 

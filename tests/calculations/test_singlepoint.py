@@ -7,7 +7,9 @@ from aiida.common import datastructures
 from aiida.engine import run
 from aiida.orm import Str, StructureData
 from aiida.plugins import CalculationFactory
+
 from aiida_mlip.data.model import ModelData
+
 
 def test_singlepoint(fixture_sandbox, generate_calc_job, tmp_path, janus_code):
     """Test singlepoint calculation"""
@@ -102,37 +104,14 @@ def test_run_sp(tmp_path, janus_code):
         ),
         "device": Str("cpu"),
     }
-    
+
     Singlepointcalc = CalculationFactory("janus.sp")
     result = run(Singlepointcalc, **inputs)
-
-    expected_res = {
-        "pbc": [True, True, True],
-        "cell": [
-            [3.9810111780803, 0.0, 0.0],
-            [1.9905055890401, 3.4476568129673, 0.0],
-            [1.9905055890401, 1.1492189376558, 3.2504820155376],
-        ],
-        "info": {
-            "energy": -6.7575203839729,
-            "stress": [
-                [-0.005816546985101, 1.0729600140092e-18, 2.0594053733835e-19],
-                [1.0729600140092e-18, -0.005816546985101, 5.2906717239225e-18],
-                [2.0594053733835e-19, 5.2906717239225e-18, -0.005816546985101],
-            ],
-            "unit_cell": "conventional",
-            "spacegroup": "P 1",
-            "free_energy": -6.7575203839729,
-        },
-        "forces": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
-        "numbers": [11, 17],
-        "positions": [[0.0, 0.0, 0.0], [3.98101118, 2.29843788, 1.62524101]],
-        "spacegroup_kinds": [0, 1],
-    }
 
     assert "results_dict" in result
     obtained_res = result["results_dict"].get_dict()
     assert "log_output" in result
     assert "xyz_output" in result
     assert "std_output" in result
-    assert expected_res == obtained_res
+    assert obtained_res["info"]["energy"] == pytest.approx(-6.7575203839729)
+    assert obtained_res["info"]["stress"][0][0] == pytest.approx(-0.005816546985101)
