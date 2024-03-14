@@ -73,7 +73,7 @@ def load_structure(struct: Union[str, Path, int, None]) -> StructureData:
         structure_pk = int(struct)
         structure = load_node(structure_pk)
     elif Path.exists(struct):
-        structure = StructureData(ase=read(value))
+        structure = StructureData(ase=read(struct))
     else:
         raise click.BadParameter(
             f"Invalid input: {struct}. Must be either node PK (int) or a valid \
