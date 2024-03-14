@@ -54,8 +54,8 @@ jobs:
         PYTEST_ADDOPTS: "--durations=0"
         JANUS_PATH: $(which janus)
       run: |
-        pip list 
-        which janus 
+        pip list
+        which janus
         poetry run pytest --cov aiida_mlip --cov-append .
 
     - name: Report coverage to Coveralls
