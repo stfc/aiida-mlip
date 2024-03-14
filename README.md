@@ -18,7 +18,7 @@ intended to help developers get started with their AiiDA plugins.
 * [`.github/`](.github/): [Github Actions](https://github.com/features/actions) configuration
   * [`ci.yml`](.github/workflows/ci.yml): runs tests, checks test coverage and builds documentation at every new commit
   * [`publish-on-pypi.yml`](.github/workflows/publish-on-pypi.yml): automatically deploy git tags to PyPI - just generate a [PyPI API token](https://pypi.org/help/#apitoken) for your PyPI account and add it to the `pypi_token` secret of your github repository
-  * [`docs.yml`](.github/workflows/docs.yml): builds and deploys the documentasion
+  * [`docs.yml`](.github/workflows/docs.yml): builds and deploys the documentation
 * [`aiida_mlip/`](aiida_mlip/): The main source code of the plugin package
   * [`data/`](aiida_mlip/data/): Plugin `Data` classes
     * [`model.py/`](aiida_mlip/data/model.py) `ModelData` class to save mlip models as AiiDA data types
