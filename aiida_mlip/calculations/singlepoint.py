@@ -77,7 +77,7 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
             valid_type=Str,
             required=False,
             default=lambda: Str("cpu"),
-            help="Device in which to run calculation(cpu, gpu...)",
+            help="Device on which to run calculation (cpu, cuda or mps)",
         )
 
         spec.input(
