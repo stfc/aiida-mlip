@@ -83,7 +83,7 @@ def load_structure(struct: Union[str, Path, int, None]) -> StructureData:
     return structure
 
 
-def singlepoint(params: dict):
+def singlepoint(params: dict) -> None :
     """
     Prepare inputs and run a single point calculation.
 
@@ -94,8 +94,7 @@ def singlepoint(params: dict):
 
     Returns
     -------
-    tuple
-        A tuple containing the exit code and the node of the calculation.
+        None
     """
     structure = load_structure(params["file"])
 
@@ -103,7 +102,7 @@ def singlepoint(params: dict):
     model = load_model(params["model"], params["architecture"])
 
     # Select calculation to use
-    Singlepointcalc = CalculationFactory("janus.sp")
+    singlePointCalculation = CalculationFactory("janus.sp")
 
     # Define inputs
     inputs = {
@@ -118,7 +117,7 @@ def singlepoint(params: dict):
     }
 
     # Run calculation
-    result, node = run_get_node(Singlepointcalc, **inputs)
+    result, node = run_get_node(singlePointCalculation, **inputs)
     print(f"Printing results from calculation: {result}")
     print(f"Printing node of calculation: {node}")
 
