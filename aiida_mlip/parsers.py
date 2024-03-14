@@ -23,7 +23,7 @@ def convert_numpy(dictionary: dict) -> dict:
     Parameters
     ----------
     dictionary : dict
-        A dictionary.
+        A dictionary with numpy array values to be converted into lists.
 
     Returns
     -------
