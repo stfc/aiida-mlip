@@ -113,7 +113,7 @@ sections = ['FUTURE', 'STDLIB', 'THIRDPARTY', 'AIIDA', 'FIRSTPARTY', 'LOCALFOLDE
 known_aiida = ['aiida']
 
 [tool.numpydoc_validation]
-numpydoc_show_inherited_class_members = False
+
 # report on all checks, except the below
 checks = [
     "all",
