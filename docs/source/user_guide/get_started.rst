@@ -38,5 +38,5 @@ If you have already set up your own aiida_mlip code using
 Available calculations
 ++++++++++++++++++++++
 
-.. aiida-calcjob:: DiffCalculation
-    :module: aiida_mlip.calculations
+.. aiida-calcjob:: Singlepoint
+    :module: aiida_mlip.calculations.singlepoint

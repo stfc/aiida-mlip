@@ -46,11 +46,14 @@ jobs:
       run: |
         poetry env use ${{ matrix.python-version }}
         poetry install --with dev
+        echo "JANUS_PATH=$(poetry run which janus)" >> $GITHUB_ENV
 
     - name: Run test suite
+
       env:
-        # show timings of tests
+        # show timings of test
         PYTEST_ADDOPTS: "--durations=0"
+        JANUS_PATH: ${{ env.JANUS_PATH }}
       run: poetry run pytest --cov aiida_mlip --cov-append .
 
     - name: Report coverage to Coveralls
