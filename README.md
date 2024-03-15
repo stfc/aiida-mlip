@@ -47,8 +47,7 @@ intended to help developers get started with their AiiDA plugins.
 
 
 
-## Features
-## Features (this is in development not all things work yet)
+## Features (in development)
 
 - [x] Supports multiple MLIPs
   - MACE
