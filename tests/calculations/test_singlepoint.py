@@ -57,7 +57,6 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, tmp_path, janus_code):
         "aiida-stdout.txt",
     ]
 
-
     # Check the attributes of the returned `CalcInfo`
     assert sorted(fixture_sandbox.get_content_list()) == ["aiida.cif"]
     assert isinstance(calc_info, datastructures.CalcInfo)
