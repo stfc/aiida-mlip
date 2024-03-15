@@ -52,14 +52,14 @@ def fixture_sandbox():
     This fixture returns a `SandboxFolder` instance for temporary file operations
     within a test function.
 
-    Returns
+    Yields
     -------
     SandboxFolder
         A `SandboxFolder` instance for temporary file operations.
     """
 
     with SandboxFolder() as folder:
-        return folder
+        yield folder
 
 
 @pytest.fixture
@@ -207,7 +207,9 @@ def example_file_path():
     Returns:
         Path: The path to the example file.
     """
-    return Path(__file__).resolve().parent.parent
-           / "examples"
-           / "calculations"
-           / "submit_singlepoint.py"
+    return (
+        Path(__file__).resolve().parent.parent
+        / "examples"
+        / "calculations"
+        / "submit_singlepoint.py"
+    )
