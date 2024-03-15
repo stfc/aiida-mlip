@@ -29,7 +29,7 @@ class ModelData(SinglefileData):
     filepath : str
         Path of the mlip model.
 
-     Methods
+    Methods
     -------
     set_file(file, filename=None, architecture=None, **kwargs)
         Set the file for the node.

@@ -135,14 +135,14 @@ def fixture_code(fixture_localhost):
             An `InstalledCode` instance.
         """
         label = f"test.{entry_point_name}"
-
+        janus_path = os.environ.get("JANUS_PATH")
         try:
             return load_code(label=label)
         except exceptions.NotExistent:
             return InstalledCode(
                 label=label,
                 computer=fixture_localhost,
-                filepath_executable="",
+                filepath_executable=janus_path,
                 default_calc_job_plugin=entry_point_name,
             )
 
