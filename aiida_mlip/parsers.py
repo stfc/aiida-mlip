@@ -106,7 +106,7 @@ class SPParser(Parser):
             )
             return self.exit_codes.ERROR_MISSING_OUTPUT_FILES
 
-        # Add output file to the outpus
+        # Add output file to the outputs
         self.logger.info(f"Parsing '{xyzoutput}'")
 
         with self.retrieved.open(logoutput, "rb") as handle:
