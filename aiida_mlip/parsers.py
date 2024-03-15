@@ -6,10 +6,11 @@ from pathlib import Path
 
 from ase.io import read
 import numpy as np
-from aiida.orm.nodes.process.process import ProcessNode
+
 from aiida.common import exceptions
 from aiida.engine import ExitCode
 from aiida.orm import Dict, SinglefileData
+from aiida.orm.nodes.process.process import ProcessNode
 from aiida.parsers.parser import Parser
 from aiida.plugins import CalculationFactory
 

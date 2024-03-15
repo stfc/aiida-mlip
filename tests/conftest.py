@@ -197,7 +197,19 @@ def generate_calc_job():
 
     return _generate_calc_job
 
-#Fixture to provide the path to the example file
+
+# Fixture to provide the path to the example file
 @pytest.fixture
 def example_file_path():
-    return Path(__file__).resolve().parent.parent / 'examples' / 'calculations' / 'submit_singlepoint.py' #pylint: disable=line-too-long
+    """
+    Fixture to provide the path to the example file.
+
+    Returns:
+        Path: The path to the example file.
+    """
+    return (
+        Path(__file__).resolve().parent.parent
+        / "examples"
+        / "calculations"
+        / "submit_singlepoint.py"
+    )

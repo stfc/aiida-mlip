@@ -1,5 +1,7 @@
 """Tests for singlepoint calculation."""
 
+import subprocess
+
 from ase.build import bulk
 import pytest
 
@@ -7,7 +9,7 @@ from aiida.common import datastructures
 from aiida.engine import run
 from aiida.orm import Str, StructureData
 from aiida.plugins import CalculationFactory
-import subprocess
+
 from aiida_mlip.data.model import ModelData
 
 
@@ -116,13 +118,21 @@ def test_run_sp(tmp_path, janus_code):
     assert obtained_res["info"]["energy"] == pytest.approx(-6.7575203839729)
     assert obtained_res["info"]["stress"][0][0] == pytest.approx(-0.005816546985101)
 
-def test_example(example_file_path, janus_code):
+
+def test_example(example_file_path):
+    """
+    Test function to execute the example file with specific command arguments.
+    """
     command = [
-        'verdi', 'run', example_file_path,
-        "janus@localhost", '--calctype', 'singlepoint',
+        "verdi",
+        "run",
+        example_file_path,
+        "janus@localhost",
+        "--calctype",
+        "singlepoint",
     ]
 
     # Execute the command
-    result = subprocess.run(command, capture_output=True, text=True)
+    result = subprocess.run(command, capture_output=True, text=True, check=False)
     assert result.stderr == ""
-    assert result.returncode == 0 
+    assert result.returncode == 0

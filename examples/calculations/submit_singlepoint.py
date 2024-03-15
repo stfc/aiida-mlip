@@ -95,7 +95,7 @@ def singlepoint(params: dict) -> None:
     -------
         None
     """
-    for key,value in params.items():
+    for key, value in params.items():
         print(key, type(value))
 
     structure = load_structure(params["file"])

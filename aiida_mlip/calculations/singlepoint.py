@@ -137,7 +137,7 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
     @classmethod
     def validate_inputs(
         cls, inputs: dict, port_namespace: aiida.engine.processes.ports.PortNamespace
-        ):
+    ):
         """
         Check if the inputs are valid.
 
