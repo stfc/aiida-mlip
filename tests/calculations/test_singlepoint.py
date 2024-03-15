@@ -99,14 +99,14 @@ def test_run_sp(tmp_path, janus_code):
         "calctype": Str("singlepoint"),
         "model": ModelData.download(
             "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
-            architecture="mace_mp",
+            architecture="mace",
             cache_dir=tmp_path,
         ),
         "device": Str("cpu"),
     }
 
-    Singlepointcalc = CalculationFactory("janus.sp")
-    result = run(Singlepointcalc, **inputs)
+    singlePointCalculation = CalculationFactory("janus.sp")
+    result = run(singlePointCalculation, **inputs)
 
     assert "results_dict" in result
     obtained_res = result["results_dict"].get_dict()

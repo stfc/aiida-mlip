@@ -61,8 +61,8 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
         spec.input(
             "architecture",
             valid_type=Str,
-            default=lambda: Str("mace_mp"),
-            help="Architecture to use for calculation, defaults to mace_mp",
+            default=lambda: Str("mace"),
+            help="Architecture to use for calculation, defaults to mace",
         )
         spec.input(
             "model",
