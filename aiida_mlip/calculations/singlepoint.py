@@ -206,14 +206,13 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
             if self.inputs.model
             else str(self.inputs.architecture.value)
         )
-        model_path = (
-            str((self.inputs.model).filepath)
-            if self.inputs.model
-            else ModelData.download(
+        if self.inputs.model:
+            model_path = self.inputs.model.filepath
+        else:
+            model_path = ModelData.download(
                 "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",  # pylint:disable=line-too-long
                 architecture,
             ).filepath
-        )
 
         # The inputs are saved in the node, but we want their value as a string
         calctype = (self.inputs.calctype).value
