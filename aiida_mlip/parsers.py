@@ -6,7 +6,7 @@ from pathlib import Path
 
 from ase.io import read
 import numpy as np
-
+from aiida.orm.nodes.process.process import ProcessNode
 from aiida.common import exceptions
 from aiida.engine import ExitCode
 from aiida.orm import Dict, SinglefileData
@@ -64,7 +64,7 @@ class SPParser(Parser):
         If the ProcessNode being passed was not produced by a Singlepointcalc.
     """
 
-    def __init__(self, node):
+    def __init__(self, node: ProcessNode):
         """
         Check that the ProcessNode being passed was produced by a Singlepointcalc.
 
@@ -74,6 +74,7 @@ class SPParser(Parser):
             ProcessNode of calculation.
         """
         super().__init__(node)
+
         if not issubclass(node.process_class, Singlepointcalc):
             raise exceptions.ParsingError("Can only parse Singlepointcalc")
 
@@ -110,19 +111,11 @@ class SPParser(Parser):
         self.logger.info(f"Parsing '{xyzoutput}'")
 
         with self.retrieved.open(logoutput, "rb") as handle:
-            log_node = SinglefileData(file=handle)
-
-        self.out("log_output", log_node)
-
+            self.out("log_output", SinglefileData(file=handle))
         with self.retrieved.open(xyzoutput, "rb") as handle:
-            xyz_node = SinglefileData(file=handle)
-
-        self.out("xyz_output", xyz_node)
-
+            self.out("xyz_output", SinglefileData(file=handle))
         with self.retrieved.open(output_filename, "rb") as handle:
-            stdout_node = SinglefileData(file=handle)
-
-        self.out("std_output", stdout_node)
+            self.out("std_output", SinglefileData(file=handle))
 
         content = read(Path(self.node.get_remote_workdir(), xyzoutput))
         results = convert_numpy(content.todict())

@@ -1,7 +1,5 @@
 """Class to run single point calculations."""
 
-from typing import Union
-
 from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
@@ -139,7 +137,7 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
     @classmethod
     def validate_inputs(
         cls, inputs: dict, port_namespace: aiida.engine.processes.ports.PortNamespace
-    ) -> Union[ValueError, None]:
+        ):
         """
         Check if the inputs are valid.
 
