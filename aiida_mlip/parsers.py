@@ -78,7 +78,7 @@ class SPParser(Parser):
             raise exceptions.ParsingError("Can only parse Singlepointcalc")
 
     # pylint: disable=too-many-locals
-    def parse(self, **kwargs):
+    def parse(self, **kwargs) -> int:
         """
         Parse outputs, store results in the database.
 
