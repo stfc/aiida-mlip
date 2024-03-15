@@ -77,7 +77,6 @@ class SPParser(Parser):
         if not issubclass(node.process_class, Singlepointcalc):
             raise exceptions.ParsingError("Can only parse Singlepointcalc")
 
-    # pylint: disable=too-many-locals
     def parse(self, **kwargs) -> int:
         """
         Parse outputs, store results in the database.
@@ -95,8 +94,6 @@ class SPParser(Parser):
         output_filename = self.node.get_option("output_filename")
         xyzoutput = (self.node.inputs.xyz_output_name).value
         logoutput = (self.node.inputs.log_filename).value
-
-        remote_folder = self.node.get_remote_workdir()
 
         # Check that folder content is as expected
         files_retrieved = self.retrieved.list_object_names()
@@ -127,8 +124,7 @@ class SPParser(Parser):
 
         self.out("std_output", stdout_node)
 
-        output_path = Path(remote_folder, xyzoutput)
-        content = read(output_path)
+        content = read(Path(self.node.get_remote_workdir(), xyzoutput))
         results = convert_numpy(content.todict())
         results_node = Dict(results)
         self.out("results_dict", results_node)

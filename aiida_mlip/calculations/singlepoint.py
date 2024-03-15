@@ -135,16 +135,6 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
             "ERROR_MISSING_OUTPUT_FILES",
             message="Some output files missing or cannot be read",
         )
-        spec.exit_code(
-            306,
-            "ERROR_EMPTY_OUTPUT_FILES",
-            message="File.xyz is empty",
-        )
-        spec.exit_code(
-            307,
-            "ERROR_CONTENT_OUTPUT_FILES",
-            message="The output file does not contain the right content",
-        )
 
     @classmethod
     def validate_inputs(
@@ -169,26 +159,28 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
         # Wrapping processes may choose to exclude certain input ports
         # If the ports have been excluded, skip the validation.
         if any(key not in port_namespace for key in ("calctype", "structure")):
-            return None
+            raise ValueError("Both 'calctype' and 'structure' namespaces are required.")
 
         for key in ("calctype", "structure"):
             if key not in inputs:
-                return f"required value was not provided for the `{key}` namespace."
+                raise ValueError(
+                    f"Required value was not provided for the `{key}` \
+                                 namespace."
+                )
 
         valid_calctypes = {"singlepoint", "geom opt"}
         if (
                 "calctype" in inputs and
                 str(inputs["calctype"].value) not in valid_calctypes
         ):
-                return (f"The 'calctype' must be one of {valid_calctypes}, "
-                        f"but got '{inputs['calctype']}'.")
+                raise ValueError(
+                    f"The 'calctype' must be one of {valid_calctypes}, \
+                    but got '{value['calctype']}'."
+                )
 
         if "input_filename" in inputs:
             if not str(inputs["input_filename"].value).endswith(".cif"):
-                return "The parameter 'input_filename' must end with '.cif'"
-
-        # If both structure and calctype are provided, return None
-        return None
+                raise ValueError("The parameter 'input_filename' must end with '.cif'")
 
     # pylint: disable=too-many-locals
     def prepare_for_submission(
@@ -225,12 +217,12 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
         )
 
         # The inputs are saved in the node, but we want their value as a string
-        calctype = str((self.inputs.calctype).value)
-        precision = str((self.inputs.precision).value)
-        device = str((self.inputs.device).value)
-        xyz_filename = str((self.inputs.xyz_output_name).value)
+        calctype = (self.inputs.calctype).value
+        precision = (self.inputs.precision).value
+        device = (self.inputs.device).value
+        xyz_filename = (self.inputs.xyz_output_name).value
         input_filename = self.inputs.metadata.options.input_filename
-        log_filename = str((self.inputs.log_filename).value)
+        log_filename = (self.inputs.log_filename).value
         # Transform the structure data in cif file called input_filename
         structure = self.inputs.structure
         cif_structure = structure.get_cif()

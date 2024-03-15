@@ -48,15 +48,30 @@ intended to help developers get started with their AiiDA plugins.
 
 
 ## Features
+## Features (this is in development not all things work yet)
 
- * Save MLIP models using `ModelData`
+- [x] Supports multiple MLIPs
+  - MACE
+  - M3GNET
+  - CHGNET
+- [x] Single point calculations
+- [ ] Geometry optimisation
+- [ ] Molecular Dynamics:
+  - NVE
+  - NVT (Langevin(Eijnden/Ciccotti flavour) and Nosé-Hoover (Melchionna flavour))
+  - NPT (Nosé-Hoover (Melchiona flavour))
+- [ ] Training ML potentials (MACE only planned)
+- [ ] Fine tunning MLIPs (MACE only planned)
+
+The code relies heavily on ASE, unless something else is mentioned.
+
 
 ## Installation
 
 ```shell
 pip install aiida-mlip
 verdi quicksetup  # better to set up a new profile
-verdi plugin list aiida.calculations  # should now show your calclulation plugins
+verdi plugin list aiida.calculations  # should now show your calculation plugins
 ```
 
 
@@ -68,7 +83,7 @@ A quick demo of how to submit a calculation:
 ```shell
 verdi daemon start     # make sure the daemon is running
 cd examples
-verdi run submit_singlepoint.py "janus@localhost" --calctype "singlepoint"  --architecture mace_mp --model "~./cache/mlips/mace_mp/46jrkm3v"       # run test calculation
+verdi run submit_singlepoint.py "janus@localhost" --calctype "singlepoint"  --architecture mace --model "~./cache/mlips/mace/46jrkm3v"       # run test calculation
 verdi process list -a  # check record of calculation
 ```
 
