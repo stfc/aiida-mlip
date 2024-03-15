@@ -207,9 +207,7 @@ def example_file_path():
     Returns:
         Path: The path to the example file.
     """
-    return (
-        Path(__file__).resolve().parent.parent
-        / "examples"
-        / "calculations"
-        / "submit_singlepoint.py"
-    )
+    return Path(__file__).resolve().parent.parent
+           / "examples"
+           / "calculations"
+           / "submit_singlepoint.py"
