@@ -12,7 +12,7 @@ from aiida_mlip.data.model import ModelData
 
 
 def test_singlepoint(fixture_sandbox, generate_calc_job, tmp_path, janus_code):
-    """Test singlepoint calculation"""
+    """Test generating singlepoint calculation job"""
     # pylint:disable=line-too-long
     entry_point_name = "janus.sp"
     inputs = {
@@ -88,7 +88,7 @@ def test_sp_error(fixture_sandbox, generate_calc_job, tmp_path, janus_code):
 
 
 def test_run_sp(tmp_path, janus_code):
-    """Test singlepoint calculation"""
+    """Test running singlepoint calculation"""
     # pylint:disable=line-too-long
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
