@@ -180,8 +180,8 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
                 "calctype" in inputs and
                 str(inputs["calctype"].value) not in valid_calctypes
         ):
-                return f"The 'calctype' must be one of {valid_calctypes}, \
-                    but got '{inputs['calctype']}'."
+                return (f"The 'calctype' must be one of {valid_calctypes}, "
+                        f"but got '{inputs['calctype']}'.")
 
         if "input_filename" in inputs:
             if not str(inputs["input_filename"].value).endswith(".cif"):
