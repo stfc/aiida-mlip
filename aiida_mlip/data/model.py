@@ -29,24 +29,13 @@ class ModelData(SinglefileData):
     filepath : str
         Path of the mlip model.
 
-    Methods
+     Methods
     -------
-    _calculate_hash(file: Union[str, Path]) -> str:
-        Calculate the hash of a file.
-    _check_existing_file(file: Union[str, Path]) -> Path:
-        Check if a file already exists and return the path of the existing file.
-    __init__(file: Union[str, Path], architecture: str,
-        filename: Optional[str] = None, **kwargs: Any) -> None:
-        Initialize the ModelData object.
-    set_file(file: Union[str, Path], filename: Optional[str] = None,
-        architecture: Optional[str] = None, **kwargs: Any) -> None:
+    set_file(file, filename=None, architecture=None, **kwargs)
         Set the file for the node.
-    local_file(file: Union[str, Path], architecture: str,
-        filename: Optional[str] = None) -> 'ModelData':
+    local_file(file, architecture, filename=None):
         Create a ModelData instance from a local file.
-    download(url: str, architecture: str, filename: Optional[str] = None,
-        cache_dir: Optional[Union[str, Path]] = None,
-            force_download: Optional[bool] = False) -> 'ModelData':
+    download(url, architecture, filename=None, cache_dir=None, force_download=False)
         Download a file from a URL and save it as ModelData.
 
     Other Parameters

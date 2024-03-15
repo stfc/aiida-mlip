@@ -49,17 +49,17 @@ def fixture_sandbox():
     """
     Return a `SandboxFolder` fixture.
 
-    This fixture yields a `SandboxFolder` instance for temporary file operations
+    This fixture returns a `SandboxFolder` instance for temporary file operations
     within a test function.
 
-    Yields
-    ------
+    Returns
+    -------
     SandboxFolder
         A `SandboxFolder` instance for temporary file operations.
     """
 
     with SandboxFolder() as folder:
-        yield folder
+        return folder
 
 
 @pytest.fixture
