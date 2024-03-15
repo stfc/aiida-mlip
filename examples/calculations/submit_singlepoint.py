@@ -15,7 +15,7 @@ from aiida.plugins import CalculationFactory
 from aiida_mlip.data.model import ModelData
 
 
-def load_model(string: Union[str, None], architecture: str) -> ModelData:
+def load_model(string: Union[str, Path, None], architecture: str) -> ModelData:
     """
     Load a model from a given string.
 
@@ -24,7 +24,7 @@ def load_model(string: Union[str, None], architecture: str) -> ModelData:
 
     Parameters
     ----------
-    string : Union[str, None]
+    string : Union[str, Path, None]
         The string representing either a file path or a URL for downloading the model.
     architecture : str
         The architecture of the model.
@@ -95,6 +95,9 @@ def singlepoint(params: dict) -> None:
     -------
         None
     """
+    for key,value in params.items():
+        print(key, type(value))
+
     structure = load_structure(params["file"])
 
     # Select model to use
@@ -128,13 +131,13 @@ def singlepoint(params: dict) -> None:
 @click.option(
     "--file",
     default=None,
-    type=Union[str, Path, int],
+    type=str,
     help="Specify the structure (aiida node or path to a structure file)",
 )
 @click.option(
     "--model",
     default=None,
-    type=Union[str, Path],
+    type=Path,
     help="Specify path or url of the model to use",
 )
 @click.option("--architecture", default="mace_mp", type=str)
