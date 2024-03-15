@@ -85,7 +85,7 @@ class SPParser(Parser):
         Parameters
         ----------
         **kwargs : Any
-            Any keyword argument.
+            Any keyword arguments.
 
         Returns
         -------
