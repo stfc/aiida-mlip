@@ -176,8 +176,10 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
                 return f"required value was not provided for the `{key}` namespace."
 
         valid_calctypes = {"singlepoint", "geom opt"}
-        if "calctype" in inputs:
-            if str(inputs["calctype"].value) not in valid_calctypes:
+        if (
+                "calctype" in inputs and
+                str(inputs["calctype"].value) not in valid_calctypes
+        ):
                 return f"The 'calctype' must be one of {valid_calctypes}, \
                     but got '{inputs['calctype']}'."
 
