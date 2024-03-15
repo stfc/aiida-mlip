@@ -53,7 +53,7 @@ def fixture_sandbox():
     within a test function.
 
     Yields
-    -------
+    ------
     SandboxFolder
         A `SandboxFolder` instance for temporary file operations.
     """
