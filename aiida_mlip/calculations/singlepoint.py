@@ -139,7 +139,7 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
     @classmethod
     def validate_inputs(
         cls, inputs: dict, port_namespace: aiida.engine.processes.ports.PortNamespace
-    ) -> Union[str, None]:
+    ) -> Union[ValueError, None]:
         """
         Check if the inputs are valid.
 
@@ -151,9 +151,9 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
         port_namespace : `aiida.engine.processes.ports.PortNamespace`
             An instance of aiida's `PortNameSpace`.
 
-        Returns
-        -------
-        str or None
+        Raises
+        ------
+        ValueError
             Error message if validation fails, None otherwise.
         """
         # Wrapping processes may choose to exclude certain input ports
@@ -170,16 +170,16 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
 
         valid_calctypes = {"singlepoint", "geom opt"}
         if (
-                "calctype" in inputs and
-                str(inputs["calctype"].value) not in valid_calctypes
+            "calctype" in inputs
+            and str(inputs["calctype"].value) not in valid_calctypes
         ):
-                raise ValueError(
-                    f"The 'calctype' must be one of {valid_calctypes}, \
-                    but got '{value['calctype']}'."
-                )
+            raise ValueError(
+                f"The 'calctype' must be one of {valid_calctypes}, \
+                    but got '{inputs['calctype']}'."
+            )
 
         if "input_filename" in inputs:
-            if not str(inputs["input_filename"].value).endswith(".cif"):
+            if not inputs["input_filename"].value.endswith(".cif"):
                 raise ValueError("The parameter 'input_filename' must end with '.cif'")
 
     # pylint: disable=too-many-locals
