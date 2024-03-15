@@ -14,7 +14,7 @@ from aiida.orm.nodes.process.process import ProcessNode
 from aiida.parsers.parser import Parser
 from aiida.plugins import CalculationFactory
 
-Singlepointcalc = CalculationFactory("janus.sp")
+singlePointCalculation = CalculationFactory("janus.sp")
 
 
 def convert_numpy(dictionary: dict) -> dict:
@@ -62,12 +62,12 @@ class SPParser(Parser):
     Raises
     ------
     exceptions.ParsingError
-        If the ProcessNode being passed was not produced by a Singlepointcalc.
+        If the ProcessNode being passed was not produced by a singlePointCalculation.
     """
 
     def __init__(self, node: ProcessNode):
         """
-        Check that the ProcessNode being passed was produced by a Singlepointcalc.
+        Check that the ProcessNode being passed was produced by a `Singlepoint`.
 
         Parameters
         ----------
@@ -76,8 +76,8 @@ class SPParser(Parser):
         """
         super().__init__(node)
 
-        if not issubclass(node.process_class, Singlepointcalc):
-            raise exceptions.ParsingError("Can only parse Singlepointcalc")
+        if not issubclass(node.process_class, singlePointCalculation):
+            raise exceptions.ParsingError("Can only parse `Singlepoint` calculations")
 
     def parse(self, **kwargs) -> int:
         """
