@@ -98,7 +98,7 @@ class SPParser(Parser):
         # Check that folder content is as expected
         files_retrieved = self.retrieved.list_object_names()
 
-        files_expected = [xyzoutput, logoutput]
+        files_expected = {xyzoutput, logoutput}
         # Note: set(A) <= set(B) checks whether A is a subset of B
         if not set(files_expected) <= set(files_retrieved):
             self.logger.error(
