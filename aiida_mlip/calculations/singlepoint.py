@@ -174,8 +174,8 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
             and str(inputs["calctype"].value) not in valid_calctypes
         ):
             raise ValueError(
-                f"The 'calctype' must be one of {valid_calctypes}, \
-                    but got '{inputs['calctype']}'."
+                f"The 'calctype' must be one of {valid_calctypes}, "
+                f"but got '{inputs['calctype']}'."
             )
 
         if "input_filename" in inputs:
