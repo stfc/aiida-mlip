@@ -25,6 +25,8 @@ def clear_database_auto(aiida_profile_clean):  # pylint: disable=unused-argument
 def filepath_tests():
     """
     Return the absolute filepath of the `tests` folder.
+    .. warning: If this file moves with respect to the `tests` folder,
+        the implementation should change.
 
     Parameters
     ----------
@@ -34,12 +36,6 @@ def filepath_tests():
     -------
     Path
         Absolute filepath of `tests` folder.
-
-    Warns
-    -----
-    Warning
-        If this file moves with respect to the `tests` folder,
-        the implementation should change.
     """
     return Path(__file__).resolve()
 
