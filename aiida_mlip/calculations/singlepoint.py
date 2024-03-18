@@ -111,7 +111,7 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
             default="_scheduler-stdout.txt",
             help="Filename to which the content of stdout of the scheduler is written.",
         )
-        spec.inputs["metadata"]["options"]["parser_name"].default = "janus.parser"
+        spec.inputs["metadata"]["options"]["parser_name"].default = "janus.sp_parser"
         spec.inputs.validator = cls.validate_inputs
         # Define outputs. The default is a dictionary with the content of the xyz file
         spec.output(

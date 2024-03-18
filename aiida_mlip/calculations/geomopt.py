@@ -2,11 +2,11 @@
 
 from aiida.common import datastructures
 import aiida.common.folders
-from aiida.engine import CalcJob, CalcJobProcessSpec
+from aiida.engine import CalcJobProcessSpec
 import aiida.engine.processes
-from aiida.orm import Dict, SinglefileData, Str, StructureData, Bool, Float
+from aiida.orm import Bool, Float, SinglefileData, Str, StructureData
+
 from aiida_mlip.calculations.singlepoint import Singlepoint
-from aiida_mlip.data.model import ModelData
 
 
 class GeomOpt(Singlepoint):
@@ -20,8 +20,10 @@ class GeomOpt(Singlepoint):
     prepare_for_submission(folder: Folder) -> CalcInfo:
         Create the input files for the `CalcJob`.
     """
+
     _DEFAULT_TRAJ_FILE = "aiida-traj.xyz"
 
+    @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
         """
         Define the process specification, its inputs, outputs and exit codes.
@@ -59,12 +61,15 @@ class GeomOpt(Singlepoint):
             "max_force",
             valid_type=Float,
             required=False,
-            default = lambda: Float(0.1)
-            help="Set force convergence criteria for optimizer in units eV/Å."
+            default=lambda: Float(0.1),
+            help="Set force convergence criteria for optimizer in units eV/Å.",
         )
 
+        spec.inputs["metadata"]["options"]["parser_name"].default = "janus.opt_parser"
+
+        spec.output("traj_file", valid_type=SinglefileData)
         spec.output("traj_output", valid_type=SinglefileData)
-        spec.output("opt_structure", valid_type=StructureData)
+        spec.output("final_structure", valid_type=StructureData)
 
     def prepare_for_submission(
         self, folder: aiida.common.folders.Folder
@@ -88,11 +93,11 @@ class GeomOpt(Singlepoint):
         codeinfo = super().prepare_for_submission(folder)
 
         geom_opt_cmdline = {
-            "traj" :  self.inputs.traj.value, 
-            "fully_opt" : self.inputs.fully_opt.value, 
-            "vectors_only" : self.inputs.vectors_only.value,
-            "max_force" : self.inputs.max_force.value
-        } 
+            "traj": self.inputs.traj.value,
+            "fully_opt": self.inputs.fully_opt.value,
+            "vectors_only": self.inputs.vectors_only.value,
+            "max_force": self.inputs.max_force.value,
+        }
 
         for flag, value in geom_opt_cmdline.items():
             if isinstance(value, bool):
@@ -101,7 +106,7 @@ class GeomOpt(Singlepoint):
                     codeinfo.cmdline_params.append(f"--{flag}")
                 else:
                     codeinfo.cmdline_params += [f"--{flag}", value]
-        
+
         calcinfo.retrieve_list.append(self.inputs.traj.value)
 
         return calcinfo
