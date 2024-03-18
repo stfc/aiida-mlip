@@ -9,7 +9,7 @@ import click
 
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
-from aiida.orm import Str, StructureData, load_code, load_node, Float, Bool
+from aiida.orm import Bool, Float, Str, StructureData, load_code, load_node
 from aiida.plugins import CalculationFactory
 
 from aiida_mlip.data.model import ModelData
@@ -116,9 +116,9 @@ def singlepoint(params: dict) -> None:
         "model": model,
         "precision": Str(params["precision"]),
         "device": Str(params["device"]),
-        "max_force" : Float(params["max_force"]),
-        "vectors_only" : Bool(params["vectors_only"]),
-        "fully_opt" : Bool(params["fully_opt"])
+        "max_force": Float(params["max_force"]),
+        "vectors_only": Bool(params["vectors_only"]),
+        "fully_opt": Bool(params["fully_opt"]),
     }
 
     # Run calculation
@@ -149,7 +149,18 @@ def singlepoint(params: dict) -> None:
 @click.option("--max_force", default=0.1, type=float)
 @click.option("--vectors_only", default=False, type=bool)
 @click.option("--fully_opt", default=False, type=bool)
-def cli(codelabel, calctype, file, model, architecture, device, precision, max_force, vectors_only, fully_opt) -> None:
+def cli(
+    codelabel,
+    calctype,
+    file,
+    model,
+    architecture,
+    device,
+    precision,
+    max_force,
+    vectors_only,
+    fully_opt,
+) -> None:
     # pylint: disable=too-many-arguments
     """Click interface."""
     try:
@@ -166,9 +177,9 @@ def cli(codelabel, calctype, file, model, architecture, device, precision, max_f
         "architecture": architecture,
         "device": device,
         "precision": precision,
-        "max_force" : max_force,
-        "vectors_only" : vectors_only,
-        "fully_opt" : fully_opt
+        "max_force": max_force,
+        "vectors_only": vectors_only,
+        "fully_opt": fully_opt,
     }
 
     # Submit single point
