@@ -165,7 +165,7 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
                     f"Required value was not provided for the `{key}` namespace."
                 )
 
-        valid_calctypes = {"singlepoint", "geom opt"}
+        valid_calctypes = {"singlepoint", "geomopt"}
         if (
             "calctype" in inputs
             and str(inputs["calctype"].value) not in valid_calctypes

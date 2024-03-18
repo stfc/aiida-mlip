@@ -4,7 +4,7 @@ from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJobProcessSpec
 import aiida.engine.processes
-from aiida.orm import Bool, Float, SinglefileData, Str, StructureData
+from aiida.orm import Bool, Float, SinglefileData, Str, StructureData, TrajectoryData
 
 from aiida_mlip.calculations.singlepoint import Singlepoint
 
@@ -68,7 +68,7 @@ class GeomOpt(Singlepoint):
         spec.inputs["metadata"]["options"]["parser_name"].default = "janus.opt_parser"
 
         spec.output("traj_file", valid_type=SinglefileData)
-        spec.output("traj_output", valid_type=SinglefileData)
+        spec.output("traj_output", valid_type=TrajectoryData)
         spec.output("final_structure", valid_type=StructureData)
 
     def prepare_for_submission(
@@ -90,13 +90,13 @@ class GeomOpt(Singlepoint):
 
         # Call the parent class method to prepare common inputs
         calcinfo = super().prepare_for_submission(folder)
-        codeinfo = super().prepare_for_submission(folder)
+        codeinfo = calcinfo.codes_info[0]
 
         geom_opt_cmdline = {
             "traj": self.inputs.traj.value,
-            "fully_opt": self.inputs.fully_opt.value,
-            "vectors_only": self.inputs.vectors_only.value,
-            "max_force": self.inputs.max_force.value,
+            "fully-opt": self.inputs.fully_opt.value,
+            "vectors-only": self.inputs.vectors_only.value,
+            "max-force": self.inputs.max_force.value,
         }
 
         for flag, value in geom_opt_cmdline.items():
@@ -104,8 +104,8 @@ class GeomOpt(Singlepoint):
                 # Add boolean flags without value if True
                 if value:
                     codeinfo.cmdline_params.append(f"--{flag}")
-                else:
-                    codeinfo.cmdline_params += [f"--{flag}", value]
+            else:
+                codeinfo.cmdline_params += [f"--{flag}", value]
 
         calcinfo.retrieve_list.append(self.inputs.traj.value)
 
