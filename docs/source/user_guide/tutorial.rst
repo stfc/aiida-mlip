@@ -53,6 +53,7 @@ Another parameter that we need to define as AiiDA type is the code. Assuming the
 The other inputs can be set up as AiiDA Str. There is a default for every input except the structure and code. This is a list of possible inputs:
 
 .. code-block:: python
+
     from aiida.orm import Bool, Float, Str
     inputs = {
         "code": code,
@@ -135,15 +136,15 @@ The calculation can also be interacted with through verdi cli. Use `verdi proces
 
 .. code-block:: python
 
-    $ verdi process list -a
-    PK  Created    Process label    ♻    Process State     Process status
+    verdi process list -a
+    PK  Created    Process label        Process State     Process status
     ----  ---------  ---------------  ---  ----------------  ----------------------------------
-    1130  1m ago    GeomOpt               ⏹ Finished [0]
+    1130  1m ago    GeomOpt                Finished [0]
 
 
 .. code-block:: python
 
-    $ verdi node show 1130
+    verdi node show 1130
     Property     Value
     -----------  ------------------------------------
     type         GeomOpt
@@ -192,7 +193,7 @@ The results can be examined using `verdi calcjob` commands, such as:
 
 .. code-block:: python
 
-    $ verdi calcjob res 1130
+    verdi calcjob res 1130
     {
         "cell": [
             [
