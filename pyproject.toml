@@ -97,6 +97,7 @@ filterwarnings = [
     "ignore::DeprecationWarning:plumpy:",
     "ignore::DeprecationWarning:yaml:",
 ]
+pythonpath = ["."]
 
 [tool.coverage.run]
 # Configuration of [coverage.py](https://coverage.readthedocs.io)
