@@ -9,7 +9,7 @@ from aiida.orm import Bool, Float, SinglefileData, Str, StructureData, Trajector
 from aiida_mlip.calculations.singlepoint import Singlepoint
 
 
-class GeomOpt(Singlepoint):
+class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
     """
     Calcjob implementation to run geometry optimization calculations using mlips.
 
@@ -98,6 +98,8 @@ class GeomOpt(Singlepoint):
             "vectors-only": self.inputs.vectors_only.value,
             "max-force": self.inputs.max_force.value,
         }
+
+        codeinfo.cmdline_params[0] = "geomopt"
 
         for flag, value in geom_opt_cmdline.items():
             if isinstance(value, bool):

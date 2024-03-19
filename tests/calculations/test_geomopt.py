@@ -1,4 +1,4 @@
-"""Tests for singlepoint calculation."""
+"""Tests for geometry optimisation calculation."""
 
 import subprocess
 
@@ -7,16 +7,16 @@ import pytest
 
 from aiida.common import datastructures
 from aiida.engine import run
-from aiida.orm import Str, StructureData
+from aiida.orm import Bool, Str, StructureData
 from aiida.plugins import CalculationFactory
 
 from aiida_mlip.data.model import ModelData
 
 
-def test_singlepoint(fixture_sandbox, generate_calc_job, tmp_path, janus_code):
+def test_geomopt(fixture_sandbox, generate_calc_job, tmp_path, janus_code):
     """Test generating singlepoint calculation job"""
     # pylint:disable=line-too-long
-    entry_point_name = "janus.sp"
+    entry_point_name = "janus.opt"
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
@@ -34,7 +34,7 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, tmp_path, janus_code):
     calc_info = generate_calc_job(fixture_sandbox, entry_point_name, inputs)
     # pylint:disable=line-too-long
     cmdline_params = [
-        "singlepoint",
+        "geomopt",
         "--arch",
         "mace",
         "--struct",
@@ -47,46 +47,34 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, tmp_path, janus_code):
         f"{{'model': '{tmp_path}/mace/mace_mp_small.model', 'default_dtype': 'float64'}}",
         "--write-kwargs",
         "{'filename': 'aiida-results.xyz'}",
+        "--traj",
+        "aiida-traj.xyz",
+        "--max-force",
+        0.1,
     ]
+
+    print(calc_info.codes_info[0].cmdline_params)
+    print(cmdline_params)
 
     retrieve_list = [
         calc_info.uuid,
         "aiida.log",
         "aiida-results.xyz",
         "aiida-stdout.txt",
+        "aiida-traj.xyz",
     ]
 
     # Check the attributes of the returned `CalcInfo`
     assert sorted(fixture_sandbox.get_content_list()) == ["aiida.cif"]
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
-    assert sorted(calc_info.codes_info[0].cmdline_params) == sorted(cmdline_params)
+    assert len(calc_info.codes_info[0].cmdline_params) == len(cmdline_params)
+    for x, y in zip((calc_info.codes_info[0].cmdline_params), (cmdline_params)):
+        assert x == y
     assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
 
 
-def test_sp_error(fixture_sandbox, generate_calc_job, tmp_path, fixture_code):
-    """Test singlepoint calculation with error input"""
-    entry_point_name = "janus.sp"
-    # pylint:disable=line-too-long
-    inputs = {
-        "metadata": {"options": {"resources": {"num_machines": 1}}},
-        "code": fixture_code,
-        "input_filename": "wrongname",
-        "architecture": Str("mace"),
-        "precision": Str("float64"),
-        "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
-        "model": ModelData.download(
-            "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
-            architecture="mace",
-            cache_dir=tmp_path,
-        ),
-        "device": Str("cpu"),
-    }
-    with pytest.raises(ValueError):
-        generate_calc_job(fixture_sandbox, entry_point_name, inputs)
-
-
-def test_run_sp(tmp_path, janus_code):
+def test_run_opt(tmp_path, janus_code):
     """Test running singlepoint calculation"""
     # pylint:disable=line-too-long
     inputs = {
@@ -101,26 +89,25 @@ def test_run_sp(tmp_path, janus_code):
             cache_dir=tmp_path,
         ),
         "device": Str("cpu"),
+        "fully_opt": Bool(True),
     }
 
-    singlePointCalculation = CalculationFactory("janus.sp")
-    result = run(singlePointCalculation, **inputs)
+    geomoptCalculation = CalculationFactory("janus.opt")
+    result = run(geomoptCalculation, **inputs)
 
     assert "results_dict" in result
-    obtained_res = result["results_dict"].get_dict()
-    assert "log_output" in result
-    assert "xyz_output" in result
-    assert "std_output" in result
-    assert obtained_res["info"]["energy"] == pytest.approx(-6.7575203839729)
-    assert obtained_res["info"]["stress"][0][0] == pytest.approx(-0.005816546985101)
+    assert "final_structure" in result
+    assert "traj_output" in result
+    assert "traj_file" in result
+    assert result["traj_output"].numsteps == 3
+    assert result["final_structure"].cell[0][0] == pytest.approx(4.0223130461422)
 
 
-def test_example(example_path):
+def test_example_opt(example_path):
     """
     Test function to execute the example file with specific command arguments.
     """
-
-    example_file_path = example_path / "submit_singlepoint.py"
+    example_file_path = example_path / "submit_geomopt.py"
     command = ["verdi", "run", example_file_path, "janus@localhost"]
 
     # Execute the command

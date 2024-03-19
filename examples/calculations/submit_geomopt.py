@@ -104,7 +104,7 @@ def singlepoint(params: dict) -> None:
     model = load_model(params["model"], params["architecture"])
 
     # Select calculation to use
-    singlePointCalculation = CalculationFactory("janus.opt")
+    geomoptCalculation = CalculationFactory("janus.opt")
 
     # Define inputs
     inputs = {
@@ -112,7 +112,6 @@ def singlepoint(params: dict) -> None:
         "code": params["code"],
         "architecture": Str(params["architecture"]),
         "structure": structure,
-        "calctype": Str(params["calctype"]),
         "model": model,
         "precision": Str(params["precision"]),
         "device": Str(params["device"]),
@@ -122,7 +121,7 @@ def singlepoint(params: dict) -> None:
     }
 
     # Run calculation
-    result, node = run_get_node(singlePointCalculation, **inputs)
+    result, node = run_get_node(geomoptCalculation, **inputs)
     print(f"Printing results from calculation: {result}")
     print(f"Printing node of calculation: {node}")
 
@@ -130,7 +129,6 @@ def singlepoint(params: dict) -> None:
 # Arguments and options to give to the cli when running the script
 @click.command("cli")
 @click.argument("codelabel", type=str)
-@click.option("--calctype", default="singlepoint", type=str)
 @click.option(
     "--file",
     default=None,
@@ -151,7 +149,6 @@ def singlepoint(params: dict) -> None:
 @click.option("--fully_opt", default=False, type=bool)
 def cli(
     codelabel,
-    calctype,
     file,
     model,
     architecture,
@@ -171,7 +168,6 @@ def cli(
 
     params = {
         "code": code,
-        "calctype": calctype,
         "file": file,
         "model": model,
         "architecture": architecture,

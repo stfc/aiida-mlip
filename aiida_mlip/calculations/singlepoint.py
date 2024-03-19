@@ -53,12 +53,6 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
 
         # Define inputs
         spec.input(
-            "calctype",
-            valid_type=Str,
-            default=lambda: Str("singlepoint"),
-            help="calculation type (single point or geom opt)",
-        )
-        spec.input(
             "architecture",
             valid_type=Str,
             default=lambda: Str("mace"),
@@ -156,24 +150,18 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
         """
         # Wrapping processes may choose to exclude certain input ports
         # If the ports have been excluded, skip the validation.
-        if any(key not in port_namespace for key in ("calctype", "structure")):
-            raise ValueError("Both 'calctype' and 'structure' namespaces are required.")
+        if any(key not in port_namespace for key in ["structure"]):
+            raise ValueError("'Structure' namespaces is required.")
 
-        for key in ("calctype", "structure"):
-            if key not in inputs:
-                raise ValueError(
-                    f"Required value was not provided for the `{key}` namespace."
-                )
-
-        valid_calctypes = {"singlepoint", "geomopt"}
-        if (
-            "calctype" in inputs
-            and str(inputs["calctype"].value) not in valid_calctypes
-        ):
-            raise ValueError(
-                f"The 'calctype' must be one of {valid_calctypes}, "
-                f"but got '{inputs['calctype']}'."
-            )
+        # valid_calctypes = {"singlepoint", "geomopt"}
+        # if (
+        #     "calctype" in inputs
+        #     and str(inputs["calctype"].value) not in valid_calctypes
+        # ):
+        #     raise ValueError(
+        #         f"The 'calctype' must be one of {valid_calctypes}, "
+        #         f"but got '{inputs['calctype']}'."
+        #     )
 
         if "input_filename" in inputs:
             if not inputs["input_filename"].value.endswith(".cif"):
@@ -213,7 +201,6 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
             ).filepath
 
         # The inputs are saved in the node, but we want their value as a string
-        calctype = (self.inputs.calctype).value
         precision = (self.inputs.precision).value
         device = (self.inputs.device).value
         xyz_filename = (self.inputs.xyz_output_name).value
@@ -238,8 +225,9 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
 
         # Initialize cmdline_params as an empty list
         codeinfo.cmdline_params = []
+
         # Adding command line params for when we run janus
-        codeinfo.cmdline_params.append(calctype)
+        codeinfo.cmdline_params.append("singlepoint")
         for flag, value in cmd_line.items():
             codeinfo.cmdline_params += [f"--{flag}", str(value)]
 

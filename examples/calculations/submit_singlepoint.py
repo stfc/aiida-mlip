@@ -112,7 +112,6 @@ def singlepoint(params: dict) -> None:
         "code": params["code"],
         "architecture": Str(params["architecture"]),
         "structure": structure,
-        "calctype": Str(params["calctype"]),
         "model": model,
         "precision": Str(params["precision"]),
         "device": Str(params["device"]),
@@ -127,7 +126,6 @@ def singlepoint(params: dict) -> None:
 # Arguments and options to give to the cli when running the script
 @click.command("cli")
 @click.argument("codelabel", type=str)
-@click.option("--calctype", default="singlepoint", type=str)
 @click.option(
     "--file",
     default=None,
@@ -143,7 +141,7 @@ def singlepoint(params: dict) -> None:
 @click.option("--architecture", default="mace_mp", type=str)
 @click.option("--device", default="cpu", type=str)
 @click.option("--precision", default="float64", type=str)
-def cli(codelabel, calctype, file, model, architecture, device, precision) -> None:
+def cli(codelabel, file, model, architecture, device, precision) -> None:
     # pylint: disable=too-many-arguments
     """Click interface."""
     try:
@@ -154,7 +152,6 @@ def cli(codelabel, calctype, file, model, architecture, device, precision) -> No
 
     params = {
         "code": code,
-        "calctype": calctype,
         "file": file,
         "model": model,
         "architecture": architecture,
