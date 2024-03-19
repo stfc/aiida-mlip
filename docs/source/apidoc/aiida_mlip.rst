@@ -9,19 +9,7 @@ Subpackages
 
    aiida_mlip.calculations
    aiida_mlip.data
-
-Submodules
-----------
-
-aiida\_mlip.parsers module
---------------------------
-
-.. automodule:: aiida_mlip.parsers
-   :members:
-   :special-members:
-   :private-members:
-   :undoc-members:
-   :show-inheritance:
+   aiida_mlip.parsers
 
 Module contents
 ---------------

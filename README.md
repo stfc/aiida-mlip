@@ -16,7 +16,7 @@ machine learning interatomic potentials aiida plugin
   - M3GNET
   - CHGNET
 - [x] Single point calculations
-- [ ] Geometry optimisation
+- [x] Geometry optimisation
 - [ ] Molecular Dynamics:
   - NVE
   - NVT (Langevin(Eijnden/Ciccotti flavour) and Nosé-Hoover (Melchionna flavour))
@@ -24,7 +24,8 @@ machine learning interatomic potentials aiida plugin
 - [ ] Training ML potentials (MACE only planned)
 - [ ] Fine tunning MLIPs (MACE only planned)
 
-The code relies heavily on ASE, unless something else is mentioned.
+The code relies heavily on [janus-core](https://github.com/stfc/janus-core), which handles mlip calculations using ASE.
+
 
 
 ## Installation
@@ -32,7 +33,16 @@ The code relies heavily on ASE, unless something else is mentioned.
 ```shell
 pip install aiida-mlip
 verdi quicksetup  # better to set up a new profile
-verdi plugin list aiida.calculations  # should now show your calculation plugins
+verdi plugin list aiida.calculations
+```
+The last command should show a list of AiiDA pre-installed calculations and the aiida-mlip plugin calculations (janus.opt, janus.sp)
+```
+Registered entry points for aiida.calculations:
+* core.arithmetic.add
+* core.templatereplacer
+* core.transfer
+* janus.opt
+* janus.sp
 ```
 
 
@@ -44,7 +54,7 @@ A quick demo of how to submit a calculation:
 ```shell
 verdi daemon start     # make sure the daemon is running
 cd examples
-verdi run submit_singlepoint.py "janus@localhost" --calctype "singlepoint"  --architecture mace --model "~./cache/mlips/mace/46jrkm3v"       # run test calculation
+verdi run submit_singlepoint.py "janus@localhost" --architecture mace --model "~./cache/mlips/mace/46jrkm3v"    # run test calculation
 verdi process list -a  # check record of calculation
 ```
 
