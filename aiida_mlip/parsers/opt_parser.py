@@ -20,7 +20,7 @@ geomoptCalculation = CalculationFactory("janus.opt")
 
 def xyz_to_aiida_traj(traj_file: Union[str, Path]):
     """
-    A function to convert xyz file to `TrajectoryData` data type.
+    A function to convert xyz trajectory file to `TrajectoryData` data type.
 
     Parameters
     ----------
@@ -36,12 +36,9 @@ def xyz_to_aiida_traj(traj_file: Union[str, Path]):
     struct_list = read(traj_file, index=":")
 
     # Create a TrajectoryData object
-traj = [StructureData(ase=struct) for struct in struct_list]
+    traj = [StructureData(ase=struct) for struct in struct_list]
 
-    opt = traj[-1]
-    traj_out = TrajectoryData(traj)
-
-    return opt, traj_out
+    return traj[-1], TrajectoryData(traj)
 
 
 class GeomOptParser(SPParser):
