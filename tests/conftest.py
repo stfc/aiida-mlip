@@ -3,6 +3,7 @@
 
 import os
 from pathlib import Path
+import shutil
 
 import pytest
 
@@ -93,7 +94,7 @@ def janus_code(aiida_local_code_factory):
     `Code`
         The janus code instance.
     """
-    janus_path = os.environ.get("JANUS_PATH")
+    janus_path = shutil.which("janus") or os.environ.get("JANUS_PATH")
     return aiida_local_code_factory(executable=janus_path, entry_point="janus.sp")
 
 
