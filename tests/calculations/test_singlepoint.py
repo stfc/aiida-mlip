@@ -13,26 +13,23 @@ from aiida.plugins import CalculationFactory
 from aiida_mlip.data.model import ModelData
 
 
-def test_singlepoint(fixture_sandbox, generate_calc_job, tmp_path, janus_code):
+def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     """Test generating singlepoint calculation job"""
-    # pylint:disable=line-too-long
+
     entry_point_name = "janus.sp"
+    model_file = model_folder / "mace_mp_small.model"
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
         "architecture": Str("mace"),
         "precision": Str("float64"),
         "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
-        "model": ModelData.download(
-            "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
-            architecture="mace",
-            cache_dir=tmp_path,
-        ),
+        "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
 
     calc_info = generate_calc_job(fixture_sandbox, entry_point_name, inputs)
-    # pylint:disable=line-too-long
+
     cmdline_params = [
         "singlepoint",
         "--arch",
@@ -44,7 +41,7 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, tmp_path, janus_code):
         "--log",
         "aiida.log",
         "--calc-kwargs",
-        f"{{'model': '{tmp_path}/mace/mace_mp_small.model', 'default_dtype': 'float64'}}",
+        f"{{'model': '{model_file}', 'default_dtype': 'float64'}}",
         "--write-kwargs",
         "{'filename': 'aiida-results.xyz'}",
     ]
@@ -64,9 +61,10 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, tmp_path, janus_code):
     assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
 
 
-def test_sp_error(fixture_sandbox, generate_calc_job, tmp_path, fixture_code):
+def test_sp_error(fixture_sandbox, generate_calc_job, model_folder, fixture_code):
     """Test singlepoint calculation with error input"""
     entry_point_name = "janus.sp"
+    model_file = model_folder / "mace_mp_small.model"
     # pylint:disable=line-too-long
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
@@ -75,31 +73,23 @@ def test_sp_error(fixture_sandbox, generate_calc_job, tmp_path, fixture_code):
         "architecture": Str("mace"),
         "precision": Str("float64"),
         "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
-        "model": ModelData.download(
-            "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
-            architecture="mace",
-            cache_dir=tmp_path,
-        ),
+        "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
     with pytest.raises(ValueError):
         generate_calc_job(fixture_sandbox, entry_point_name, inputs)
 
 
-def test_run_sp(tmp_path, janus_code):
+def test_run_sp(model_folder, janus_code):
     """Test running singlepoint calculation"""
-    # pylint:disable=line-too-long
+    model_file = model_folder / "mace_mp_small.model"
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
         "architecture": Str("mace"),
         "precision": Str("float64"),
         "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
-        "model": ModelData.download(
-            "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
-            architecture="mace",
-            cache_dir=tmp_path,
-        ),
+        "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
 
