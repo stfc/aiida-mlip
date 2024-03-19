@@ -36,15 +36,7 @@ def xyz_to_aiida_traj(traj_file: Union[str, Path]):
     struct_list = read(traj_file, index=":")
 
     # Create a TrajectoryData object
-    traj = []
-
-    # TrajectoryData wants a list of StructureData
-    # Loop over all structures in the trajectory file
-    for struct in struct_list:
-        # Create a StructureData object for each frame
-        step = StructureData(ase=struct)
-        # Add the StructureData object to the TrajectoryData
-        traj.append(step)
+traj = [StructureData(ase=struct) for struct in struct_list]
 
     opt = traj[-1]
     traj_out = TrajectoryData(traj)
