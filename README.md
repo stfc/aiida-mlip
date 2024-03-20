@@ -54,7 +54,7 @@ A quick demo of how to submit a calculation:
 ```shell
 verdi daemon start     # make sure the daemon is running
 cd examples
-verdi run submit_singlepoint.py "janus@localhost" --architecture mace --model "~./cache/mlips/mace/46jrkm3v"    # run test calculation
+verdi run submit_singlepoint.py "janus@localhost" --architecture mace --model "~/.cache/mlips/mace/46jrkm3v"    # run test calculation
 verdi process list -a  # check record of calculation
 ```
 
