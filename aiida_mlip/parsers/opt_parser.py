@@ -18,19 +18,22 @@ from aiida_mlip.parsers.sp_parser import SPParser
 geomoptCalculation = CalculationFactory("janus.opt")
 
 
-def xyz_to_aiida_traj(traj_file: Union[str, Path]):
+def xyz_to_aiida_traj(
+    traj_file: Union[str, Path]
+) -> tuple[StructureData, TrajectoryData]:
     """
     A function to convert xyz trajectory file to `TrajectoryData` data type.
 
     Parameters
     ----------
     traj_file : Union[str, Path]
-        The path to a xyz file.
+        The path to the XYZ file.
 
     Returns
     -------
-    dict
-        Converted dictionary.
+    Tuple[StructureData, TrajectoryData]
+        A tuple containing the last structure in the trajectory and a `TrajectoryData`
+        object containing all structures from the trajectory.
     """
     # Read the XYZ file using ASE
     struct_list = read(traj_file, index=":")

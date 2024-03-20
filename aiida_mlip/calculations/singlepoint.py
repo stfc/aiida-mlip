@@ -56,13 +56,13 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
             "architecture",
             valid_type=Str,
             default=lambda: Str("mace"),
-            help="Architecture to use for calculation, defaults to mace",
+            help="Mlip architecture to use for calculation, defaults to mace",
         )
         spec.input(
             "model",
             valid_type=ModelData,
             required=False,
-            help="mlip model used for calculation",
+            help="Mlip model used for calculation",
         )
         spec.input("structure", valid_type=StructureData, help="The input structure.")
         spec.input("precision", valid_type=Str, help="Precision level for calculation")

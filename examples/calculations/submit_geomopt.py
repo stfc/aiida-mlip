@@ -1,7 +1,7 @@
 """Example code for submitting single point calculation"""
 
 from pathlib import Path
-from typing import Union
+from typing import Optional, Union
 
 from ase.build import bulk
 from ase.io import read
@@ -15,7 +15,7 @@ from aiida.plugins import CalculationFactory
 from aiida_mlip.data.model import ModelData
 
 
-def load_model(string: Union[str, Path, None], architecture: str) -> ModelData:
+def load_model(url_or_path: Optional[Union[str, Path]], architecture: str) -> ModelData:
     """
     Load a model from a given string.
 
@@ -24,22 +24,22 @@ def load_model(string: Union[str, Path, None], architecture: str) -> ModelData:
 
     Parameters
     ----------
-    string : Union[str, Path, None]
+    url_or_path : Optional[Union[str, Path]]
         The string representing either a file path or a URL for downloading the model.
     architecture : str
         The architecture of the model.
 
     Returns
     -------
-    ModelData or None
-        The loaded model if successful, otherwise None.
+    ModelData
+        The loaded model.
     """
-    if string is None:
+    if url_or_path is None:
         model = None
-    elif (file_path := Path(string)).is_file():
+    elif (file_path := Path(url_or_path)).is_file():
         model = ModelData.local_file(file_path, architecture=architecture)
     else:
-        model = ModelData.download(string, architecture=architecture)
+        model = ModelData.download(url_or_path, architecture=architecture)
     return model
 
 
@@ -93,7 +93,7 @@ def singlepoint(params: dict) -> None:
 
     Returns
     -------
-        None
+    None
     """
 
     structure = load_structure(params["file"])

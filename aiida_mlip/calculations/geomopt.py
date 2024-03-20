@@ -41,28 +41,28 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             valid_type=Str,
             required=False,
             default=lambda: Str(cls._DEFAULT_TRAJ_FILE),
-            help="Trajectory file name",
+            help="Path to save optimization frames to",
         )
         spec.input(
             "fully_opt",
             valid_type=Bool,
             required=False,
             default=lambda: Bool(False),
-            help="Whether to optimize the cell as well as atomic positions.",
+            help="Fully optimize the cell vectors, angles, and atomic positions",
         )
         spec.input(
             "vectors_only",
             valid_type=Bool,
             required=False,
             default=lambda: Bool(False),
-            help="Whether to allow only hydrostatic deformations.",
+            help="Allow only cell vectors to change",
         )
         spec.input(
             "max_force",
             valid_type=Float,
             required=False,
             default=lambda: Float(0.1),
-            help="Set force convergence criteria for optimizer in units eV/Å.",
+            help="Maximum force for convergence",
         )
 
         spec.inputs["metadata"]["options"]["parser_name"].default = "janus.opt_parser"
