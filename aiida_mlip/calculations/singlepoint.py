@@ -153,16 +153,6 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
         if any(key not in port_namespace for key in ["structure"]):
             raise ValueError("'Structure' namespaces is required.")
 
-        # valid_calctypes = {"singlepoint", "geomopt"}
-        # if (
-        #     "calctype" in inputs
-        #     and str(inputs["calctype"].value) not in valid_calctypes
-        # ):
-        #     raise ValueError(
-        #         f"The 'calctype' must be one of {valid_calctypes}, "
-        #         f"but got '{inputs['calctype']}'."
-        #     )
-
         if "input_filename" in inputs:
             if not inputs["input_filename"].value.endswith(".cif"):
                 raise ValueError("The parameter 'input_filename' must end with '.cif'")

@@ -99,21 +99,19 @@ class GeomOptParser(SPParser):
         # Call the parent parse method to handle common parsing logic
         exit_code = super().parse(**kwargs)
 
-        if exit_code != ExitCode(0):
-            return exit_code
+        if exit_code == ExitCode(0):
+            traj_file = (self.node.inputs.traj).value
 
-        traj_file = (self.node.inputs.traj).value
+            # Parse the trajectory file and save it as `SingleFileData`
+            with self.retrieved.open(traj_file, "rb") as handle:
+                self.out("traj_file", SinglefileData(file=handle))
+            # Parse trajectory and save it as `TrajectoryData`
+            opt, traj_output = xyz_to_aiida_traj(
+                Path(self.node.get_remote_workdir(), traj_file)
+            )
+            self.out("traj_output", traj_output)
 
-        # Parse the trajectory file and save it as `SingleFileData`
-        with self.retrieved.open(traj_file, "rb") as handle:
-            self.out("traj_file", SinglefileData(file=handle))
-        # Parse trajectory and save it as `TrajectoryData`
-        opt, traj_output = xyz_to_aiida_traj(
-            Path(self.node.get_remote_workdir(), traj_file)
-        )
-        self.out("traj_output", traj_output)
+            # Parse the final structure of the trajectory to obtain the opt structure
+            self.out("final_structure", opt)
 
-        # Parse the final structure of the trajectory to obtain the optimized structure
-        self.out("final_structure", opt)
-
-        return ExitCode(0)
+        return exit_code
