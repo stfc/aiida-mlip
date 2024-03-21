@@ -9,7 +9,7 @@ import click
 
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
-from aiida.orm import Bool, Float, Str, StructureData, load_code, load_node
+from aiida.orm import Bool, Float, Int, Str, StructureData, load_code, load_node
 from aiida.plugins import CalculationFactory
 
 from aiida_mlip.data.model import ModelData
@@ -116,6 +116,8 @@ def singlepoint(params: dict) -> None:
         "max_force": Float(params["max_force"]),
         "vectors_only": Bool(params["vectors_only"]),
         "fully_opt": Bool(params["fully_opt"]),
+        "checkpoint": Bool(True),
+        "steps": Int(2),
     }
 
     # Run calculation

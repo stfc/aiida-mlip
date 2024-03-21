@@ -117,4 +117,11 @@ class GeomOptParser(SPParser):
             # Parse the final structure of the trajectory to obtain the opt structure
             self.out("final_structure", opt)
 
+            # if (self.node.inputs.checkpoint).value is True:
+            # Parse the restart file and save it as `SingleFileData`
+            with self.retrieved.open(
+                Path(self.node.get_remote_workdir(), "restart_file"), "rb"
+            ) as handle:
+                self.out("restart_file", SinglefileData(file=handle))
+
         return exit_code

@@ -1,10 +1,20 @@
 """Class to run geom opt calculations."""
 
+
 from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJobProcessSpec
 import aiida.engine.processes
-from aiida.orm import Bool, Float, SinglefileData, Str, StructureData, TrajectoryData
+from aiida.orm import (
+    Bool,
+    Dict,
+    Float,
+    Int,
+    SinglefileData,
+    Str,
+    StructureData,
+    TrajectoryData,
+)
 
 from aiida_mlip.calculations.singlepoint import Singlepoint
 
@@ -22,6 +32,7 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
     """
 
     _DEFAULT_TRAJ_FILE = "aiida-traj.xyz"
+    _DEFAULT_RESTART_FILE = "restart_file.txt"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
@@ -65,11 +76,37 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             help="Maximum force for convergence",
         )
 
+        spec.input(
+            "steps",
+            valid_type=Int,
+            required=False,
+            default=lambda: Int(1000),
+            help="Number of optimisation steps",
+        )
+
+        spec.input(
+            "checkpoint",
+            valid_type=Bool,
+            required=False,
+            default=lambda: Bool(False),
+            help="Number of optimisation steps",
+        )
+
+        spec.input(
+            "opt_kwargs",
+            valid_type=Dict,
+            required=False,
+            default=lambda: Dict({}),
+            help="Other optimisation keywords",
+        )
+
         spec.inputs["metadata"]["options"]["parser_name"].default = "janus.opt_parser"
 
         spec.output("traj_file", valid_type=SinglefileData)
         spec.output("traj_output", valid_type=TrajectoryData)
         spec.output("final_structure", valid_type=StructureData)
+
+        spec.output("restart_file", valid_type=SinglefileData)
 
     def prepare_for_submission(
         self, folder: aiida.common.folders.Folder
@@ -92,11 +129,18 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
         calcinfo = super().prepare_for_submission(folder)
         codeinfo = calcinfo.codes_info[0]
 
+        opt_kwargs = self.inputs.opt_kwargs.get_dict()
+
+        if self.inputs.checkpoint:
+            opt_kwargs.update({"restart": self._DEFAULT_RESTART_FILE})
+
         geom_opt_cmdline = {
             "traj": self.inputs.traj.value,
             "fully-opt": self.inputs.fully_opt.value,
             "vectors-only": self.inputs.vectors_only.value,
             "max-force": self.inputs.max_force.value,
+            "steps": self.inputs.steps.value,
+            "opt-kwargs": opt_kwargs,
         }
 
         codeinfo.cmdline_params[0] = "geomopt"
@@ -110,5 +154,8 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
                 codeinfo.cmdline_params += [f"--{flag}", value]
 
         calcinfo.retrieve_list.append(self.inputs.traj.value)
+
+        # if (self.inputs.checkpoint).value is True:
+        calcinfo.retrieve_list.append(self._DEFAULT_RESTART_FILE)
 
         return calcinfo
