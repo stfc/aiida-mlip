@@ -4,12 +4,14 @@ from pathlib import Path
 from typing import Optional, Union
 
 from ase.build import bulk
-from ase.io import read
+
+# from ase.io import read
+import ase.io
 import click
 
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
-from aiida.orm import Bool, Float, Int, Str, StructureData, load_code, load_node
+from aiida.orm import Bool, Dict, Float, Int, Str, StructureData, load_code, load_node
 from aiida.plugins import CalculationFactory
 
 from aiida_mlip.data.model import ModelData
@@ -72,8 +74,8 @@ def load_structure(struct: Union[str, Path, int, None]) -> StructureData:
     elif isinstance(struct, int) or (isinstance(struct, str) and struct.isdigit()):
         structure_pk = int(struct)
         structure = load_node(structure_pk)
-    elif Path.exists(struct):
-        structure = StructureData(ase=read(struct))
+    elif Path.exists(Path(struct)):
+        structure = StructureData(ase=ase.io.read(Path(struct)))
     else:
         raise click.BadParameter(
             f"Invalid input: {struct}. Must be either node PK (int) or a valid \
@@ -96,7 +98,7 @@ def singlepoint(params: dict) -> None:
     None
     """
 
-    structure = load_structure(params["file"])
+    structure = load_structure(Path(params["file"]))
 
     # Select model to use
     model = load_model(params["model"], params["architecture"])
@@ -116,8 +118,8 @@ def singlepoint(params: dict) -> None:
         "max_force": Float(params["max_force"]),
         "vectors_only": Bool(params["vectors_only"]),
         "fully_opt": Bool(params["fully_opt"]),
-        "checkpoint": Bool(True),
-        "steps": Int(2),
+        "opt_kwargs": Dict({"restart": "rest.pkl"}),
+        "steps": Int(3),
     }
 
     # Run calculation
