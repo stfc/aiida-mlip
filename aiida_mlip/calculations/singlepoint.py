@@ -1,5 +1,7 @@
 """Class to run single point calculations."""
 
+from ase.io import write
+
 from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
@@ -35,7 +37,7 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
     """
 
     _DEFAULT_OUTPUT_FILE = "aiida-stdout.txt"
-    _DEFAULT_INPUT_FILE = "aiida.cif"
+    _DEFAULT_INPUT_FILE = "aiida.xyz"
     _XYZ_OUTPUT = "aiida-results.xyz"
     _LOG_FILE = "aiida.log"
 
@@ -154,7 +156,7 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
             raise ValueError("'Structure' namespaces is required.")
 
         if "input_filename" in inputs:
-            if not inputs["input_filename"].value.endswith(".cif"):
+            if not inputs["input_filename"].value.endswith(".xyz"):
                 raise ValueError("The parameter 'input_filename' must end with '.cif'")
 
     # pylint: disable=too-many-locals
@@ -196,19 +198,21 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
         xyz_filename = (self.inputs.xyz_output_name).value
         input_filename = self.inputs.metadata.options.input_filename
         log_filename = (self.inputs.log_filename).value
-        # Transform the structure data in cif file called input_filename
+
+        # Transform the structure data in xyz file called input_filename
         structure = self.inputs.structure
-        cif_structure = structure.get_cif()
-        with folder.open(self._DEFAULT_INPUT_FILE, "w", encoding="utf-8") as inputfile:
-            inputfile.write(cif_structure.get_content())
+
+        atoms = structure.get_ase()
+        with folder.open(input_filename, "w", encoding="utf-8") as inputfile:
+            write(inputfile, images=atoms)
 
         cmd_line = {
             "arch": architecture,
             "struct": input_filename,
             "device": device,
             "log": log_filename,
+            "out": xyz_filename,
             "calc-kwargs": {"model": model_path, "default_dtype": precision},
-            "write-kwargs": {"filename": xyz_filename},
         }
 
         codeinfo = datastructures.CodeInfo()
