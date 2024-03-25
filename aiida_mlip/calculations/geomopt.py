@@ -65,7 +65,7 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             valid_type=Bool,
             required=False,
             default=lambda: Bool(False),
-            help="Allow only cell vectors to change",
+            help="Optimize cell vectors, as well as atomic positions",
         )
         spec.input(
             "max_force",
