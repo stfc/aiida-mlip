@@ -152,7 +152,7 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
         """
         # Wrapping processes may choose to exclude certain input ports
         # If the ports have been excluded, skip the validation.
-        if any(key not in port_namespace for key in ["structure"]):
+        if "structure" not in port_namespace:
             raise ValueError("'Structure' namespaces is required.")
 
         if "input_filename" in inputs:
