@@ -35,19 +35,23 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "--arch",
         "mace",
         "--struct",
-        "aiida.cif",
+        "aiida.xyz",
         "--device",
         "cpu",
         "--log",
         "aiida.log",
+        "--out",
+        "aiida-results.xyz",
         "--calc-kwargs",
         f"{{'model': '{model_file}', 'default_dtype': 'float64'}}",
-        "--write-kwargs",
-        "{'filename': 'aiida-results.xyz'}",
         "--traj",
         "aiida-traj.xyz",
         "--max-force",
         0.1,
+        "--steps",
+        1000,
+        "--opt-kwargs",
+        {},
     ]
 
     retrieve_list = [
@@ -58,8 +62,11 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "aiida-traj.xyz",
     ]
 
+    print(calc_info.codes_info[0].cmdline_params)
+    print(cmdline_params)
+
     # Check the attributes of the returned `CalcInfo`
-    assert sorted(fixture_sandbox.get_content_list()) == ["aiida.cif"]
+    assert sorted(fixture_sandbox.get_content_list()) == ["aiida.xyz"]
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
     assert len(calc_info.codes_info[0].cmdline_params) == len(cmdline_params)

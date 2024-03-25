@@ -31,7 +31,6 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
     """
 
     _DEFAULT_TRAJ_FILE = "aiida-traj.xyz"
-    _DEFAULT_RESTART_FILE = "restart_file.txt"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:

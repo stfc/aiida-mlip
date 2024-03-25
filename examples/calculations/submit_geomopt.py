@@ -98,7 +98,7 @@ def singlepoint(params: dict) -> None:
     None
     """
 
-    structure = load_structure(Path(params["file"]))
+    structure = load_structure(params["file"])
 
     # Select model to use
     model = load_model(params["model"], params["architecture"])

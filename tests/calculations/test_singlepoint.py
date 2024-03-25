@@ -35,15 +35,15 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "--arch",
         "mace",
         "--struct",
-        "aiida.cif",
+        "aiida.xyz",
         "--device",
         "cpu",
         "--log",
         "aiida.log",
+        "--out",
+        "aiida-results.xyz",
         "--calc-kwargs",
         f"{{'model': '{model_file}', 'default_dtype': 'float64'}}",
-        "--write-kwargs",
-        "{'filename': 'aiida-results.xyz'}",
     ]
 
     retrieve_list = [
@@ -54,7 +54,7 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
     ]
 
     # Check the attributes of the returned `CalcInfo`
-    assert sorted(fixture_sandbox.get_content_list()) == ["aiida.cif"]
+    assert sorted(fixture_sandbox.get_content_list()) == ["aiida.xyz"]
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
     assert sorted(calc_info.codes_info[0].cmdline_params) == sorted(cmdline_params)
@@ -100,6 +100,7 @@ def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, fixture_c
 def test_run_sp(model_folder, janus_code):
     """Test running singlepoint calculation"""
     model_file = model_folder / "mace_mp_small.model"
+    print(model_file)
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
