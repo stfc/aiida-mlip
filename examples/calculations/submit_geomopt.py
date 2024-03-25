@@ -45,7 +45,7 @@ def load_model(model: Optional[Union[str, Path]], architecture: str) -> ModelDat
     return loaded_model
 
 
-def load_structure(struct: Union[str, Path, int, None]) -> StructureData:
+def load_structure(struct: Optional[Union[str, Path, int]]) -> StructureData:
     """
     Load a StructureData instance from the given input.
 
@@ -55,7 +55,7 @@ def load_structure(struct: Union[str, Path, int, None]) -> StructureData:
 
     Parameters
     ----------
-    struct : Union[str, Path, int, None]
+    struct : Optional[Union[str, Path, int]]
         The input value representing either a path to a structure file, a node PK,
         or None.
 
