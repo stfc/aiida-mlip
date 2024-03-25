@@ -17,17 +17,17 @@ from aiida.plugins import CalculationFactory
 from aiida_mlip.data.model import ModelData
 
 
-def load_model(url_or_path: Optional[Union[str, Path]], architecture: str) -> ModelData:
+def load_model(model: Optional[Union[str, Path]], architecture: str) -> ModelData:
     """
-    Load a model from a given string.
+    Load a model from a file path or URL.
 
     If the string represents a file path, the model will be loaded from that path.
     Otherwise, the model will be downloaded from the specified location.
 
     Parameters
     ----------
-    url_or_path : Optional[Union[str, Path]]
-        The string representing either a file path or a URL for downloading the model.
+    model : Optional[Union[str, Path]]
+        Model file path or a URL for downloading the model.
     architecture : str
         The architecture of the model.
 
@@ -36,13 +36,13 @@ def load_model(url_or_path: Optional[Union[str, Path]], architecture: str) -> Mo
     ModelData
         The loaded model.
     """
-    if url_or_path is None:
-        model = None
+    if model is None:
+        loaded_model = None
     elif (file_path := Path(url_or_path)).is_file():
-        model = ModelData.local_file(file_path, architecture=architecture)
+        loaded_model = ModelData.local_file(file_path, architecture=architecture)
     else:
-        model = ModelData.download(url_or_path, architecture=architecture)
-    return model
+        loaded_model = ModelData.download(url_or_path, architecture=architecture)
+    return loaded_model
 
 
 def load_structure(struct: Union[str, Path, int, None]) -> StructureData:
