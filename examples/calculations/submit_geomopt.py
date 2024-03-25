@@ -38,10 +38,10 @@ def load_model(model: Optional[Union[str, Path]], architecture: str) -> ModelDat
     """
     if model is None:
         loaded_model = None
-    elif (file_path := Path(url_or_path)).is_file():
+    elif (file_path := Path(model)).is_file():
         loaded_model = ModelData.local_file(file_path, architecture=architecture)
     else:
-        loaded_model = ModelData.download(url_or_path, architecture=architecture)
+        loaded_model = ModelData.download(model, architecture=architecture)
     return loaded_model
 
 
