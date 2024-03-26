@@ -53,7 +53,7 @@ A quick demo of how to submit a calculation using the provided example files sub
 verdi daemon start     # make sure the daemon is running
 cd examples
 verdi run submit_singlepoint.py "janus@localhost" --architecture mace --model "/path/to/model"    # run test calculation
-verdi run submit_geomopt.py janus@localhost  --structure "path/to/structure" --model "path/to/model" --steps 5 --fully-opt True
+verdi run submit_geomopt.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --steps 5 --fully-opt True
 verdi process list -a  # check record of calculation
 ```
 
