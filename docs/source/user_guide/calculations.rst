@@ -66,4 +66,4 @@ They will be converted to AiiDA data types by the script itself.
 
 .. code-block:: python
 
-    verdi run submit_geomopt.py janus@localhost  --structure "path/to/structure" --model "path/to/model" --precision "float64" --device "cpu"
+    verdi run submit_geomopt.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --precision "float64" --device "cpu"
