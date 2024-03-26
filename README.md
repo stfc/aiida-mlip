@@ -98,7 +98,7 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
 * [`examples/`](examples/): Examples for submitting calculations using this plugin
   * [`calculations/`](examples/calculations/): Scripts for submitting calculations
     * [`submit_singlepoint.py`](examples/calculations/submit_singlepoint.py): Script for submitting a singlepoint calculation
-    * [`submit_geomopt.py`](examples/calculations/submit_singlepoint.py): Script for submitting a geometry optimisation calculation
+    * [`submit_geomopt.py`](examples/calculations/submit_geomopt.py): Script for submitting a geometry optimisation calculation
 * [`tests/`](tests/): Basic regression tests using the [pytest](https://docs.pytest.org/en/latest/) framework (submitting a calculation, ...). Install `pip install -e .[testing]` and run `pytest`.
   * [`conftest.py`](tests/conftest.py): Configuration of fixtures for [pytest](https://docs.pytest.org/en/latest/)
   * [`calculations/`](tests/calculations): Calculations
