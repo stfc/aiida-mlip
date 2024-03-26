@@ -85,10 +85,10 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
     * [`model.py/`](aiida_mlip/data/model.py) `ModelData` class to save mlip models as AiiDA data types
   * [`calculations/`](aiida_mlip/calculations/): Plugin `Calcjob` classes
     * [`singlepoint.py](aiida_mlip/calculations/singlepoint.py ): `Calcjob` class to run single point calculations using mlips
-    * [`geomopt.py](aiida_mlip/calculations/singlepoint.py ): `Calcjob` class to run single point calculations using mlips
+    * [`geomopt.py`](aiida_mlip/calculations/geomopt.py): `Calcjob` class to perform geometry optimization using mlips
   * [`parsers/`](aiida_mlip/parsers/): `Parsers` for the calculations
-    * [`sp_parser.py](aiida_mlip/parsers/sp_parser.py ): `Parser` for `Singlepoint` calculation.
-    * [`opt_parser.py](aiida_mlip/parsers/opt_parser.py ): `Parser` for `Geomopt` calculation.
+    * [`sp_parser.py`](aiida_mlip/parsers/sp_parser.py): `Parser` for `Singlepoint` calculation.
+    * [`opt_parser.py`](aiida_mlip/parsers/opt_parser.py): `Parser` for `Geomopt` calculation.
   * [`helpers/`](aiida_mlip/helpers/): `Helpers` to run calculations.
 * [`docs/`](docs/source/): Code documentation
   * [`apidoc/`](docs/source/apidoc/): API documentation
