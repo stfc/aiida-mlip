@@ -98,7 +98,7 @@ def test_run_opt(model_folder, janus_code):
     assert "traj_output" in result
     assert "traj_file" in result
     assert result["traj_output"].numsteps == 3
-    assert result["final_structure"].cell[0][0] == pytest.approx(4.0223130461422)
+    assert result["final_structure"].cell[0][1] == pytest.approx(2.8442048309822)
 
 
 def test_example_opt(example_path):
