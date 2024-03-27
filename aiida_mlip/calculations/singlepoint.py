@@ -1,5 +1,7 @@
 """Class to run single point calculations."""
 
+from ase.io import write
+
 from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
@@ -35,7 +37,7 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
     """
 
     _DEFAULT_OUTPUT_FILE = "aiida-stdout.txt"
-    _DEFAULT_INPUT_FILE = "aiida.cif"
+    _DEFAULT_INPUT_FILE = "aiida.xyz"
     _XYZ_OUTPUT = "aiida-results.xyz"
     _LOG_FILE = "aiida.log"
 
@@ -53,22 +55,16 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
 
         # Define inputs
         spec.input(
-            "calctype",
-            valid_type=Str,
-            default=lambda: Str("singlepoint"),
-            help="calculation type (single point or geom opt)",
-        )
-        spec.input(
             "architecture",
             valid_type=Str,
             default=lambda: Str("mace"),
-            help="Architecture to use for calculation, defaults to mace",
+            help="Mlip architecture to use for calculation, defaults to mace",
         )
         spec.input(
             "model",
             valid_type=ModelData,
             required=False,
-            help="mlip model used for calculation",
+            help="Mlip model used for calculation",
         )
         spec.input("structure", valid_type=StructureData, help="The input structure.")
         spec.input("precision", valid_type=Str, help="Precision level for calculation")
@@ -111,7 +107,7 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
             default="_scheduler-stdout.txt",
             help="Filename to which the content of stdout of the scheduler is written.",
         )
-        spec.inputs["metadata"]["options"]["parser_name"].default = "janus.parser"
+        spec.inputs["metadata"]["options"]["parser_name"].default = "janus.sp_parser"
         spec.inputs.validator = cls.validate_inputs
         # Define outputs. The default is a dictionary with the content of the xyz file
         spec.output(
@@ -156,27 +152,11 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
         """
         # Wrapping processes may choose to exclude certain input ports
         # If the ports have been excluded, skip the validation.
-        if any(key not in port_namespace for key in ("calctype", "structure")):
-            raise ValueError("Both 'calctype' and 'structure' namespaces are required.")
-
-        for key in ("calctype", "structure"):
-            if key not in inputs:
-                raise ValueError(
-                    f"Required value was not provided for the `{key}` namespace."
-                )
-
-        valid_calctypes = {"singlepoint", "geom opt"}
-        if (
-            "calctype" in inputs
-            and str(inputs["calctype"].value) not in valid_calctypes
-        ):
-            raise ValueError(
-                f"The 'calctype' must be one of {valid_calctypes}, "
-                f"but got '{inputs['calctype']}'."
-            )
+        if "structure" not in port_namespace:
+            raise ValueError("'Structure' namespaces is required.")
 
         if "input_filename" in inputs:
-            if not inputs["input_filename"].value.endswith(".cif"):
+            if not inputs["input_filename"].value.endswith(".xyz"):
                 raise ValueError("The parameter 'input_filename' must end with '.cif'")
 
     # pylint: disable=too-many-locals
@@ -213,33 +193,35 @@ class Singlepoint(CalcJob):  # numpydoc ignore=PR01
             ).filepath
 
         # The inputs are saved in the node, but we want their value as a string
-        calctype = (self.inputs.calctype).value
         precision = (self.inputs.precision).value
         device = (self.inputs.device).value
         xyz_filename = (self.inputs.xyz_output_name).value
         input_filename = self.inputs.metadata.options.input_filename
         log_filename = (self.inputs.log_filename).value
-        # Transform the structure data in cif file called input_filename
+
+        # Transform the structure data in xyz file called input_filename
         structure = self.inputs.structure
-        cif_structure = structure.get_cif()
-        with folder.open(self._DEFAULT_INPUT_FILE, "w", encoding="utf-8") as inputfile:
-            inputfile.write(cif_structure.get_content())
+
+        atoms = structure.get_ase()
+        with folder.open(input_filename, "w", encoding="utf-8") as inputfile:
+            write(inputfile, images=atoms)
 
         cmd_line = {
             "arch": architecture,
             "struct": input_filename,
             "device": device,
             "log": log_filename,
+            "out": xyz_filename,
             "calc-kwargs": {"model": model_path, "default_dtype": precision},
-            "write-kwargs": {"filename": xyz_filename},
         }
 
         codeinfo = datastructures.CodeInfo()
 
         # Initialize cmdline_params as an empty list
         codeinfo.cmdline_params = []
+
         # Adding command line params for when we run janus
-        codeinfo.cmdline_params.append(calctype)
+        codeinfo.cmdline_params.append("singlepoint")
         for flag, value in cmd_line.items():
             codeinfo.cmdline_params += [f"--{flag}", str(value)]
 

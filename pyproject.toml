@@ -34,7 +34,7 @@ PyCifRW = "^4.4.6"
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "^7.4.1"}
-janus-core = "^0.1.0b2"
+janus-core = "^0.1.0b4"
 pgtest = "^1.3.2"
 pytest = "^8.0"
 pytest-cov = "^4.1.0"
@@ -69,9 +69,11 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.plugins."aiida.calculations"]
 "janus.sp" = "aiida_mlip.calculations.singlepoint:Singlepoint"
+"janus.opt" = "aiida_mlip.calculations.geomopt:GeomOpt"
 
 [tool.poetry.plugins."aiida.parsers"]
-"janus.parser" = "aiida_mlip.parsers:SPParser"
+"janus.sp_parser" = "aiida_mlip.parsers.sp_parser:SPParser"
+"janus.opt_parser" = "aiida_mlip.parsers.opt_parser:GeomOptParser"
 
 
 [tool.black]

@@ -16,7 +16,7 @@ machine learning interatomic potentials aiida plugin
   - M3GNET
   - CHGNET
 - [x] Single point calculations
-- [ ] Geometry optimisation
+- [x] Geometry optimisation
 - [ ] Molecular Dynamics:
   - NVE
   - NVT (Langevin(Eijnden/Ciccotti flavour) and Nosé-Hoover (Melchionna flavour))
@@ -24,7 +24,8 @@ machine learning interatomic potentials aiida plugin
 - [ ] Training ML potentials (MACE only planned)
 - [ ] Fine tunning MLIPs (MACE only planned)
 
-The code relies heavily on ASE, unless something else is mentioned.
+The code relies heavily on [janus-core](https://github.com/stfc/janus-core), which handles mlip calculations using ASE.
+
 
 
 ## Installation
@@ -32,19 +33,27 @@ The code relies heavily on ASE, unless something else is mentioned.
 ```shell
 pip install aiida-mlip
 verdi quicksetup  # better to set up a new profile
-verdi plugin list aiida.calculations  # should now show your calculation plugins
+verdi plugin list aiida.calculations
+```
+The last command should show a list of AiiDA pre-installed calculations and the aiida-mlip plugin calculations (janus.opt, janus.sp)
+```
+Registered entry points for aiida.calculations:
+* core.arithmetic.add
+* core.templatereplacer
+* core.transfer
+* janus.opt
+* janus.sp
 ```
 
 
 ## Usage
 
-Here goes a complete example of how to submit a test calculation using this plugin.
-
-A quick demo of how to submit a calculation:
+A quick demo of how to submit a calculation using the provided example files submit_singlepoint.py and submit_geomopt.py:
 ```shell
 verdi daemon start     # make sure the daemon is running
-cd examples
-verdi run submit_singlepoint.py "janus@localhost" --calctype "singlepoint"  --architecture mace --model "~./cache/mlips/mace/46jrkm3v"       # run test calculation
+cd examples/calculations
+verdi run submit_singlepoint.py "janus@localhost" --architecture mace --model "/path/to/model"    # run test calculation
+verdi run submit_geomopt.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --steps 5 --fully-opt True
 verdi process list -a  # check record of calculation
 ```
 
@@ -75,19 +84,26 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
   * [`data/`](aiida_mlip/data/): Plugin `Data` classes
     * [`model.py/`](aiida_mlip/data/model.py) `ModelData` class to save mlip models as AiiDA data types
   * [`calculations/`](aiida_mlip/calculations/): Plugin `Calcjob` classes
-    * [`singlepoint.py](aiida_mlip/calculations/singlepoint.py ): `Calcjob` class to run single point calculations using mlips
-  * [`parsers.py`](aiida_mlip/parsers.py): `Parser` for the `Singlepoint` calculation
+    * [`singlepoint.py`](aiida_mlip/calculations/singlepoint.py): `Calcjob` class to run single point calculations using mlips
+    * [`geomopt.py`](aiida_mlip/calculations/geomopt.py): `Calcjob` class to perform geometry optimization using mlips
+  * [`parsers/`](aiida_mlip/parsers/): `Parsers` for the calculations
+    * [`sp_parser.py`](aiida_mlip/parsers/sp_parser.py): `Parser` for `Singlepoint` calculation.
+    * [`opt_parser.py`](aiida_mlip/parsers/opt_parser.py): `Parser` for `Geomopt` calculation.
+  * [`helpers/`](aiida_mlip/helpers/): `Helpers` to run calculations.
 * [`docs/`](docs/source/): Code documentation
   * [`apidoc/`](docs/source/apidoc/): API documentation
   * [`developer_guide/`](docs/source/developer_guide/): Documentation for developers
   * [`user_guide/`](docs/source/user_guide/): Documentation for users
   * [`images/`](docs/source/images/): Logos etc used in the documentation
 * [`examples/`](examples/): Examples for submitting calculations using this plugin
-  * [`calculations/submit_singlepoint.py`](examples/calculations/submit_singlepoint.py): Script for submitting a singlepoint calculation
+  * [`calculations/`](examples/calculations/): Scripts for submitting calculations
+    * [`submit_singlepoint.py`](examples/calculations/submit_singlepoint.py): Script for submitting a singlepoint calculation
+    * [`submit_geomopt.py`](examples/calculations/submit_geomopt.py): Script for submitting a geometry optimisation calculation
 * [`tests/`](tests/): Basic regression tests using the [pytest](https://docs.pytest.org/en/latest/) framework (submitting a calculation, ...). Install `pip install -e .[testing]` and run `pytest`.
   * [`conftest.py`](tests/conftest.py): Configuration of fixtures for [pytest](https://docs.pytest.org/en/latest/)
   * [`calculations/`](tests/calculations): Calculations
     * [`test_singlepoint.py`](tests/calculations/test_singlepoint.py): Test `SinglePoint` calculation
+    * [`test_geomopt.py`](tests/calculations/test_geomopt.py): Test `Geomopt` calculation
   * [`data/`](tests/data): `ModelData`
     * [`test_model.py`](tests/data/test_model.py): Test `ModelData` type
 * [`.gitignore`](.gitignore): Telling git which files to ignore
