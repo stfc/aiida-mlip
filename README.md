@@ -86,9 +86,12 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
   * [`calculations/`](aiida_mlip/calculations/): Plugin `Calcjob` classes
     * [`singlepoint.py`](aiida_mlip/calculations/singlepoint.py): `Calcjob` class to run single point calculations using mlips
     * [`geomopt.py`](aiida_mlip/calculations/geomopt.py): `Calcjob` class to perform geometry optimization using mlips
+    * [`base.py`](aiida_mlip/calculations/base.py): Base `Calcjob` class for other calculations
+    * [`md.py`](aiida_mlip/calculations/md.py): `Calcjob` class to perform molecular dynamics using mlips
   * [`parsers/`](aiida_mlip/parsers/): `Parsers` for the calculations
     * [`sp_parser.py`](aiida_mlip/parsers/sp_parser.py): `Parser` for `Singlepoint` calculation.
     * [`opt_parser.py`](aiida_mlip/parsers/opt_parser.py): `Parser` for `Geomopt` calculation.
+    * [`md_parser.py`](aiida_mlip/parsers/opt_parser.py): `Parser` for `MD` calculation.
   * [`helpers/`](aiida_mlip/helpers/): `Helpers` to run calculations.
 * [`docs/`](docs/source/): Code documentation
   * [`apidoc/`](docs/source/apidoc/): API documentation

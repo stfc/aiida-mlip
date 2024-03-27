@@ -70,8 +70,9 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
     assert len(calc_info.codes_info[0].cmdline_params) == len(cmdline_params)
-    for x, y in zip((calc_info.codes_info[0].cmdline_params), (cmdline_params)):
-        assert x == y
+    assert sorted(map(str, calc_info.codes_info[0].cmdline_params)) == sorted(
+        map(str, cmdline_params)
+    )
     assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
 
 

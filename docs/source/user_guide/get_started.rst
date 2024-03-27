@@ -17,7 +17,7 @@ Use the following commands to install the plugin::
     verdi quicksetup  # better to set up a new profile
     verdi plugin list aiida.calculations  # should now show your calculation plugins
 
-Then use ``verdi code setup`` with the ``mlip`` input plugin
+Then use ``verdi code setup`` with the ``janus`` input plugin
 to set up an AiiDA code for aiida-mlip.
 
 Usage
