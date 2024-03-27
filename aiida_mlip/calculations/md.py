@@ -4,18 +4,12 @@ from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJobProcessSpec
 import aiida.engine.processes
-from aiida.orm import (
-    Dict,
-    SinglefileData,
-    Str,
-    StructureData,
-    TrajectoryData,
-)
+from aiida.orm import Dict, SinglefileData, Str, StructureData, TrajectoryData
 
-from aiida_mlip.calculations.singlepoint import Singlepoint
+from aiida_mlip.calculations.base import BaseJanus
 
 
-class MD(Singlepoint):  # numpydoc ignore=PR01
+class MD(BaseJanus):  # numpydoc ignore=PR01
     """
     Calcjob implementation to run geometry MD calculations using mlips.
 
