@@ -1,20 +1,21 @@
-"""Example code for submitting geometry optimisation calculation"""
+"""Example code for submitting single point calculation"""
 
+import json
 from pathlib import Path
 
 import click
 
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
-from aiida.orm import Bool, Dict, Float, Int, Str, load_code
+from aiida.orm import Dict, Str, load_code
 from aiida.plugins import CalculationFactory
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
 
-def geomopt(params: dict) -> None:
+def MD(params: dict) -> None:
     """
-    Prepare inputs and run a geometry optimisation calculation.
+    Prepare inputs and run a single point calculation.
 
     Parameters
     ----------
@@ -32,7 +33,7 @@ def geomopt(params: dict) -> None:
     model = load_model(params["model"], params["architecture"])
 
     # Select calculation to use
-    geomoptCalculation = CalculationFactory("janus.opt")
+    MDCalculation = CalculationFactory("janus.md")
 
     # Define inputs
     inputs = {
@@ -43,15 +44,12 @@ def geomopt(params: dict) -> None:
         "model": model,
         "precision": Str(params["precision"]),
         "device": Str(params["device"]),
-        "max_force": Float(params["max_force"]),
-        "vectors_only": Bool(params["vectors_only"]),
-        "fully_opt": Bool(params["fully_opt"]),
-        "opt_kwargs": Dict({"restart": "rest.pkl"}),
-        "steps": Int(params["steps"]),
+        "ensemble": Str(params["ensemble"]),
+        "md_dict": Dict(params["md_dict"]),
     }
 
     # Run calculation
-    result, node = run_get_node(geomoptCalculation, **inputs)
+    result, node = run_get_node(MDCalculation, **inputs)
     print(f"Printing results from calculation: {result}")
     print(f"Printing node of calculation: {node}")
 
@@ -74,24 +72,14 @@ def geomopt(params: dict) -> None:
 @click.option("--architecture", default="mace_mp", type=str)
 @click.option("--device", default="cpu", type=str)
 @click.option("--precision", default="float64", type=str)
-@click.option("--max_force", default=0.1, type=float)
-@click.option("--vectors_only", default=False, type=bool)
-@click.option("--fully_opt", default=False, type=bool)
-@click.option("--steps", default=1000, type=int)
+@click.option("--ensemble", default="nve", type=str)
+@click.option("--md_dict_str", default="{}", type=str)
 def cli(
-    codelabel,
-    file,
-    model,
-    architecture,
-    device,
-    precision,
-    max_force,
-    vectors_only,
-    fully_opt,
-    steps,
+    codelabel, file, model, architecture, device, precision, ensemble, md_dict_str
 ) -> None:
-    # pylint: disable=too-many-arguments
     """Click interface."""
+    # pylint: disable=too-many-arguments
+    md_dict = json.loads(md_dict_str)
     try:
         code = load_code(codelabel)
     except NotExistent as exc:
@@ -105,14 +93,12 @@ def cli(
         "architecture": architecture,
         "device": device,
         "precision": precision,
-        "max_force": max_force,
-        "vectors_only": vectors_only,
-        "fully_opt": fully_opt,
-        "steps": steps,
+        "ensemble": ensemble,
+        "md_dict": md_dict,
     }
 
     # Submit single point
-    geomopt(params)
+    MD(params)
 
 
 if __name__ == "__main__":

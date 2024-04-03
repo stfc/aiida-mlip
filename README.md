@@ -17,7 +17,7 @@ machine learning interatomic potentials aiida plugin
   - CHGNET
 - [x] Single point calculations
 - [x] Geometry optimisation
-- [ ] Molecular Dynamics:
+- [x] Molecular Dynamics:
   - NVE
   - NVT (Langevin(Eijnden/Ciccotti flavour) and Nosé-Hoover (Melchionna flavour))
   - NPT (Nosé-Hoover (Melchiona flavour))
@@ -91,7 +91,7 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
   * [`parsers/`](aiida_mlip/parsers/): `Parsers` for the calculations
     * [`sp_parser.py`](aiida_mlip/parsers/sp_parser.py): `Parser` for `Singlepoint` calculation.
     * [`opt_parser.py`](aiida_mlip/parsers/opt_parser.py): `Parser` for `Geomopt` calculation.
-    * [`md_parser.py`](aiida_mlip/parsers/opt_parser.py): `Parser` for `MD` calculation.
+    * [`md_parser.py`](aiida_mlip/parsers/md_parser.py): `Parser` for `MD` calculation.
   * [`helpers/`](aiida_mlip/helpers/): `Helpers` to run calculations.
 * [`docs/`](docs/source/): Code documentation
   * [`apidoc/`](docs/source/apidoc/): API documentation

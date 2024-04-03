@@ -13,7 +13,7 @@ from aiida.orm import SinglefileData, StructureData, TrajectoryData
 from aiida.orm.nodes.process.process import ProcessNode
 from aiida.plugins import CalculationFactory
 
-from aiida_mlip.parsers.sp_parser import SPParser
+from aiida_mlip.parsers.base_parser import BaseParser
 
 MDCalculation = CalculationFactory("janus.md")
 
@@ -44,7 +44,7 @@ def xyz_to_aiida_traj(
     return traj[-1], TrajectoryData(traj)
 
 
-class MDParser(SPParser):
+class MDParser(BaseParser):
     """
     Parser class for parsing output of geometry optimization calculation.
 
@@ -101,21 +101,20 @@ class MDParser(SPParser):
         """
         # Call the parent parse method to handle common parsing logic
         exit_code = super().parse(**kwargs)
-
         if exit_code == ExitCode(0):
-            if self.node.inputs.md_dict.traj:
-                traj_file = (self.node.inputs.traj).value
-
-                # Parse the trajectory file and save it as `SingleFileData`
-                with self.retrieved.open(traj_file, "rb") as handle:
+            md_dict = self.node.inputs.md_dict.get_dict()
+            if "traj-file" in md_dict:
+                with self.retrieved.open(md_dict["traj-file"], "rb") as handle:
                     self.out("traj_file", SinglefileData(file=handle))
-                # Parse trajectory and save it as `TrajectoryData`
-                fin, traj_output = xyz_to_aiida_traj(
-                    Path(self.node.get_remote_workdir(), traj_file)
-                )
-                self.out("traj_output", traj_output)
+            with self.retrieved.open(md_dict["stats-file"], "rb") as handle:
+                self.out("stats_file", SinglefileData(file=handle))
+            # Parse trajectory and save it as `TrajectoryData`
+            fin, traj_output = xyz_to_aiida_traj(
+                Path(self.node.get_remote_workdir(), md_dict["traj-file"])
+            )
+            self.out("traj_output", traj_output)
 
-                # Parse the final structure of the trajectory 
-                self.out("final_structure", fin)
+            # Parse the final structure of the trajectory
+            self.out("final_structure", fin)
 
         return exit_code

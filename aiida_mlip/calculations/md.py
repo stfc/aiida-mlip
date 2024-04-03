@@ -22,6 +22,7 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
     """
 
     _DEFAULT_TRAJ_FILE = "aiida-traj.xyz"
+    _DEFAULT_STATS_FILE = "aiida-stats.dat"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
@@ -53,7 +54,7 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
 
         spec.inputs["metadata"]["options"]["parser_name"].default = "janus.md_parser"
 
-        spec.output("stat_file", valid_type=SinglefileData)
+        spec.output("stats_file", valid_type=SinglefileData)
         spec.output("traj_file", valid_type=SinglefileData)
         spec.output("traj_output", valid_type=TrajectoryData)
         spec.output("final_structure", valid_type=StructureData)
@@ -80,10 +81,15 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
         codeinfo = calcinfo.codes_info[0]
 
         md_dict = self.inputs.md_dict.get_dict()
+        if not "traj-file" in md_dict:
+            md_dict["traj-file"] = str(self._DEFAULT_TRAJ_FILE)
+        if not "stats-file" in md_dict:
+            md_dict["stats-file"] = str(self._DEFAULT_STATS_FILE)
 
         ensemble = self.inputs.ensemble.value.lower()
         codeinfo.cmdline_params[0] = "md"
-        codeinfo.cmdline_params.append(f"--ensemble : {ensemble}")
+
+        codeinfo.cmdline_params += ["--ensemble", ensemble]
 
         for flag, value in md_dict.items():
             if isinstance(value, bool):
@@ -93,6 +99,7 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
             else:
                 codeinfo.cmdline_params += [f"--{flag}", value]
 
-        calcinfo.retrieve_list.append(self.inputs.traj.value)
+        calcinfo.retrieve_list.append(md_dict["traj-file"])
+        calcinfo.retrieve_list.append(md_dict["stats-file"])
 
         return calcinfo

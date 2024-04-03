@@ -2,43 +2,13 @@
 Parsers provided by aiida_mlip.
 """
 
-from pathlib import Path
-
-from ase.io import read
-import numpy as np
-
-from aiida.common import exceptions
 from aiida.engine import ExitCode
-from aiida.orm import Dict, SinglefileData
+from aiida.orm import SinglefileData
 from aiida.orm.nodes.process.process import ProcessNode
-from aiida.plugins import CalculationFactory
-
-from aiida_mlip.parsers.base_parser import BaseParser
-
-singlePointCalculation = CalculationFactory("janus.sp")
+from aiida.parsers.parser import Parser
 
 
-def convert_numpy(dictionary: dict) -> dict:
-    """
-    A function to convert numpy ndarrays in dictionary into lists.
-
-    Parameters
-    ----------
-    dictionary : dict
-        A dictionary with numpy array values to be converted into lists.
-
-    Returns
-    -------
-    dict
-        Converted dictionary.
-    """
-    for key, value in dictionary.items():
-        if isinstance(value, np.ndarray):
-            dictionary[key] = value.tolist()
-    return dictionary
-
-
-class SPParser(BaseParser):
+class BaseParser(Parser):
     """
     Parser class for parsing output of calculation.
 
@@ -77,9 +47,6 @@ class SPParser(BaseParser):
         """
         super().__init__(node)
 
-        if not issubclass(node.process_class, singlePointCalculation):
-            raise exceptions.ParsingError("Can only parse `Singlepoint` calculations")
-
     def parse(self, **kwargs) -> int:
         """
         Parse outputs, store results in the database.
@@ -94,13 +61,13 @@ class SPParser(BaseParser):
         int
             An exit code.
         """
-
-        xyzoutput = (self.node.inputs.xyz_output_name).value
+        output_filename = self.node.get_option("output_filename")
+        logoutput = (self.node.inputs.log_filename).value
 
         # Check that folder content is as expected
         files_retrieved = self.retrieved.list_object_names()
 
-        files_expected = {xyzoutput}
+        files_expected = {output_filename, logoutput}
         # Note: set(A) <= set(B) checks whether A is a subset of B
         if not set(files_expected) <= set(files_retrieved):
             self.logger.error(
@@ -109,14 +76,11 @@ class SPParser(BaseParser):
             return self.exit_codes.ERROR_MISSING_OUTPUT_FILES
 
         # Add output file to the outputs
-        self.logger.info(f"Parsing '{xyzoutput}'")
 
-        with self.retrieved.open(xyzoutput, "rb") as handle:
-            self.out("xyz_output", SinglefileData(file=handle))
+        with self.retrieved.open(logoutput, "rb") as handle:
+            self.out("log_output", SinglefileData(file=handle))
 
-        content = read(Path(self.node.get_remote_workdir(), xyzoutput))
-        results = convert_numpy(content.todict())
-        results_node = Dict(results)
-        self.out("results_dict", results_node)
+        with self.retrieved.open(output_filename, "rb") as handle:
+            self.out("std_output", SinglefileData(file=handle))
 
         return ExitCode(0)

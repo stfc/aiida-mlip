@@ -1,4 +1,4 @@
-"""Base class with inputs for most calculations."""
+"""Base class for features common to most calculations."""
 
 from ase.io import write
 
@@ -6,7 +6,7 @@ from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
 import aiida.engine.processes
-from aiida.orm import Str, StructureData
+from aiida.orm import SinglefileData, Str, StructureData
 
 from aiida_mlip.data.model import ModelData
 
@@ -98,6 +98,8 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         )
         spec.inputs.validator = cls.validate_inputs
 
+        spec.output("std_output", valid_type=SinglefileData)
+        spec.output("log_output", valid_type=SinglefileData)
         # Exit codes
         spec.exit_code(
             305,
