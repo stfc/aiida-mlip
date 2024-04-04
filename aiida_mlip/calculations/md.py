@@ -87,7 +87,6 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
 
         md_dictionary = self.inputs.md_dict.get_dict()
 
-
         if not "traj-file" in md_dictionary:
             md_dictionary["traj-file"] = str(self._DEFAULT_TRAJ_FILE)
         if not "stats-file" in md_dictionary:

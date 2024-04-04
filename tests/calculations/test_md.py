@@ -79,7 +79,6 @@ def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "aiida-stats.dat",
     ]
 
-
     # Check the attributes of the returned `CalcInfo`
     assert sorted(fixture_sandbox.get_content_list()) == ["aiida.xyz"]
     assert isinstance(calc_info, datastructures.CalcInfo)

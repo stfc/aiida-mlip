@@ -102,9 +102,9 @@ class MDParser(BaseParser):
         # Call the parent parse method to handle common parsing logic
         exit_code = super().parse(**kwargs)
         if exit_code == ExitCode(0):
-            
+
             md_dictionary = self.node.inputs.md_dict.get_dict()
-           
+
             if "traj-file" in md_dictionary:
                 with self.retrieved.open(md_dictionary["traj-file"], "rb") as handle:
                     self.out("traj_file", SinglefileData(file=handle))
