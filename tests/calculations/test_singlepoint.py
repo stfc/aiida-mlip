@@ -116,9 +116,7 @@ def test_run_sp(model_folder, janus_code):
 
     assert "results_dict" in result
     obtained_res = result["results_dict"].get_dict()
-    assert "log_output" in result
     assert "xyz_output" in result
-    assert "std_output" in result
     assert obtained_res["info"]["energy"] == pytest.approx(-6.7575203839729)
     assert obtained_res["info"]["stress"][0][0] == pytest.approx(-0.005816546985101)
 

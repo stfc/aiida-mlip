@@ -1,6 +1,6 @@
 """Example code for submitting single point calculation"""
 
-import json
+import ast
 from pathlib import Path
 
 import click
@@ -79,7 +79,7 @@ def cli(
 ) -> None:
     """Click interface."""
     # pylint: disable=too-many-arguments
-    md_dict = json.loads(md_dict_str)
+    md_dict = ast.literal_eval(md_dict_str)
     try:
         code = load_code(codelabel)
     except NotExistent as exc:

@@ -102,19 +102,33 @@ class MDParser(BaseParser):
         # Call the parent parse method to handle common parsing logic
         exit_code = super().parse(**kwargs)
         if exit_code == ExitCode(0):
-            md_dict = self.node.inputs.md_dict.get_dict()
-            if "traj-file" in md_dict:
-                with self.retrieved.open(md_dict["traj-file"], "rb") as handle:
+            
+            md_dictionary = self.node.inputs.md_dict.get_dict()
+           
+            if "traj-file" in md_dictionary:
+                with self.retrieved.open(md_dictionary["traj-file"], "rb") as handle:
                     self.out("traj_file", SinglefileData(file=handle))
-            with self.retrieved.open(md_dict["stats-file"], "rb") as handle:
-                self.out("stats_file", SinglefileData(file=handle))
-            # Parse trajectory and save it as `TrajectoryData`
-            fin, traj_output = xyz_to_aiida_traj(
-                Path(self.node.get_remote_workdir(), md_dict["traj-file"])
-            )
-            self.out("traj_output", traj_output)
+                fin, traj_output = xyz_to_aiida_traj(
+                    Path(self.node.get_remote_workdir(), md_dictionary["traj-file"])
+                )
+                self.out("traj_output", traj_output)
+            else:
+                with self.retrieved.open("aiida-traj.xyz", "rb") as handle:
+                    self.out("traj_file", SinglefileData(file=handle))
+                fin, traj_output = xyz_to_aiida_traj(
+                    Path(self.node.get_remote_workdir(), "aiida-traj.xyz")
+                )
+                self.out("traj_output", traj_output)
 
-            # Parse the final structure of the trajectory
-            self.out("final_structure", fin)
+            if "stats-file" in md_dictionary:
+                with self.retrieved.open(md_dictionary["stats-file"], "rb") as handle:
+                    self.out("stats_file", SinglefileData(file=handle))
+            else:
+                with self.retrieved.open("aiida-stats.dat", "rb") as handle:
+                    self.out("stats_file", SinglefileData(file=handle))
+                # Parse trajectory and save it as `TrajectoryData`
+
+                # Parse the final structure of the trajectory
+                self.out("final_structure", fin)
 
         return exit_code

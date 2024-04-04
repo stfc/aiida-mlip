@@ -216,3 +216,14 @@ def model_folder():
         Path: The path to the example file.
     """
     return Path(__file__).resolve().parent / "data" / "input_files" / "mace"
+
+
+@pytest.fixture
+def structure_folder():
+    """
+    Fixture to provide the path to the example file.
+
+    Returns:
+        Path: The path to the example file.
+    """
+    return Path(__file__).resolve().parent / "calculations" / "structures"

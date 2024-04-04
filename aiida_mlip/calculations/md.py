@@ -48,7 +48,12 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
             "md_dict",
             valid_type=Dict,
             required=False,
-            default=lambda: Dict({}),
+            default=lambda: Dict(
+                {
+                    "traj-file": cls._DEFAULT_TRAJ_FILE,
+                    "stats-file": cls._DEFAULT_STATS_FILE,
+                }
+            ),
             help="Keywords for molecular dynamics",
         )
 
@@ -80,18 +85,20 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
         calcinfo = super().prepare_for_submission(folder)
         codeinfo = calcinfo.codes_info[0]
 
-        md_dict = self.inputs.md_dict.get_dict()
-        if not "traj-file" in md_dict:
-            md_dict["traj-file"] = str(self._DEFAULT_TRAJ_FILE)
-        if not "stats-file" in md_dict:
-            md_dict["stats-file"] = str(self._DEFAULT_STATS_FILE)
+        md_dictionary = self.inputs.md_dict.get_dict()
+
+
+        if not "traj-file" in md_dictionary:
+            md_dictionary["traj-file"] = str(self._DEFAULT_TRAJ_FILE)
+        if not "stats-file" in md_dictionary:
+            md_dictionary["stats-file"] = str(self._DEFAULT_STATS_FILE)
 
         ensemble = self.inputs.ensemble.value.lower()
         codeinfo.cmdline_params[0] = "md"
 
         codeinfo.cmdline_params += ["--ensemble", ensemble]
 
-        for flag, value in md_dict.items():
+        for flag, value in md_dictionary.items():
             if isinstance(value, bool):
                 # Add boolean flags without value if True
                 if value:
@@ -99,7 +106,7 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
             else:
                 codeinfo.cmdline_params += [f"--{flag}", value]
 
-        calcinfo.retrieve_list.append(md_dict["traj-file"])
-        calcinfo.retrieve_list.append(md_dict["stats-file"])
+        calcinfo.retrieve_list.append(md_dictionary["traj-file"])
+        calcinfo.retrieve_list.append(md_dictionary["stats-file"])
 
         return calcinfo
