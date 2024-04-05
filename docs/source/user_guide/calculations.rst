@@ -3,9 +3,11 @@
 Calculations
 ==============================
 
-In these descriptions we will assume that the code [janus-core](https://github.com/stfc/janus-core) is installed and saved in the AiiDA database as a InstalledCode instance as 'janus@localhost'.
-The structure file on which to run a calculation can be anything that ase can read and it is indicated with the path ```path/to/structure````
-The model file is a local file or a file to download which depends on the specific MLIP that is being used. In this examples it is a local file ```path/to/model````
+In these descriptions we will assume that the code `janus-core <https://github.com/stfc/janus-core>`_ is installed and saved in the AiiDA database as a InstalledCode instance as 'janus@localhost'.
+
+The structure file on which to run a calculation can be anything that ase can read and it is indicated with the path `path/to/structure`.
+
+The model file is a local file or a file to download which depends on the specific MLIP that is being used. In this examples it is a local file `path/to/model`.
 
 
 SinglePoint calculation
