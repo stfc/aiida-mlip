@@ -195,11 +195,9 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
         codeinfo = datastructures.CodeInfo()
 
-        # Initialize cmdline_params as an empty list
-        codeinfo.cmdline_params = []
+        # Initialize cmdline_params with a placeholder "calculation" command
+        codeinfo.cmdline_params = ["calculation"]
 
-        # Adding command line params for when we run janus
-        codeinfo.cmdline_params.append("calculation")
         for flag, value in cmd_line.items():
             codeinfo.cmdline_params += [f"--{flag}", str(value)]
 

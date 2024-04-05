@@ -3,45 +3,20 @@ MD parser.
 """
 
 from pathlib import Path
-from typing import Union
 
-from ase.io import read
+import yaml
 
 from aiida.common import exceptions
 from aiida.engine import ExitCode
-from aiida.orm import SinglefileData, StructureData, TrajectoryData
+from aiida.orm import Dict, SinglefileData
 from aiida.orm.nodes.process.process import ProcessNode
 from aiida.plugins import CalculationFactory
 
+from aiida_mlip.calculations.md import MD
+from aiida_mlip.helpers.converters import xyz_to_aiida_traj
 from aiida_mlip.parsers.base_parser import BaseParser
 
 MDCalculation = CalculationFactory("janus.md")
-
-
-def xyz_to_aiida_traj(
-    traj_file: Union[str, Path]
-) -> tuple[StructureData, TrajectoryData]:
-    """
-    A function to convert xyz trajectory file to `TrajectoryData` data type.
-
-    Parameters
-    ----------
-    traj_file : Union[str, Path]
-        The path to the XYZ file.
-
-    Returns
-    -------
-    Tuple[StructureData, TrajectoryData]
-        A tuple containing the last structure in the trajectory and a `TrajectoryData`
-        object containing all structures from the trajectory.
-    """
-    # Read the XYZ file using ASE
-    struct_list = read(traj_file, index=":")
-
-    # Create a TrajectoryData object
-    traj = [StructureData(ase=struct) for struct in struct_list]
-
-    return traj[-1], TrajectoryData(traj)
 
 
 class MDParser(BaseParser):
@@ -105,30 +80,40 @@ class MDParser(BaseParser):
 
             md_dictionary = self.node.inputs.md_dict.get_dict()
 
-            if "traj-file" in md_dictionary:
-                with self.retrieved.open(md_dictionary["traj-file"], "rb") as handle:
-                    self.out("traj_file", SinglefileData(file=handle))
-                fin, traj_output = xyz_to_aiida_traj(
-                    Path(self.node.get_remote_workdir(), md_dictionary["traj-file"])
-                )
-                self.out("traj_output", traj_output)
-            else:
-                with self.retrieved.open("aiida-traj.xyz", "rb") as handle:
-                    self.out("traj_file", SinglefileData(file=handle))
-                fin, traj_output = xyz_to_aiida_traj(
-                    Path(self.node.get_remote_workdir(), "aiida-traj.xyz")
-                )
-                self.out("traj_output", traj_output)
+            # Process trajectory file saving both the file and trajectory as aiida data
+            traj_filepath = md_dictionary.get("traj-file", MD.DEFAULT_TRAJ_FILE)
+            with self.retrieved.open(traj_filepath, "rb") as handle:
+                self.out("traj_file", SinglefileData(file=handle))
+            fin, traj_output = xyz_to_aiida_traj(
+                Path(self.node.get_remote_workdir(), traj_filepath)
+            )
+            self.out("traj_output", traj_output)
+            self.out("final_structure", fin)
 
-            if "stats-file" in md_dictionary:
-                with self.retrieved.open(md_dictionary["stats-file"], "rb") as handle:
-                    self.out("stats_file", SinglefileData(file=handle))
-            else:
-                with self.retrieved.open("aiida-stats.dat", "rb") as handle:
-                    self.out("stats_file", SinglefileData(file=handle))
-                # Parse trajectory and save it as `TrajectoryData`
+            # Process stats file as singlefiledata
+            stats_filepath = md_dictionary.get("stats-file", MD.DEFAULT_STATS_FILE)
+            with self.retrieved.open(stats_filepath, "rb") as handle:
+                self.out("stats_file", SinglefileData(file=handle))
 
-                # Parse the final structure of the trajectory
-                self.out("final_structure", fin)
+            # Process summary as both singlefiledata and results dictionary
+            summary_filepath = md_dictionary.get("summary", MD.DEFAULT_SUMMARY_FILE)
+            print(self.node.get_remote_workdir(), summary_filepath)
+            with self.retrieved.open(summary_filepath, "rb") as handle:
+                self.out("summary", SinglefileData(file=handle))
+                handle.close()
+
+            with self.retrieved.open(summary_filepath, "r") as handle:
+                try:
+                    res_list = yaml.safe_load(handle.read())
+                    if res_list is None:
+                        self.logger.error("Results dictionary empty")
+                        return self.exit_codes.ERROR_MISSING_OUTPUT_FILES
+                    res_dict = {}
+                    for item in res_list:
+                        res_dict.update(item)
+                    results_node = Dict(res_dict)
+                    self.out("results_dict", results_node)
+                except yaml.YAMLError as exc:
+                    print("Error loading YAML:", exc)
 
         return exit_code

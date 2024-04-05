@@ -21,8 +21,9 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
         Create the input files for the `CalcJob`.
     """
 
-    _DEFAULT_TRAJ_FILE = "aiida-traj.xyz"
-    _DEFAULT_STATS_FILE = "aiida-stats.dat"
+    DEFAULT_TRAJ_FILE = "aiida-traj.xyz"
+    DEFAULT_STATS_FILE = "aiida-stats.dat"
+    DEFAULT_SUMMARY_FILE = "md_summary.yml"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
@@ -36,7 +37,7 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
         """
         super().define(spec)
 
-        # Additional inputs for molecula dynamics
+        # Additional inputs for molecular dynamics
         spec.input(
             "ensemble",
             valid_type=Str,
@@ -50,8 +51,9 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
             required=False,
             default=lambda: Dict(
                 {
-                    "traj-file": cls._DEFAULT_TRAJ_FILE,
-                    "stats-file": cls._DEFAULT_STATS_FILE,
+                    "traj-file": cls.DEFAULT_TRAJ_FILE,
+                    "stats-file": cls.DEFAULT_STATS_FILE,
+                    "summary": cls.DEFAULT_SUMMARY_FILE,
                 }
             ),
             help="Keywords for molecular dynamics",
@@ -59,10 +61,18 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
 
         spec.inputs["metadata"]["options"]["parser_name"].default = "janus.md_parser"
 
+        spec.output(
+            "results_dict",
+            valid_type=Dict,
+            help="The `results_dict` output node of the successful calculation.",
+        )
+        spec.output("summary", valid_type=SinglefileData)
         spec.output("stats_file", valid_type=SinglefileData)
         spec.output("traj_file", valid_type=SinglefileData)
         spec.output("traj_output", valid_type=TrajectoryData)
         spec.output("final_structure", valid_type=StructureData)
+
+        spec.default_output_node = "results_dict"
 
     def prepare_for_submission(
         self, folder: aiida.common.folders.Folder
@@ -87,12 +97,13 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
 
         md_dictionary = self.inputs.md_dict.get_dict()
 
-        if not "traj-file" in md_dictionary:
-            md_dictionary["traj-file"] = str(self._DEFAULT_TRAJ_FILE)
-        if not "stats-file" in md_dictionary:
-            md_dictionary["stats-file"] = str(self._DEFAULT_STATS_FILE)
+        md_dictionary.setdefault("traj-file", str(self.DEFAULT_TRAJ_FILE))
+        md_dictionary.setdefault("stats-file", str(self.DEFAULT_STATS_FILE))
+        md_dictionary.setdefault("summary", str(self.DEFAULT_SUMMARY_FILE))
 
         ensemble = self.inputs.ensemble.value.lower()
+
+        # md is overwriting the placeholder "calculation" from the base.py file
         codeinfo.cmdline_params[0] = "md"
 
         codeinfo.cmdline_params += ["--ensemble", ensemble]
@@ -107,5 +118,6 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
 
         calcinfo.retrieve_list.append(md_dictionary["traj-file"])
         calcinfo.retrieve_list.append(md_dictionary["stats-file"])
+        calcinfo.retrieve_list.append(md_dictionary["summary"])
 
         return calcinfo

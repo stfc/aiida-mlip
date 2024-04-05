@@ -5,7 +5,6 @@ Parsers provided by aiida_mlip.
 from pathlib import Path
 
 from ase.io import read
-import numpy as np
 
 from aiida.common import exceptions
 from aiida.engine import ExitCode
@@ -13,29 +12,10 @@ from aiida.orm import Dict, SinglefileData
 from aiida.orm.nodes.process.process import ProcessNode
 from aiida.plugins import CalculationFactory
 
+from aiida_mlip.helpers.converters import convert_numpy
 from aiida_mlip.parsers.base_parser import BaseParser
 
 singlePointCalculation = CalculationFactory("janus.sp")
-
-
-def convert_numpy(dictionary: dict) -> dict:
-    """
-    A function to convert numpy ndarrays in dictionary into lists.
-
-    Parameters
-    ----------
-    dictionary : dict
-        A dictionary with numpy array values to be converted into lists.
-
-    Returns
-    -------
-    dict
-        Converted dictionary.
-    """
-    for key, value in dictionary.items():
-        if isinstance(value, np.ndarray):
-            dictionary[key] = value.tolist()
-    return dictionary
 
 
 class SPParser(BaseParser):

@@ -51,6 +51,8 @@ def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "cpu",
         "--log",
         "aiida.log",
+        "--summary",
+        "md_summary.yml",
         "--calc-kwargs",
         f"{{'model': '{model_file}', 'default_dtype': 'float64'}}",
         "--ensemble",
@@ -77,6 +79,7 @@ def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "aiida-stdout.txt",
         "aiida-traj.xyz",
         "aiida-stats.dat",
+        "md_summary.yml",
     ]
 
     # Check the attributes of the returned `CalcInfo`
@@ -121,6 +124,7 @@ def test_run_md(model_folder, structure_folder, janus_code):
     assert "final_structure" in result
     assert "traj_output" in result
     assert "traj_file" in result
+    assert "results_dict" in result
     assert result["traj_output"].numsteps == 4
     assert result["traj_output"].get_step_data(1)[4][3][1] == pytest.approx(2.82)
 

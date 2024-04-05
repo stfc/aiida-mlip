@@ -3,45 +3,17 @@ Geom optimisation parser.
 """
 
 from pathlib import Path
-from typing import Union
-
-from ase.io import read
 
 from aiida.common import exceptions
 from aiida.engine import ExitCode
-from aiida.orm import SinglefileData, StructureData, TrajectoryData
+from aiida.orm import SinglefileData
 from aiida.orm.nodes.process.process import ProcessNode
 from aiida.plugins import CalculationFactory
 
+from aiida_mlip.helpers.converters import xyz_to_aiida_traj
 from aiida_mlip.parsers.sp_parser import SPParser
 
 geomoptCalculation = CalculationFactory("janus.opt")
-
-
-def xyz_to_aiida_traj(
-    traj_file: Union[str, Path]
-) -> tuple[StructureData, TrajectoryData]:
-    """
-    A function to convert xyz trajectory file to `TrajectoryData` data type.
-
-    Parameters
-    ----------
-    traj_file : Union[str, Path]
-        The path to the XYZ file.
-
-    Returns
-    -------
-    Tuple[StructureData, TrajectoryData]
-        A tuple containing the last structure in the trajectory and a `TrajectoryData`
-        object containing all structures from the trajectory.
-    """
-    # Read the XYZ file using ASE
-    struct_list = read(traj_file, index=":")
-
-    # Create a TrajectoryData object
-    traj = [StructureData(ase=struct) for struct in struct_list]
-
-    return traj[-1], TrajectoryData(traj)
 
 
 class GeomOptParser(SPParser):
