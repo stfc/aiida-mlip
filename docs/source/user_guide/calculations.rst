@@ -3,6 +3,11 @@
 Calculations
 ==============================
 
+In these descriptions we will assume that the code [janus-core](https://github.com/stfc/janus-core) is installed and saved in the AiiDA database as a InstalledCode instance as 'janus@localhost'.
+The structure file on which to run a calculation can be anything that ase can read and it is indicated with the path ```path/to/structure````
+The model file is a local file or a file to download which depends on the specific MLIP that is being used. In this examples it is a local file ```path/to/model````
+
+
 SinglePoint calculation
 -----------------------
 
@@ -67,3 +72,36 @@ They will be converted to AiiDA data types by the script itself.
 .. code-block:: python
 
     verdi run submit_geomopt.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --precision "float64" --device "cpu"
+
+
+
+Molecular Dynamics calculation
+------------------------------
+
+A `MD` Calculation represents a `Calcjob` object within the AiiDA framework.
+
+
+Usage
+^^^^^
+
+This calculation can be executed using either the `run` or `submit` AiiDA commands.
+Below is a usage example with some additional geometry optimisation parameters. These parameters must be AiiDA data types.
+
+
+.. code-block:: python
+
+
+    MDCalculation = CalculationFactory("janus.md")
+    submit(MDCalculation, code=InstalledCode, structure=StructureData, ensemble=Str("nve") md_dict=Dict({'temp':300,'steps': 4,'traj-every':3,'stats-every':1}))
+
+
+Submission
+^^^^^^^^^^
+
+To facilitate the submission process and prepare inputs as AiiDA data types, an example script is provided.
+This script can be used as is, submitted to verdi, and the parameters passed as strings to the CLI.
+They will be converted to AiiDA data types by the script itself.
+
+.. code-block:: python
+
+    verdi run submit_md.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --ensemble "nve" --md_dict_str "{'temp':300,'steps':4,'traj-every':3,'stats-every':1}"

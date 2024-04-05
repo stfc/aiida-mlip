@@ -1,7 +1,5 @@
 """Example code for submitting geometry optimisation calculation"""
 
-from pathlib import Path
-
 import click
 
 from aiida.common import NotExistent
@@ -68,16 +66,39 @@ def geomopt(params: dict) -> None:
 @click.option(
     "--model",
     default=None,
-    type=Path,
+    type=str,
     help="Specify path or url of the model to use",
 )
-@click.option("--architecture", default="mace_mp", type=str)
-@click.option("--device", default="cpu", type=str)
-@click.option("--precision", default="float64", type=str)
-@click.option("--max_force", default=0.1, type=float)
-@click.option("--vectors_only", default=False, type=bool)
-@click.option("--fully_opt", default=False, type=bool)
-@click.option("--steps", default=1000, type=int)
+@click.option(
+    "--architecture",
+    default="mace_mp",
+    type=str,
+    help="MLIP architecture to use for calculations.",
+)
+@click.option(
+    "--device", default="cpu", type=str, help="Device to run calculations on."
+)
+@click.option(
+    "--precision", default="float64", type=str, help="Chosen level of precision."
+)
+@click.option(
+    "--max_force", default=0.1, type=float, help="Maximum force for convergence."
+)
+@click.option(
+    "--vectors_only",
+    default=False,
+    type=bool,
+    help="Optimize cell vectors, as well as atomic positions.",
+)
+@click.option(
+    "--fully_opt",
+    default=False,
+    type=bool,
+    help="Fully optimize the cell vectors, angles, and atomic positions.",
+)
+@click.option(
+    "--steps", default=1000, type=int, help="Maximum number of optimization steps."
+)
 def cli(
     codelabel,
     file,

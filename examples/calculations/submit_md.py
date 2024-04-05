@@ -1,7 +1,6 @@
 """Example code for submitting single point calculation"""
 
 import ast
-from pathlib import Path
 
 import click
 
@@ -66,14 +65,30 @@ def MD(params: dict) -> None:
 @click.option(
     "--model",
     default=None,
-    type=Path,
+    type=str,
     help="Specify path or url of the model to use",
 )
-@click.option("--architecture", default="mace_mp", type=str)
-@click.option("--device", default="cpu", type=str)
-@click.option("--precision", default="float64", type=str)
-@click.option("--ensemble", default="nve", type=str)
-@click.option("--md_dict_str", default="{}", type=str)
+@click.option(
+    "--architecture",
+    default="mace_mp",
+    type=str,
+    help="MLIP architecture to use for calculations.",
+)
+@click.option(
+    "--device", default="cpu", type=str, help="Device to run calculations on."
+)
+@click.option(
+    "--precision", default="float64", type=str, help="Chosen level of precision."
+)
+@click.option(
+    "--ensemble", default="nve", type=str, help="Name of thermodynamic ensemble."
+)
+@click.option(
+    "--md_dict_str",
+    default="{}",
+    type=str,
+    help="String containing a dictionary with other md parameters",
+)
 def cli(
     codelabel, file, model, architecture, device, precision, ensemble, md_dict_str
 ) -> None:

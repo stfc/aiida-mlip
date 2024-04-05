@@ -1,7 +1,5 @@
 """Example code for submitting single point calculation"""
 
-from pathlib import Path
-
 import click
 
 from aiida.common import NotExistent
@@ -63,12 +61,21 @@ def singlepoint(params: dict) -> None:
 @click.option(
     "--model",
     default=None,
-    type=Path,
+    type=str,
     help="Specify path or url of the model to use",
 )
-@click.option("--architecture", default="mace_mp", type=str)
-@click.option("--device", default="cpu", type=str)
-@click.option("--precision", default="float64", type=str)
+@click.option(
+    "--architecture",
+    default="mace_mp",
+    type=str,
+    help="MLIP architecture to use for calculations.",
+)
+@click.option(
+    "--device", default="cpu", type=str, help="Device to run calculations on."
+)
+@click.option(
+    "--precision", default="float64", type=str, help="Chosen level of precision."
+)
 def cli(codelabel, file, model, architecture, device, precision) -> None:
     # pylint: disable=too-many-arguments
     """Click interface."""
