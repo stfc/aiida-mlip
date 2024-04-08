@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+import ase.io
 import click
 import pytest
 
@@ -41,3 +42,12 @@ def test_load_structure(structure_folder):
     # Test loading from invalid input
     with pytest.raises(click.BadParameter):
         load_structure("non_existent_file.xyz")
+
+    # Test load structure from node
+    str_store = StructureData(
+        ase=ase.io.read(Path(structure_folder / "NaCl.cif"))
+    ).store()
+    str_pk = str_store.pk
+
+    loaded_pk = load_structure(str_pk)
+    assert isinstance(loaded_pk, StructureData)

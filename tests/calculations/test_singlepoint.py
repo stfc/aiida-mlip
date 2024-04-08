@@ -61,6 +61,36 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
     assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
 
 
+def test_singlepoint_modeld(fixture_sandbox, generate_calc_job, janus_code):
+    """Test generating singlepoint calculation job"""
+
+    entry_point_name = "janus.sp"
+    inputs = {
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "code": janus_code,
+        "architecture": Str("mace"),
+        "precision": Str("float64"),
+        "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "device": Str("cpu"),
+    }
+
+    calc_info = generate_calc_job(fixture_sandbox, entry_point_name, inputs)
+
+    retrieve_list = [
+        calc_info.uuid,
+        "aiida.log",
+        "aiida-results.xyz",
+        "aiida-stdout.txt",
+    ]
+    print(sorted(calc_info.codes_info[0].cmdline_params))
+
+    # Check the attributes of the returned `CalcInfo`
+    assert sorted(fixture_sandbox.get_content_list()) == ["aiida.xyz"]
+    assert isinstance(calc_info, datastructures.CalcInfo)
+    assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
+    assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
+
+
 def test_sp_error(fixture_sandbox, generate_calc_job, model_folder, fixture_code):
     """Test singlepoint calculation with error input"""
     entry_point_name = "janus.sp"

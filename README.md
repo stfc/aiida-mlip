@@ -54,7 +54,7 @@ A quick demo of how to submit a calculation using the provided example files:
 verdi daemon start     # make sure the daemon is running
 cd examples/calculations
 verdi run submit_singlepoint.py "janus@localhost" --architecture mace --model "/path/to/model"    # run singlepoint calculation
-verdi run submit_geomopt.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --steps 5 --fully-opt True # run geometry optimisation
+verdi run submit_geomopt.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --steps 5 --fully_opt True # run geometry optimisation
 verdi run submit_md.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --ensemble "nve" --md_dict_str "'temp':300,'steps':4,'traj-every':3,'stats-every':1}" # run molecular dynamics
 
 verdi process list -a  # check record of calculation

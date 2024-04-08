@@ -134,9 +134,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
         if "input_filename" in inputs:
             if not inputs["input_filename"].value.endswith(".xyz"):
-                raise ValueError(
-                    "The parameter 'input_filename' must end with '.xyz'"
-                )  #
+                raise ValueError("The parameter 'input_filename' must end with '.xyz'")
 
     # pylint: disable=too-many-locals
     def prepare_for_submission(
@@ -161,10 +159,10 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         # otherwise get architecture from inputs and download default model
         architecture = (
             str((self.inputs.model).architecture)
-            if self.inputs.model
+            if "model" in self.inputs
             else str(self.inputs.architecture.value)
         )
-        if self.inputs.model:
+        if "model" in self.inputs:
             model_path = self.inputs.model.filepath
         else:
             model_path = ModelData.download(
