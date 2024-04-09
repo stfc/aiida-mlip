@@ -15,7 +15,7 @@ from aiida_mlip.data.model import ModelData
 
 
 def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
-    """Test generating singlepoint calculation job"""
+    """Test generating MD calculation job."""
 
     entry_point_name = "janus.md"
     model_file = model_folder / "mace_mp_small.model"
