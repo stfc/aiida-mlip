@@ -92,7 +92,7 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
     * [`geomopt.py`](aiida_mlip/calculations/geomopt.py): `Calcjob` class to perform geometry optimization using mlips
     * [`md.py`](aiida_mlip/calculations/md.py): `Calcjob` class to perform molecular dynamics using mlips
   * [`parsers/`](aiida_mlip/parsers/): `Parsers` for the calculations
-    * [`base_parser.py`](aiida_mlip/parsers/md_parser.py): Base `Parser` for all calculations.
+    * [`base_parser.py`](aiida_mlip/parsers/base_parser.py): Base `Parser` for all calculations.
     * [`sp_parser.py`](aiida_mlip/parsers/sp_parser.py): `Parser` for `Singlepoint` calculation.
     * [`opt_parser.py`](aiida_mlip/parsers/opt_parser.py): `Parser` for `Geomopt` calculation.
     * [`md_parser.py`](aiida_mlip/parsers/md_parser.py): `Parser` for `MD` calculation.
