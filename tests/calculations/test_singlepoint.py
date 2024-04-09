@@ -62,7 +62,7 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
 
 
 def test_singlepoint_modeld(fixture_sandbox, generate_calc_job, janus_code):
-    """Test generating singlepoint calculation job"""
+    """Test generating singlepoint calculation job."""
 
     entry_point_name = "janus.sp"
     inputs = {
