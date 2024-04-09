@@ -11,8 +11,8 @@ from aiida_mlip.helpers.converters import convert_numpy, xyz_to_aiida_traj
 
 def test_convert_numpy():
     """Test for the convert_numpy function."""
-    input_dict = {"a": np.array([1, 2, 3]), "b": np.array([4, 5, 6])}
-    expected_output = {"a": [1, 2, 3], "b": [4, 5, 6]}
+    input_dict = {"a": np.array([1, 2, 3]), "b": np.array([4, 5, 6]), "c": [7, 8, 9]}
+    expected_output = {"a": [1, 2, 3], "b": [4, 5, 6], "c": [7, 8, 9]}
     assert convert_numpy(input_dict) == expected_output
 
 
