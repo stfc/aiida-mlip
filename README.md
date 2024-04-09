@@ -85,7 +85,7 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
   * [`docs.yml`](.github/workflows/docs.yml): builds and deploys the documentation
 * [`aiida_mlip/`](aiida_mlip/): The main source code of the plugin package
   * [`data/`](aiida_mlip/data/): Plugin `Data` classes
-    * [`model.py/`](aiida_mlip/data/model.py) `ModelData` class to save mlip models as AiiDA data types
+    * [`model.py`](aiida_mlip/data/model.py) `ModelData` class to save mlip models as AiiDA data types
   * [`calculations/`](aiida_mlip/calculations/): Plugin `Calcjob` classes
     * [`base.py`](aiida_mlip/calculations/base.py): Base `Calcjob` class for other calculations
     * [`singlepoint.py`](aiida_mlip/calculations/singlepoint.py): `Calcjob` class to run single point calculations using mlips
