@@ -121,7 +121,7 @@ pygments_style = "sphinx"
 # -- Options for HTML output ----------------------------------------------
 
 html_theme = "furo"
-html_logo = "images/AiiDA_transparent_logo.png"
+html_logo = "images/aiida-mlip.png"
 html_title = f"aiida-mlip v{release}"
 html_theme_options = {
     "source_repository": "https://github.com/stfc/aiida-mlip/",
