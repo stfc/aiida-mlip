@@ -45,11 +45,19 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
         # Define inputs
 
         spec.input(
-            "xyz_output_name",
+            "out",
             valid_type=Str,
             required=False,
             default=lambda: Str(cls._XYZ_OUTPUT),
             help="Name of the xyz output file",
+        )
+
+        spec.input(
+            "properties",
+            valid_type=Str,
+            required=False,
+            default=lambda: Str("energy"),
+            help="Properties to calculate",
         )
         spec.inputs["metadata"]["options"]["parser_name"].default = "janus.sp_parser"
 
@@ -87,7 +95,7 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
         """
         # Wrapping processes may choose to exclude certain input ports
         # If the ports have been excluded, skip the validation.
-        if "structure" not in port_namespace:
+        if "structure" not in port_namespace and "config" not in port_namespace:
             raise ValueError("'Structure' namespaces is required.")
 
         if "input_filename" in inputs:
@@ -112,7 +120,7 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
             An instance of `aiida.common.datastructures.CalcInfo`.
         """
         # The inputs are saved in the node, but we want their value as a string
-        xyz_filename = (self.inputs.xyz_output_name).value
+        xyz_filename = (self.inputs.out).value
 
         # Call the parent class method to prepare common inputs
         calcinfo = super().prepare_for_submission(folder)

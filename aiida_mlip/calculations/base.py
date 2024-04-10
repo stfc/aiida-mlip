@@ -1,6 +1,7 @@
 """Base class for features common to most calculations."""
 
 from ase.io import write
+import yaml
 
 from aiida.common import datastructures
 import aiida.common.folders
@@ -39,6 +40,25 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
     _LOG_FILE = "aiida.log"
 
     @classmethod
+    def from_config(cls, config_file):
+        """
+        Parse config file.
+
+        Parameters
+        ----------
+        config_file : Filepath
+            The config file path.
+
+        Returns
+        -------
+        dict
+            Config parameters loaded as a dictionary.
+        """
+        with open(config_file, encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+        return cls(**config)
+
+    @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
         """
         Define the process specification, its inputs, outputs and exit codes.
@@ -63,7 +83,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             required=False,
             help="Mlip model used for calculation",
         )
-        spec.input("structure", valid_type=StructureData, help="The input structure.")
+        spec.input("struct", valid_type=StructureData, help="The input structure.")
         spec.input("precision", valid_type=Str, help="Precision level for calculation")
         spec.input(
             "device",
@@ -106,6 +126,12 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             "ERROR_MISSING_OUTPUT_FILES",
             message="Some output files missing or cannot be read",
         )
+        spec.input(
+            "config",
+            valid_type=SinglefileData,
+            required=False,
+            help="Name of the log output file",
+        )
 
     @classmethod
     def validate_inputs(
@@ -129,7 +155,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         """
         # Wrapping processes may choose to exclude certain input ports
         # If the ports have been excluded, skip the validation.
-        if "structure" not in port_namespace:
+        if "struct" not in port_namespace:
             raise ValueError("'Structure' namespaces is required.")
 
         if "input_filename" in inputs:
@@ -177,7 +203,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         log_filename = (self.inputs.log_filename).value
 
         # Transform the structure data in xyz file called input_filename
-        structure = self.inputs.structure
+        structure = self.inputs.struct
 
         atoms = structure.get_ase()
         with folder.open(input_filename, "w", encoding="utf-8") as inputfile:
@@ -190,6 +216,12 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             "log": log_filename,
             "calc-kwargs": {"model": model_path, "default_dtype": precision},
         }
+
+        if "config" in self.inputs.get_dict():
+            cmd_line.update({"config": "config.yaml"})
+            config_parse = self.from_config(self.inputs.config.filepath)
+            with folder.open("config.yaml", "w", encoding="utf-8") as configfile:
+                configfile.write(config_parse)
 
         codeinfo = datastructures.CodeInfo()
 
