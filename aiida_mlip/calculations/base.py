@@ -84,7 +84,12 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             help="Mlip model used for calculation",
         )
         spec.input("struct", valid_type=StructureData, help="The input structure.")
-        spec.input("precision", valid_type=Str, help="Precision level for calculation")
+        spec.input(
+            "precision",
+            valid_type=Str,
+            default=lambda: Str("float64"),
+            help="Precision level for calculation",
+        )
         spec.input(
             "device",
             valid_type=Str,
@@ -217,9 +222,9 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             "calc-kwargs": {"model": model_path, "default_dtype": precision},
         }
 
-        if "config" in self.inputs.get_dict():
+        if "config" in self.inputs:
             cmd_line.update({"config": "config.yaml"})
-            config_parse = self.from_config(self.inputs.config.filepath)
+            config_parse = self.inputs.config.get_content()
             with folder.open("config.yaml", "w", encoding="utf-8") as configfile:
                 configfile.write(config_parse)
 

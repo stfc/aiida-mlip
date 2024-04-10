@@ -75,7 +75,7 @@ class SPParser(BaseParser):
             An exit code.
         """
 
-        xyzoutput = (self.node.inputs.xyz_output_name).value
+        xyzoutput = (self.node.inputs.out).value
 
         # Check that folder content is as expected
         files_retrieved = self.retrieved.list_object_names()
