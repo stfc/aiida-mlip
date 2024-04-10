@@ -140,4 +140,4 @@ Contributors to this project were funded by
 [license-link]: https://opensource.org/licenses/BSD-3-Clause
 [doi-link]: https://zenodo.org/badge/latestdoi/750834002
 [doi-badge]: https://zenodo.org/badge/750834002.svg
-[logo]: https://raw.githubusercontent.com/stfc/aiida-mlip/main/docs/source/images/aiida-mlip.png
+[logo]: https://raw.githubusercontent.com/stfc/aiida-mlip/main/docs/source/images/aiida-mlip-100.png
