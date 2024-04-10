@@ -1,15 +1,26 @@
 """Base class for features common to most calculations."""
 
+from pathlib import Path
+from typing import Any, Union
+
 from ase.io import write
 import yaml
 
 from aiida.common import datastructures
 import aiida.common.folders
-from aiida.engine import CalcJob, CalcJobProcessSpec
+from aiida.engine import (
+    CalcJob,
+    CalcJobProcessSpec,
+    run,
+    run_get_node,
+    run_get_pk,
+    submit,
+)
 import aiida.engine.processes
-from aiida.orm import SinglefileData, Str, StructureData
+from aiida.orm import ProcessNode, SinglefileData, Str, StructureData
 
 from aiida_mlip.data.model import ModelData
+from aiida_mlip.helpers.converters import convert_to_nodes
 
 
 class BaseJanus(CalcJob):  # numpydoc ignore=PR01
@@ -40,7 +51,9 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
     _LOG_FILE = "aiida.log"
 
     @classmethod
-    def from_config(cls, config_file):
+    def run_from_config(
+        cls, config_file: Union[Path, str], launch: str
+    ) -> tuple[dict[str, Any], ProcessNode]:
         """
         Parse config file.
 
@@ -48,15 +61,26 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         ----------
         config_file : Filepath
             The config file path.
+        launch : str
+            Chosen launch function (can be run, run_get_node, run_get_pk, submit).
 
         Returns
         -------
-        dict
-            Config parameters loaded as a dictionary.
+        tuple
+            Returns the output of the chosen launch function.
         """
         with open(config_file, encoding="utf-8") as f:
-            config = yaml.safe_load(f)
-        return cls(**config)
+            config_dict = yaml.safe_load(f)
+            config = convert_to_nodes(config_dict)
+        if launch == "run":
+            return run(cls, config)
+        if launch == "run_get_node":
+            return run_get_node(cls, config)
+        if launch == "submit":
+            return submit(cls, config)
+        if launch == "run_get_pk":
+            return run_get_pk(cls, config)
+        raise ValueError
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
@@ -72,7 +96,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
         # Define inputs
         spec.input(
-            "architecture",
+            "arch",
             valid_type=Str,
             default=lambda: Str("mace"),
             help="Mlip architecture to use for calculation, defaults to mace",
@@ -121,6 +145,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             default="_scheduler-stdout.txt",
             help="Filename to which the content of stdout of the scheduler is written.",
         )
+
         spec.inputs.validator = cls.validate_inputs
 
         spec.output("std_output", valid_type=SinglefileData)
@@ -191,7 +216,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         architecture = (
             str((self.inputs.model).architecture)
             if "model" in self.inputs
-            else str(self.inputs.architecture.value)
+            else str(self.inputs.arch.value)
         )
         if "model" in self.inputs:
             model_path = self.inputs.model.filepath

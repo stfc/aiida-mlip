@@ -8,7 +8,9 @@ from typing import Union
 from ase.io import read
 import numpy as np
 
-from aiida.orm import StructureData, TrajectoryData
+from aiida.orm import Dict, Str, StructureData, TrajectoryData, load_code
+
+from aiida_mlip.helpers.help_load import load_model, load_structure
 
 
 def convert_numpy(dictionary: dict) -> dict:
@@ -55,3 +57,38 @@ def xyz_to_aiida_traj(
     traj = [StructureData(ase=struct) for struct in struct_list]
 
     return traj[-1], TrajectoryData(traj)
+
+
+def convert_to_nodes(dictionary: dict) -> dict:
+    """
+    Convert each key of the config file to a aiida node.
+
+    Parameters
+    ----------
+    dictionary : dict
+        The dictionary obtained from the config file.
+
+    Returns
+    -------
+    dict
+        Returns the converted dictionary.
+    """
+    arch = ""
+    for key, value in sorted(dictionary.items()):
+        if key == "code":
+            value = load_code(value)
+        elif key == "struct":
+            value = load_structure(value)
+        elif key == "model":
+            value = load_model(value, arch)
+        elif key.endswith("_kwargs"):
+            value = Dict(value)
+        elif key == "arch":
+            arch = value
+            value = Str(value)
+        elif key == "metadata":
+            continue
+        else:
+            value = Str(value)
+        dictionary.update({key: value})
+    return dictionary
