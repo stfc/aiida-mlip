@@ -3,6 +3,10 @@ The aiida-mlip plugin for `AiiDA`_
 
 ``aiida-mlip`` is available at http://github.com/aiidateam/aiida-mlip
 
+.. image::  images/aiida-mlip.png
+   :height: 298px
+   :target: http://github.com/aiidateam/aiida-mlip
+
 
 .. toctree::
    :maxdepth: 2
@@ -23,7 +27,7 @@ If you use AiiDA for your research, please cite the following work:
   for computational science*, Comp. Mat. Sci 111, 218-230 (2016);
   https://doi.org/10.1016/j.commatsci.2015.09.013; http://www.aiida.net.
 
-``aiida-mlip`` is released under the [BSD 3-Clause license](https://opensource.org/license/bsd-3-clause/).
+``aiida-mlip`` is released under the `BSD 3-Clause license <https://opensource.org/license/bsd-3-clause/>`_.
 
 Funding
 =======
