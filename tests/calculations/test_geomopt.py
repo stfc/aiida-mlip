@@ -21,9 +21,9 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
-        "architecture": Str("mace"),
+        "arch": Str("mace"),
         "precision": Str("float64"),
-        "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
@@ -46,7 +46,7 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         f"{{'model': '{model_file}', 'default_dtype': 'float64'}}",
         "--traj",
         "aiida-traj.xyz",
-        "--max-force",
+        "--fmax",
         0.1,
         "--steps",
         1000,
@@ -83,9 +83,9 @@ def test_run_opt(model_folder, janus_code):
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
-        "architecture": Str("mace"),
+        "arch": Str("mace"),
         "precision": Str("float64"),
-        "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
         "fully_opt": Bool(True),

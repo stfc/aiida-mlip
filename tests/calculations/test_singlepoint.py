@@ -21,9 +21,9 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
-        "architecture": Str("mace"),
+        "arch": Str("mace"),
         "precision": Str("float64"),
-        "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
@@ -68,9 +68,9 @@ def test_singlepoint_modeld(fixture_sandbox, generate_calc_job, janus_code):
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
-        "architecture": Str("mace"),
+        "arch": Str("mace"),
         "precision": Str("float64"),
-        "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "device": Str("cpu"),
     }
 
@@ -100,9 +100,9 @@ def test_sp_error(fixture_sandbox, generate_calc_job, model_folder, fixture_code
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": fixture_code,
         "input_filename": "wrongname",
-        "architecture": Str("mace"),
+        "arch": Str("mace"),
         "precision": Str("float64"),
-        "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
@@ -118,7 +118,7 @@ def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, fixture_c
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": fixture_code,
-        "architecture": Str("mace"),
+        "arch": Str("mace"),
         "precision": Str("float64"),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
@@ -134,9 +134,9 @@ def test_run_sp(model_folder, janus_code):
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
-        "architecture": Str("mace"),
+        "arch": Str("mace"),
         "precision": Str("float64"),
-        "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
     }

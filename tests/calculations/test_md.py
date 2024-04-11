@@ -22,13 +22,13 @@ def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
-        "architecture": Str("mace"),
+        "arch": Str("mace"),
         "precision": Str("float64"),
-        "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
         "ensemble": Str("nve"),
-        "md_dict": Dict(
+        "md_kwargs": Dict(
             {
                 "temp": 300.0,
                 "steps": 4,
@@ -101,13 +101,13 @@ def test_run_md(model_folder, structure_folder, janus_code):
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
-        "architecture": Str("mace"),
+        "arch": Str("mace"),
         "precision": Str("float64"),
-        "structure": StructureData(ase=read(structure_file)),
+        "struct": StructureData(ase=read(structure_file)),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
         "ensemble": Str("nve"),
-        "md_dict": Dict(
+        "md_kwargs": Dict(
             {
                 "temp": 300.0,
                 "steps": 3,

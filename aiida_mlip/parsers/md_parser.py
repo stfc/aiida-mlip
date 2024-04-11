@@ -78,7 +78,7 @@ class MDParser(BaseParser):
         exit_code = super().parse(**kwargs)
         if exit_code == ExitCode(0):
 
-            md_dictionary = self.node.inputs.md_dict.get_dict()
+            md_dictionary = self.node.inputs.md_kwargs.get_dict()
 
             # Process trajectory file saving both the file and trajectory as aiida data
             traj_filepath = md_dictionary.get("traj-file", MD.DEFAULT_TRAJ_FILE)
@@ -104,13 +104,12 @@ class MDParser(BaseParser):
 
             with self.retrieved.open(summary_filepath, "r") as handle:
                 try:
-                    res_list = yaml.safe_load(handle.read())
-                    if res_list is None:
+                    res_dict = yaml.safe_load(handle.read())
+                    if res_dict is None:
                         self.logger.error("Results dictionary empty")
                         return self.exit_codes.ERROR_MISSING_OUTPUT_FILES
-                    res_dict = {}
-                    for item in res_list:
-                        res_dict.update(item)
+                    print(f"res_list={res_dict}")
+                    print(type(res_dict))
                     results_node = Dict(res_dict)
                     self.out("results_dict", results_node)
                 except yaml.YAMLError as exc:

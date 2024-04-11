@@ -46,7 +46,7 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
         )
 
         spec.input(
-            "md_dict",
+            "md_kwargs",
             valid_type=Dict,
             required=False,
             default=lambda: Dict(
@@ -95,7 +95,7 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
         calcinfo = super().prepare_for_submission(folder)
         codeinfo = calcinfo.codes_info[0]
 
-        md_dictionary = self.inputs.md_dict.get_dict()
+        md_dictionary = self.inputs.md_kwargs.get_dict()
 
         md_dictionary.setdefault("traj-file", str(self.DEFAULT_TRAJ_FILE))
         md_dictionary.setdefault("stats-file", str(self.DEFAULT_STATS_FILE))

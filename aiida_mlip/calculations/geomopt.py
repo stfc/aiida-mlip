@@ -67,7 +67,7 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             help="Optimize cell vectors, as well as atomic positions",
         )
         spec.input(
-            "max_force",
+            "fmax",
             valid_type=Float,
             required=False,
             default=lambda: Float(0.1),
@@ -123,7 +123,7 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             "traj": self.inputs.traj.value,
             "fully-opt": self.inputs.fully_opt.value,
             "vectors-only": self.inputs.vectors_only.value,
-            "max-force": self.inputs.max_force.value,
+            "fmax": self.inputs.fmax.value,
             "steps": self.inputs.steps.value,
             "opt-kwargs": opt_kwargs,
         }
