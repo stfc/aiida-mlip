@@ -38,8 +38,8 @@ def MD(params: dict) -> None:
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": params["code"],
-        "architecture": Str(params["architecture"]),
-        "structure": structure,
+        "arch": Str(params["architecture"]),
+        "struct": structure,
         "model": model,
         "precision": Str(params["precision"]),
         "device": Str(params["device"]),
