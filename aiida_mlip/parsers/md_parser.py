@@ -84,11 +84,11 @@ class MDParser(BaseParser):
             traj_filepath = md_dictionary.get("traj-file", MD.DEFAULT_TRAJ_FILE)
             with self.retrieved.open(traj_filepath, "rb") as handle:
                 self.out("traj_file", SinglefileData(file=handle))
-            fin, traj_output = xyz_to_aiida_traj(
+            final_str, traj_output = xyz_to_aiida_traj(
                 Path(self.node.get_remote_workdir(), traj_filepath)
             )
             self.out("traj_output", traj_output)
-            self.out("final_structure", fin)
+            self.out("final_structure", final_str)
 
             # Process stats file as singlefiledata
             stats_filepath = md_dictionary.get("stats-file", MD.DEFAULT_STATS_FILE)
@@ -108,8 +108,6 @@ class MDParser(BaseParser):
                     if res_dict is None:
                         self.logger.error("Results dictionary empty")
                         return self.exit_codes.ERROR_MISSING_OUTPUT_FILES
-                    print(f"res_list={res_dict}")
-                    print(type(res_dict))
                     results_node = Dict(res_dict)
                     self.out("results_dict", results_node)
                 except yaml.YAMLError as exc:

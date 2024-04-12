@@ -92,6 +92,85 @@ def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     )
     assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
 
+def test_MD_with_config(fixture_sandbox, generate_calc_job, janus_code, model_folder):
+    """Test generating MD calculation job."""
+
+    entry_point_name = "janus.md"
+    model_file = model_folder / "mace_mp_small.model"
+    inputs = {
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "code": janus_code,
+        "arch": Str("mace"),
+        "precision": Str("float64"),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "model": ModelData.local_file(model_file, architecture="mace"),
+        "device": Str("cpu"),
+        "ensemble": Str("nve"),
+        "md_kwargs": Dict(
+            {
+                "temp": 300.0,
+                "steps": 4,
+                "traj-every": 1,
+                "restart-every": 3,
+                "stats-every": 1,
+            }
+        ),
+    }
+
+    calc_info = generate_calc_job(fixture_sandbox, entry_point_name, inputs)
+
+    cmdline_params = [
+        "md",
+        "--arch",
+        "mace",
+        "--struct",
+        "aiida.xyz",
+        "--device",
+        "cpu",
+        "--log",
+        "aiida.log",
+        "--summary",
+        "md_summary.yml",
+        "--calc-kwargs",
+        f"{{'model': '{model_file}', 'default_dtype': 'float64'}}",
+        "--ensemble",
+        "nve",
+        "--temp",
+        300.0,
+        "--steps",
+        4,
+        "--traj-every",
+        1,
+        "--stats-every",
+        1,
+        "--restart-every",
+        3,
+        "--traj-file",
+        "aiida-traj.xyz",
+        "--stats-file",
+        "aiida-stats.dat",
+    ]
+
+    retrieve_list = [
+        calc_info.uuid,
+        "aiida.log",
+        "aiida-stdout.txt",
+        "aiida-traj.xyz",
+        "aiida-stats.dat",
+        "md_summary.yml",
+    ]
+
+    # Check the attributes of the returned `CalcInfo`
+    assert sorted(fixture_sandbox.get_content_list()) == ["aiida.xyz"]
+    assert isinstance(calc_info, datastructures.CalcInfo)
+    assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
+    assert len(calc_info.codes_info[0].cmdline_params) == len(cmdline_params)
+    assert sorted(map(str, calc_info.codes_info[0].cmdline_params)) == sorted(
+        map(str, cmdline_params)
+    )
+    assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
+
+
 
 def test_run_md(model_folder, structure_folder, janus_code):
     """Test running singlepoint calculation"""
@@ -126,7 +205,7 @@ def test_run_md(model_folder, structure_folder, janus_code):
     assert "traj_file" in result
     assert "results_dict" in result
     assert result["traj_output"].numsteps == 4
-    assert result["traj_output"].get_step_data(1)[4][3][1] == pytest.approx(2.82)
+    assert (result["energy"])== pytest.approx(2.82)
 
 
 def test_example_md(example_path):
