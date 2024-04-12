@@ -21,7 +21,7 @@ MDCalculation = CalculationFactory("janus.md")
 
 class MDParser(BaseParser):
     """
-    Parser class for parsing output of geometry optimization calculation.
+    Parser class for parsing output of molecular dynamics simulation.
 
     Inherits from SPParser.
 
