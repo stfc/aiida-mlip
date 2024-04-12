@@ -7,7 +7,7 @@ from aiida.plugins import CalculationFactory
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.helpers.help_load import load_structure
 
-# And the required inputs for aiida
+# Add the required inputs for aiida
 metadata = {"options": {"resources": {"num_machines": 1}}}
 code = load_code("janus@localhost")
 
