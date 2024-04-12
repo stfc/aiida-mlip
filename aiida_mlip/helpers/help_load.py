@@ -74,7 +74,7 @@ def load_structure(struct: Optional[Union[str, Path, int]]) -> StructureData:
     click.BadParameter
         If the input is not a valid path to a structure file or a node PK.
     """
-    if struct is None:
+    if struct is None or struct == "NaCl":
         structure = StructureData(ase=bulk("NaCl", "rocksalt", 5.63))
     elif isinstance(struct, int) or (isinstance(struct, str) and struct.isdigit()):
         structure_pk = int(struct)

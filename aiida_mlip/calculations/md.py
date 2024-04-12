@@ -41,7 +41,7 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
         spec.input(
             "ensemble",
             valid_type=Str,
-            required=True,
+            required=False,
             help="Name for thermodynamic ensemble",
         )
 
@@ -101,7 +101,12 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
         md_dictionary.setdefault("stats-file", str(self.DEFAULT_STATS_FILE))
         md_dictionary.setdefault("summary", str(self.DEFAULT_SUMMARY_FILE))
 
-        ensemble = self.inputs.ensemble.value.lower()
+        if "ensemble" in self.inputs:
+            ensemble = self.inputs.ensemble.value.lower()
+        elif "ensemble" in self.inputs.config.as_dictionary.items():
+            ensemble = self.inputs.config.as_dictionary["ensemble"]
+        else:
+            print("ERROR ENSEMBLE NOT PROVIDED")
 
         # md is overwriting the placeholder "calculation" from the base.py file
         codeinfo.cmdline_params[0] = "md"

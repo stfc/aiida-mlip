@@ -8,7 +8,7 @@ from typing import Union
 from ase.io import read
 import numpy as np
 
-from aiida.orm import Dict, Str, StructureData, TrajectoryData, load_code
+from aiida.orm import Bool, Dict, Str, StructureData, TrajectoryData, load_code
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
@@ -59,7 +59,7 @@ def xyz_to_aiida_traj(
     return traj[-1], TrajectoryData(traj)
 
 
-def convert_to_nodes(dictionary: dict) -> dict:
+def convert_to_nodes(dictionary: dict, convert_all: bool = False) -> dict:
     """
     Convert each key of the config file to a aiida node.
 
@@ -67,6 +67,8 @@ def convert_to_nodes(dictionary: dict) -> dict:
     ----------
     dictionary : dict
         The dictionary obtained from the config file.
+    convert_all : bool
+        Define if you want to convert all the parameters or only the main ones.
 
     Returns
     -------
@@ -81,14 +83,23 @@ def convert_to_nodes(dictionary: dict) -> dict:
             value = load_structure(value)
         elif key == "model":
             value = load_model(value, arch)
-        elif key.endswith("_kwargs"):
-            value = Dict(value)
         elif key == "arch":
             arch = value
             value = Str(value)
         elif key == "metadata":
             continue
-        else:
-            value = Str(value)
-        dictionary.update({key: value})
+        # This is only in the case in which we use the run_from_config function, in that
+        # case the config file would be made for aiida specifically not for janus
+        elif convert_all:
+            if key.endswith("_kwargs") or key.endswith("-kwargs"):
+                key = key.replace("-kwargs", "_kwargs")
+                value = Dict(value)
+            else:
+                value = Str(value)
+        else:  # when all is False
+            if key in ["ensemble", "fully_opt"]:
+                value = Str(value) if key == "ensemble" else Bool(value)
+            else:
+                continue
+        dictionary[key] = value
     return dictionary

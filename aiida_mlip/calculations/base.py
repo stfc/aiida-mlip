@@ -1,26 +1,15 @@
 """Base class for features common to most calculations."""
 
-from pathlib import Path
-from typing import Any, Union
-
 from ase.io import write
-import yaml
 
 from aiida.common import datastructures
 import aiida.common.folders
-from aiida.engine import (
-    CalcJob,
-    CalcJobProcessSpec,
-    run,
-    run_get_node,
-    run_get_pk,
-    submit,
-)
+from aiida.engine import CalcJob, CalcJobProcessSpec
 import aiida.engine.processes
-from aiida.orm import ProcessNode, SinglefileData, Str, StructureData
+from aiida.orm import SinglefileData, Str, StructureData
 
+from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
-from aiida_mlip.helpers.converters import convert_to_nodes
 
 
 class BaseJanus(CalcJob):  # numpydoc ignore=PR01
@@ -51,38 +40,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
     _LOG_FILE = "aiida.log"
 
     @classmethod
-    def run_from_config(
-        cls, config_file: Union[Path, str], launch: str
-    ) -> tuple[dict[str, Any], ProcessNode]:
-        """
-        Parse config file.
-
-        Parameters
-        ----------
-        config_file : Filepath
-            The config file path.
-        launch : str
-            Chosen launch function (can be run, run_get_node, run_get_pk, submit).
-
-        Returns
-        -------
-        tuple
-            Returns the output of the chosen launch function.
-        """
-        with open(config_file, encoding="utf-8") as f:
-            config_dict = yaml.safe_load(f)
-            config = convert_to_nodes(config_dict)
-        if launch == "run":
-            return run(cls, config)
-        if launch == "run_get_node":
-            return run_get_node(cls, config)
-        if launch == "submit":
-            return submit(cls, config)
-        if launch == "run_get_pk":
-            return run_get_pk(cls, config)
-        raise ValueError
-
-    @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
         """
         Define the process specification, its inputs, outputs and exit codes.
@@ -107,7 +64,12 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             required=False,
             help="Mlip model used for calculation",
         )
-        spec.input("struct", valid_type=StructureData, help="The input structure.")
+        spec.input(
+            "struct",
+            valid_type=StructureData,
+            required=False,
+            help="The input structure.",
+        )
         spec.input(
             "precision",
             valid_type=Str,
@@ -158,7 +120,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         )
         spec.input(
             "config",
-            valid_type=SinglefileData,
+            valid_type=JanusConfigfile,
             required=False,
             help="Name of the log output file",
         )
@@ -185,7 +147,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         """
         # Wrapping processes may choose to exclude certain input ports
         # If the ports have been excluded, skip the validation.
-        if "struct" not in port_namespace:
+        if "struct" not in port_namespace and "config" not in port_namespace:
             raise ValueError("'Structure' namespaces is required.")
 
         if "input_filename" in inputs:
@@ -248,8 +210,16 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         }
 
         if "config" in self.inputs:
+            # Check if there are values in the config fiel that are also in the command
+            # line and do not store them as only the cmd line parameters will be used
+            config_dict = self.inputs.config.as_dictionary
+            overlapping_params = set(cmd_line.keys()) & set(config_dict.keys())
+            # Store the other parameters
+            self.inputs.config.store_content(skip=list(overlapping_params))
+            # Add config file to command line
             cmd_line.update({"config": "config.yaml"})
             config_parse = self.inputs.config.get_content()
+            # Copy config file content inside the folder where the calculation is run
             with folder.open("config.yaml", "w", encoding="utf-8") as configfile:
                 configfile.write(config_parse)
 
