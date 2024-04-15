@@ -5,7 +5,7 @@ import subprocess
 from ase.build import bulk
 import pytest
 
-from aiida.common import datastructures
+from aiida.common import InputValidationError, datastructures
 from aiida.engine import run
 from aiida.orm import Str, StructureData
 from aiida.plugins import CalculationFactory
@@ -61,7 +61,7 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
     assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
 
 
-def test_singlepoint_modeld(fixture_sandbox, generate_calc_job, janus_code):
+def test_singlepoint_model_download(fixture_sandbox, generate_calc_job, janus_code):
     """Test generating singlepoint calculation job."""
 
     entry_point_name = "janus.sp"
@@ -91,39 +91,40 @@ def test_singlepoint_modeld(fixture_sandbox, generate_calc_job, janus_code):
     assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
 
 
-def test_sp_error(fixture_sandbox, generate_calc_job, model_folder, fixture_code):
+def test_sp_error(fixture_sandbox, generate_calc_job, model_folder, janus_code):
     """Test singlepoint calculation with error input"""
     entry_point_name = "janus.sp"
     model_file = model_folder / "mace_mp_small.model"
     # pylint:disable=line-too-long
     inputs = {
-        "metadata": {"options": {"resources": {"num_machines": 1}}},
-        "code": fixture_code,
-        "input_filename": "wrongname",
+        "metadata": {
+            "options": {"resources": {"num_machines": 1}, "input_filename": "wrong"}
+        },
+        "code": janus_code,
         "arch": Str("mace"),
         "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
-    with pytest.raises(ValueError):
+    with pytest.raises(InputValidationError):
         generate_calc_job(fixture_sandbox, entry_point_name, inputs)
 
 
-def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, fixture_code):
+def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, janus_code):
     """Test singlepoint calculation with error input"""
     entry_point_name = "janus.sp"
     model_file = model_folder / "mace_mp_small.model"
     # pylint:disable=line-too-long
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
-        "code": fixture_code,
+        "code": janus_code,
         "arch": Str("mace"),
         "precision": Str("float64"),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
-    with pytest.raises(ValueError):
+    with pytest.raises(InputValidationError):
         generate_calc_job(fixture_sandbox, entry_point_name, inputs)
 
 

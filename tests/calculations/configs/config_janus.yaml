@@ -1,4 +1,3 @@
-struct: "/home/federica/prova_janus/naclcif/aiida.cif"
 properties:
   - "energy"
 out: "results.xyz"

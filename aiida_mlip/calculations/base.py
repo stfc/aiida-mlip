@@ -2,7 +2,7 @@
 
 from ase.io import read, write
 
-from aiida.common import datastructures
+from aiida.common import InputValidationError, datastructures
 import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
 import aiida.engine.processes
@@ -10,6 +10,39 @@ from aiida.orm import SinglefileData, Str, StructureData
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
+
+
+def validate_inputs(inputs: dict):
+    """
+    Check if the inputs are valid.
+
+    Parameters
+    ----------
+    inputs : dict
+        The inputs dictionary.
+
+    Raises
+    ------
+    ValueError
+        Error message if validation fails, None otherwise.
+    """
+    # Wrapping processes may choose to exclude certain input ports
+    # If the ports have been excluded, skip the validation.
+
+    if not "struct" in inputs and not "config" in inputs:
+        raise InputValidationError(
+            "Structure must be specified through struct or config"
+        )
+    if "config" in inputs and "struct" not in inputs["config"].as_dictionary:
+        raise InputValidationError(
+            "Structure must be specified through struct or config"
+        )
+
+    if "input_filename" in inputs["metadata"]["options"]:
+        if not inputs["metadata"]["options"]["input_filename"].endswith(".xyz"):
+            raise InputValidationError(
+                "The parameter 'input_filename' must end with '.xyz'"
+            )
 
 
 class BaseJanus(CalcJob):  # numpydoc ignore=PR01
@@ -50,7 +83,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             The calculation job process spec to define.
         """
         super().define(spec)
-
+        spec.inputs.validator = validate_inputs
         # Define inputs
         spec.input(
             "arch",
@@ -107,7 +140,12 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             help="Filename to which the content of stdout of the scheduler is written.",
         )
 
-        spec.inputs.validator = cls.validate_inputs
+        spec.input(
+            "config",
+            valid_type=JanusConfigfile,
+            required=False,
+            help="Name of the log output file",
+        )
 
         spec.output("std_output", valid_type=SinglefileData)
         spec.output("log_output", valid_type=SinglefileData)
@@ -117,41 +155,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             "ERROR_MISSING_OUTPUT_FILES",
             message="Some output files missing or cannot be read",
         )
-        spec.input(
-            "config",
-            valid_type=JanusConfigfile,
-            required=False,
-            help="Name of the log output file",
-        )
-
-    @classmethod
-    def validate_inputs(
-        cls, inputs: dict, port_namespace: aiida.engine.processes.ports.PortNamespace
-    ):
-        """
-        Check if the inputs are valid.
-
-        Parameters
-        ----------
-        inputs : dict
-            The inputs dictionary.
-
-        port_namespace : `aiida.engine.processes.ports.PortNamespace`
-            An instance of aiida's `PortNameSpace`.
-
-        Raises
-        ------
-        ValueError
-            Error message if validation fails, None otherwise.
-        """
-        # Wrapping processes may choose to exclude certain input ports
-        # If the ports have been excluded, skip the validation.
-        if "struct" not in port_namespace and "config" not in port_namespace:
-            raise ValueError("'Structure' or 'config' namespaces are required.")
-
-        if "input_filename" in inputs:
-            if not inputs["input_filename"].value.endswith(".xyz"):
-                raise ValueError("The parameter 'input_filename' must end with '.xyz'")
 
     # pylint: disable=too-many-locals
     def prepare_for_submission(
@@ -174,14 +177,13 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         # Create needed inputs
 
         # Transform the structure data in xyz file called input_filename
+
         if "struct" in self.inputs:
             structure = self.inputs.struct
         elif "config" in self.inputs and "struct" in self.inputs.config.as_dictionary:
             structure = StructureData(
                 ase=read(self.inputs.config.as_dictionary["struct"])
             ).store()
-        else:
-            raise ValueError("'Structure' not provided.")
 
         input_filename = self.inputs.metadata.options.input_filename
         atoms = structure.get_ase()
