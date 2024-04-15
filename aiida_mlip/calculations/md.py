@@ -103,10 +103,10 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
 
         if "ensemble" in self.inputs:
             ensemble = self.inputs.ensemble.value.lower()
-        elif "ensemble" in self.inputs.config.as_dictionary.items():
+        elif "config" in self.inputs and "ensemble" in self.inputs.config.as_dictionary:
             ensemble = self.inputs.config.as_dictionary["ensemble"]
         else:
-            print("ERROR ENSEMBLE NOT PROVIDED")
+            raise ValueError("'ensemble' not provided.")
 
         # md is overwriting the placeholder "calculation" from the base.py file
         codeinfo.cmdline_params[0] = "md"

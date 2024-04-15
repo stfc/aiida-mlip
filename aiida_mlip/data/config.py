@@ -24,16 +24,18 @@ class JanusConfigfile(SinglefileData):
     Attributes
     ----------
     filepath : str
-        Path of the mlip model.
+        Path of the config file.
 
     Methods
     -------
     set_file(file, filename=None, architecture=None, **kwargs)
         Set the file for the node.
-    local_file(file, architecture, filename=None):
-        Create a ModelData instance from a local file.
-    download(url, architecture, filename=None, cache_dir=None, force_download=False)
-        Download a file from a URL and save it as ModelData.
+    read_yaml()
+        Reads the config file from yaml format.
+    store_content(store_all: bool = False, skip: list = None) -> dict:
+        Converts keys in dictionary to nodes and store them
+    as_dictionary(self) -> dict
+        Returns the config file as a dictionary.
 
     Other Parameters
     ----------------
@@ -131,7 +133,7 @@ class JanusConfigfile(SinglefileData):
         Returns
         -------
         str
-            Path of the mlip model.
+            Path of the config file.
         """
         return self.base.attributes.get("filepath")
 
@@ -142,7 +144,7 @@ class JanusConfigfile(SinglefileData):
 
         Returns
         -------
-        str
-            Path of the mlip model.
+        dict
+            Config file as a dictionary.
         """
         return dict(self.read_yaml())

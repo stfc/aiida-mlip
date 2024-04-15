@@ -1,6 +1,6 @@
 """Base class for features common to most calculations."""
 
-from ase.io import write
+from ase.io import read, write
 
 from aiida.common import datastructures
 import aiida.common.folders
@@ -55,7 +55,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         spec.input(
             "arch",
             valid_type=Str,
-            default=lambda: Str("mace"),
+            required=False,
             help="Mlip architecture to use for calculation, defaults to mace",
         )
         spec.input(
@@ -73,14 +73,13 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         spec.input(
             "precision",
             valid_type=Str,
-            default=lambda: Str("float64"),
+            required=False,
             help="Precision level for calculation",
         )
         spec.input(
             "device",
             valid_type=Str,
             required=False,
-            default=lambda: Str("cpu"),
             help="Device on which to run calculation (cpu, cuda or mps)",
         )
 
@@ -148,7 +147,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         # Wrapping processes may choose to exclude certain input ports
         # If the ports have been excluded, skip the validation.
         if "struct" not in port_namespace and "config" not in port_namespace:
-            raise ValueError("'Structure' namespaces is required.")
+            raise ValueError("'Structure' or 'config' namespaces are required.")
 
         if "input_filename" in inputs:
             if not inputs["input_filename"].value.endswith(".xyz"):
@@ -173,41 +172,66 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         """
 
         # Create needed inputs
-        # Define architecture from model if model is given,
-        # otherwise get architecture from inputs and download default model
-        architecture = (
-            str((self.inputs.model).architecture)
-            if "model" in self.inputs
-            else str(self.inputs.arch.value)
-        )
-        if "model" in self.inputs:
-            model_path = self.inputs.model.filepath
-        else:
-            model_path = ModelData.download(
-                "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",  # pylint:disable=line-too-long
-                architecture,
-            ).filepath
-
-        # The inputs are saved in the node, but we want their value as a string
-        precision = (self.inputs.precision).value
-        device = (self.inputs.device).value
-        input_filename = self.inputs.metadata.options.input_filename
-        log_filename = (self.inputs.log_filename).value
 
         # Transform the structure data in xyz file called input_filename
-        structure = self.inputs.struct
+        if "struct" in self.inputs:
+            structure = self.inputs.struct
+        elif "config" in self.inputs and "struct" in self.inputs.config.as_dictionary:
+            structure = StructureData(
+                ase=read(self.inputs.config.as_dictionary["struct"])
+            ).store()
+        else:
+            raise ValueError("'Structure' not provided.")
 
+        input_filename = self.inputs.metadata.options.input_filename
         atoms = structure.get_ase()
         with folder.open(input_filename, "w", encoding="utf-8") as inputfile:
             write(inputfile, images=atoms)
 
+        log_filename = (self.inputs.log_filename).value
         cmd_line = {
-            "arch": architecture,
             "struct": input_filename,
-            "device": device,
             "log": log_filename,
-            "calc-kwargs": {"model": model_path, "default_dtype": precision},
         }
+
+        # The inputs are saved in the node, but we want their value as a string
+        if "precision" in self.inputs:
+            precision = (self.inputs.precision).value
+            cmd_line["calc-kwargs"] = {"default_dtype": precision}
+        if "device" in self.inputs:
+            device = (self.inputs.device).value
+            cmd_line["device"] = device
+
+        # Define architecture from model if model is given,
+        # otherwise get architecture from inputs and download default model
+        architecture = (
+            str((self.inputs.model).architecture)
+            if "model" in self.inputs and hasattr(self.inputs.model, "architecture")
+            else str(self.inputs.arch.value) if "arch" in self.inputs else None
+        )
+
+        if architecture:
+            cmd_line["arch"] = architecture
+
+        model_path = (
+            self.inputs.model.filepath
+            if "model" in self.inputs
+            else (
+                None
+                if "config" in self.inputs
+                and "model" in self.inputs.config.as_dictionary
+                else (
+                    ModelData.download(
+                        "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",  # pylint: disable=line-too-long
+                        architecture,
+                    ).filepath
+                    if "arch" in self.inputs
+                    else None
+                )
+            )
+        )
+        if model_path:
+            cmd_line.setdefault("calc-kwargs", {})["model"] = model_path
 
         if "config" in self.inputs:
             # Check if there are values in the config fiel that are also in the command

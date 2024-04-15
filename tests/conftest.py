@@ -227,3 +227,14 @@ def structure_folder():
         Path: The path to the example file.
     """
     return Path(__file__).resolve().parent / "calculations" / "structures"
+
+
+@pytest.fixture
+def config_folder():
+    """
+    Fixture to provide the path to the example file.
+
+    Returns:
+        Path: The path to the example file.
+    """
+    return Path(__file__).resolve().parent / "calculations" / "configs"

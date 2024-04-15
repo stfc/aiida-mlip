@@ -11,7 +11,7 @@ from aiida_mlip.helpers.help_load import load_structure
 metadata = {"options": {"resources": {"num_machines": 1}}}
 code = load_code("janus@localhost")
 
-# Let'say we have a structure already loaded here that we want to use
+# This structure will overwrite the one in the config file if present
 structure = load_structure("/home/federica/prova_janus/waterxyz/water.xyz")
 
 # All the other paramenters we want them from the config file

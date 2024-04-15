@@ -43,7 +43,7 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "--out",
         "aiida-results.xyz",
         "--calc-kwargs",
-        f"{{'model': '{model_file}', 'default_dtype': 'float64'}}",
+        f"{{'default_dtype': 'float64', 'model': '{model_file}'}}",
         "--traj",
         "aiida-traj.xyz",
         "--fmax",
@@ -62,8 +62,8 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "aiida-traj.xyz",
     ]
 
-    print(calc_info.codes_info[0].cmdline_params)
-    print(cmdline_params)
+    print(sorted(map(str, calc_info.codes_info[0].cmdline_params)))
+    print(sorted(map(str, cmdline_params)))
 
     # Check the attributes of the returned `CalcInfo`
     assert sorted(fixture_sandbox.get_content_list()) == ["aiida.xyz"]
@@ -104,7 +104,7 @@ def test_run_opt(model_folder, janus_code):
 
 def test_example_opt(example_path):
     """
-    Test function to execute the example file with specific command arguments.
+    Test function to run md calculation through the use of the example file provided.
     """
     example_file_path = example_path / "submit_geomopt.py"
     command = ["verdi", "run", example_file_path, "janus@localhost"]

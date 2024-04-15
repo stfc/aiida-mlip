@@ -1,10 +1,8 @@
-struct: "/home/federica/prova_janus/naclcif/aiida.cif"
 properties:
   - "energy"
-out: "results.xyz"
 arch: mace_mp
-model: "/home/federica/.cache/mlips/mace_mp/46jrkm3v"
 ensemble: "nvt"
+struct: "./tests/calculations/structures/NaCl.cif"
 temp: 200
 minimize-kwargs:
   filter-kwargs:

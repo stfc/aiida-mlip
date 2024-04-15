@@ -43,7 +43,7 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "--out",
         "aiida-results.xyz",
         "--calc-kwargs",
-        f"{{'model': '{model_file}', 'default_dtype': 'float64'}}",
+        f"{{'default_dtype': 'float64', 'model': '{model_file}'}}",
     ]
 
     retrieve_list = [
@@ -153,7 +153,7 @@ def test_run_sp(model_folder, janus_code):
 
 def test_example(example_path):
     """
-    Test function to execute the example file with specific command arguments.
+    Test function to run md calculation through the use of the example file provided.
     """
 
     example_file_path = example_path / "submit_singlepoint.py"
