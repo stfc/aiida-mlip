@@ -4,6 +4,16 @@ aiida\_mlip.data package
 Submodules
 ----------
 
+aiida\_mlip.data.config module
+------------------------------
+
+.. automodule:: aiida_mlip.data.config
+   :members:
+   :special-members:
+   :private-members:
+   :undoc-members:
+   :show-inheritance:
+
 aiida\_mlip.data.model module
 -----------------------------
 
