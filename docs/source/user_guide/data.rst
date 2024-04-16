@@ -37,7 +37,7 @@ Usage
 
     model_arch = model.architecture
 
-    
+
 
 -The filepath of the model file can be accessed using the `filepath` property:
 
@@ -47,8 +47,8 @@ Usage
 
 .. warning::
 
-    When sharing data, using the ``filepath`` could point to a location inaccessible on another computer. 
-    So if you are using data from someone else, for both the modeldata and the configfile, consider using the ``get_content()`` method to create a new file with identical content. 
+    When sharing data, using the ``filepath`` could point to a location inaccessible on another computer.
+    So if you are using data from someone else, for both the modeldata and the configfile, consider using the ``get_content()`` method to create a new file with identical content.
     Then, use the filepath of the newly created file for running calculation.
     A more robust solution to this problem is going to be implemented.
 
@@ -85,16 +85,16 @@ Usage
 
 The `store_content()` method accepts the following parameters:
 
-    - `store_all` (bool): 
-        Determines whether to store all parameters or only specific ones. 
-        By default, it's set to `False`. 
-        When set to `False`, only the key parameters relevant for the provenance graph are stored: `code`, `structure`, `model`, `architecture`, `fully_opt` (for GeomOpt), and `ensemble` (for MD). 
-        However, all inputs can be accessed in the config file at any time (just the config file will appear in the provenance graph as JanusConfigfile). 
+    - `store_all` (bool):
+        Determines whether to store all parameters or only specific ones.
+        By default, it's set to `False`.
+        When set to `False`, only the key parameters relevant for the provenance graph are stored: `code`, `structure`, `model`, `architecture`, `fully_opt` (for GeomOpt), and `ensemble` (for MD).
+        However, all inputs can be accessed in the config file at any time (just the config file will appear in the provenance graph as JanusConfigfile).
         If `store_all` is set to `True`, all inputs are stored, either as specific data types (e.g. the input 'struct' is recognised as a StructureData type) or as Str.
 
-    - `skip` (list): 
-        Specifies a list of parameters that should not be stored. 
-        In the source code of the calcjobs, when the same parameter is provided both as an AiiDA input and within the config file, the parameter from the config file is ignored and not stored. 
+    - `skip` (list):
+        Specifies a list of parameters that should not be stored.
+        In the source code of the calcjobs, when the same parameter is provided both as an AiiDA input and within the config file, the parameter from the config file is ignored and not stored.
         These parameters are added to the `skip` list to ensure they are excluded from storage.
 
 
@@ -106,11 +106,11 @@ The `store_content()` method accepts the following parameters:
 
 .. warning::
 
-    When sharing data, using the ``filepath`` could point to a location inaccessible on another computer. 
-    So if you are using data from someone else, for both the modeldata and the configfile, consider using the ``get_content()`` method to create a new file with identical content. 
+    When sharing data, using the ``filepath`` could point to a location inaccessible on another computer.
+    So if you are using data from someone else, for both the modeldata and the configfile, consider using the ``get_content()`` method to create a new file with identical content.
     Then, use the filepath of the newly created file for running calculation.
     A more robust solution to this problem is going to be implemented.
-  
+
 
 - The content of the config file can be accessed as a dictionary using the `as_dictionary` property:
 
