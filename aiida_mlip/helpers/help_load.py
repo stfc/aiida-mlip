@@ -50,7 +50,7 @@ def load_model(
     return loaded_model
 
 
-def load_structure(struct: Optional[Union[str, Path, int]]) -> StructureData:
+def load_structure(struct: Union[str, Path, int] = None) -> StructureData:
     """
     Load a StructureData instance from the given input.
 
@@ -74,7 +74,7 @@ def load_structure(struct: Optional[Union[str, Path, int]]) -> StructureData:
     click.BadParameter
         If the input is not a valid path to a structure file or a node PK.
     """
-    if struct is None or struct == "NaCl":
+    if struct is None:
         structure = StructureData(ase=bulk("NaCl", "rocksalt", 5.63))
     elif isinstance(struct, int) or (isinstance(struct, str) and struct.isdigit()):
         structure_pk = int(struct)
