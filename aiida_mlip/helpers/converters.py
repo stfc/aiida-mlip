@@ -75,8 +75,8 @@ def convert_to_nodes(dictionary: dict, convert_all: bool = False) -> dict:
     dict
         Returns the converted dictionary.
     """
-    arch = ""
-    for key, value in sorted(dictionary.items()):
+    arch = dictionary["arch"]
+    for key, value in dictionary.items():
         if key == "code":
             value = load_code(value)
         elif key == "struct":
@@ -84,7 +84,6 @@ def convert_to_nodes(dictionary: dict, convert_all: bool = False) -> dict:
         elif key == "model":
             value = load_model(value, arch)
         elif key == "arch":
-            arch = value
             value = Str(value)
         elif key == "metadata":
             continue
