@@ -38,8 +38,10 @@ def validate_inputs(inputs: dict):
             "Structure must be specified through struct or config"
         )
 
-    if "input_filename" in inputs["metadata"]["options"]:
-        if not inputs["metadata"]["options"]["input_filename"].endswith(".xyz"):
+   if (
+           "input_filename" in inputs["metadata"]["options"] and
+           not inputs["metadata"]["options"]["input_filename"].endswith(".xyz")
+   ):
             raise InputValidationError(
                 "The parameter 'input_filename' must end with '.xyz'"
             )
