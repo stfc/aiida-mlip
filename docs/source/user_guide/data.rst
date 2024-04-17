@@ -31,7 +31,7 @@ Usage
 
     model = ModelData.download('http://yoururl.test/model', architecture='mace', filename='model', cache_dir='/home/mlip/', force_download=False)
 
--The architecture of the model file can be accessed using the `architecture` property:
+- The architecture of the model file can be accessed using the `architecture` property:
 
 .. code-block:: python
 
@@ -39,7 +39,7 @@ Usage
 
 
 
--The filepath of the model file can be accessed using the `filepath` property:
+- The filepath of the model file can be accessed using the `filepath` property:
 
 .. code-block:: python
 
@@ -47,8 +47,8 @@ Usage
 
 .. warning::
 
-    When sharing data, using the ``filepath`` could point to a location inaccessible on another computer.
-    So if you are using data from someone else, for both the modeldata and the configfile, consider using the ``get_content()`` method to create a new file with identical content.
+    When using shared data, the ``filepath`` could point to a inaccessible location on another computer.
+    So if you are using data from someone else, for both the model data and the config file, consider using the ``get_content()`` method to create a new file with identical content.
     Then, use the filepath of the newly created file for running calculation.
     A more robust solution to this problem is going to be implemented.
 
