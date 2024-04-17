@@ -138,7 +138,7 @@ They will be converted to AiiDA data types by the script itself.
 Molecular Dynamics calculation
 ------------------------------
 
-A `MD` Calculation represents a `Calcjob` object within the AiiDA framework.
+An `MD` Calculation represents a `Calcjob` object within the AiiDA framework.
 
 
 Usage
