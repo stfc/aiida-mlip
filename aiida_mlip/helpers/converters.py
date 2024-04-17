@@ -96,10 +96,11 @@ def convert_to_nodes(dictionary: dict, convert_all: bool = False) -> dict:
                 value = Dict(value)
             else:
                 value = Str(value)
-        else:  # when all is False
-            if key in ["ensemble", "fully_opt"]:
-                value = Str(value) if key == "ensemble" else Bool(value)
-            else:
-                continue
+        elif key == "ensemble":
+            value = Str(value)
+        elif key == "fully_opt": 
+            value = Bool(value)
+        else:
+            continue
         dictionary[key] = value
     return dictionary
