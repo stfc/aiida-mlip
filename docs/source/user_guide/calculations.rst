@@ -2,7 +2,7 @@
 Calculations
 ==============================
 
-In these descriptions, we will assume that the code `janus-core <https://github.com/stfc/janus-core>`_ is installed and saved in the AiiDA database as an InstalledCode instance named 'janus@localhost'.
+In these examples, we will assume that the `janus-core <https://github.com/stfc/janus-core>`_ package is installed and saved in the AiiDA database as an `InstalledCode` instance named 'janus@localhost'.
 
 The structure file on which to run a calculation can be anything that `ASE <https://wiki.fysik.dtu.dk/ase/>`_ can read, indicated with the path `path/to/structure`.
 
