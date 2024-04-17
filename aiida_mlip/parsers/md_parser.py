@@ -105,12 +105,12 @@ class MDParser(BaseParser):
             with self.retrieved.open(summary_filepath, "r") as handle:
                 try:
                     res_dict = yaml.safe_load(handle.read())
-                    if res_dict is None:
-                        self.logger.error("Results dictionary empty")
-                        return self.exit_codes.ERROR_MISSING_OUTPUT_FILES
-                    results_node = Dict(res_dict)
-                    self.out("results_dict", results_node)
                 except yaml.YAMLError as exc:
                     print("Error loading YAML:", exc)
+                if res_dict is None:
+                    self.logger.error("Results dictionary empty")
+                    return self.exit_codes.ERROR_MISSING_OUTPUT_FILES
+                results_node = Dict(res_dict)
+                self.out("results_dict", results_node)
 
         return exit_code
