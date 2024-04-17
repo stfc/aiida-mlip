@@ -76,10 +76,9 @@ class BaseParser(Parser):
 
         # Add output file to the outputs
 
-        with self.retrieved.open(logoutput, "rb") as handle:
-            self.out("log_output", SinglefileData(file=handle))
-
-        with self.retrieved.open(output_filename, "rb") as handle:
-            self.out("std_output", SinglefileData(file=handle))
+        with (self.retrieved.open(logoutput, "rb") as log,
+              self.retrieved.open(output_filename, "rb") as output):
+            self.out("log_output", SinglefileData(file=log))
+            self.out("std_output", SinglefileData(file=output))
 
         return ExitCode(0)
