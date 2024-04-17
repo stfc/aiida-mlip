@@ -152,7 +152,7 @@ Below is a usage example with some additional geometry optimisation parameters. 
 
 
     MDCalculation = CalculationFactory("janus.md")
-    submit(MDCalculation, code=InstalledCode, structure=StructureData, ensemble=Str("nve") md_dict=Dict({'temp':300,'steps': 4,'traj-every':3,'stats-every':1}))
+    submit(MDCalculation, code=InstalledCode, structure=StructureData, ensemble=Str("nve"), md_dict=Dict({'temp':300,'steps': 4,'traj-every':3,'stats-every':1}))
 
 As per the singlepoint calculation, the parameters can be provided in the form of a dictionary or a config file.
 
