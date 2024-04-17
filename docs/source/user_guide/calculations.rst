@@ -118,7 +118,9 @@ Below is a usage example with some additional geometry optimisation parameters. 
     submit(GeomOptCalculation, code=InstalledCode, structure=StructureData, max_force=Float(0.1), vectors_only=Bool(True))
 
 
-As per the singlepoint calculation, the parameters can be provided in the form of a dictionary or a config file.
+.. note::
+
+    As per the singlepoint calculation, the parameters can be provided as a dictionary or config file.
 
 Submission
 ^^^^^^^^^^
