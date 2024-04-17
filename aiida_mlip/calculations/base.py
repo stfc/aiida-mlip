@@ -238,7 +238,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             cmd_line.setdefault("calc-kwargs", {})["model"] = model_path
 
         if "config" in self.inputs:
-            # Check if there are values in the config fiel that are also in the command
+            # Check if there are values in the config file that are also in the command
             # line and do not store them as only the cmd line parameters will be used
             config_dict = self.inputs.config.as_dictionary
             overlapping_params = set(cmd_line.keys()) & set(config_dict.keys())
