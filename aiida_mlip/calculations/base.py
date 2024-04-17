@@ -241,7 +241,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             # Check if there are values in the config file that are also in the command
             # line and do not store them as only the cmd line parameters will be used
             config_dict = self.inputs.config.as_dictionary
-            overlapping_params = set(cmd_line.keys()) & set(config_dict.keys())
+            overlapping_params = cmd_line.keys() & config_dict.keys()
             # Store the other parameters
             self.inputs.config.store_content(skip=list(overlapping_params))
             # Add config file to command line
