@@ -27,10 +27,11 @@ def convert_numpy(dictionary: dict) -> dict:
     dict
         Converted dictionary.
     """
-    for key, value in dictionary.items():
+    new_dict = dictionary.copy()
+    for key, value in new_dict.items():
         if isinstance(value, np.ndarray):
-            dictionary[key] = value.tolist()
-    return dictionary
+            new_dict[key] = value.tolist()
+    return new_dict
 
 
 def xyz_to_aiida_traj(
