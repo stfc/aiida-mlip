@@ -9,7 +9,7 @@ The structure should be a path to a file. Here, the structure file is specified 
 .. note::
    Any format that `ASE <https://wiki.fysik.dtu.dk/ase/>`_ can read is a valid structure file for a calculation.
 
-The model file is a local file or a file to download, depending on the specific MLIP that is being used. In these examples, it is referred to as a local file `path/to/model`.
+The model file determines the specific MLIP to be used. I can be a local file or a URI to a file to download. In these examples, it is assumed to be a local file located at `path/to/model`.
 
 
 SinglePoint Calculation
