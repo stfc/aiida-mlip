@@ -114,10 +114,9 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
         codeinfo.cmdline_params += ["--ensemble", ensemble]
 
         for flag, value in md_dictionary.items():
-            if isinstance(value, bool):
-                # Add boolean flags without value if True
-                if value:
-                    codeinfo.cmdline_params.append(f"--{flag}")
+            # Add boolean flags without value if True
+            if isinstance(value, bool) and value:
+                codeinfo.cmdline_params.append(f"--{flag}")
             else:
                 codeinfo.cmdline_params += [f"--{flag}", value]
 
