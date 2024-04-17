@@ -127,7 +127,7 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
         codeinfo = calcinfo.codes_info[0]
 
         # Adding command line params for when we run janus
-        # Singlepoint is overwriting the placeholder "calculation" from the base.py file
+        # singlepoint is overwriting the placeholder "calculation" from the base.py file
         codeinfo.cmdline_params[0] = "singlepoint"
         codeinfo.cmdline_params += ["--out", xyz_filename]
 

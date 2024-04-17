@@ -128,7 +128,8 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             "opt-kwargs": opt_kwargs,
         }
 
-        # geomopt is overwriting the placeholder "calculation" from the base.py file
+        # Adding command line params for when we run janus
+        # 'geomopt' is overwriting the placeholder "calculation" from the base.py file
         codeinfo.cmdline_params[0] = "geomopt"
 
         for flag, value in geom_opt_cmdline.items():
