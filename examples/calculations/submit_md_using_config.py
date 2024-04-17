@@ -11,7 +11,7 @@ from aiida_mlip.helpers.help_load import load_structure
 metadata = {"options": {"resources": {"num_machines": 1}}}
 code = load_code("janus@localhost")
 
-# # This structure will overwrite the one in the config file if present
+# This structure will overwrite the one in the config file if present
 structure = load_structure(
     "/home/federica/aiida-mlip/tests/calculations/structures/NaCl.cif"
 )
