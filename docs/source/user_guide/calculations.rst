@@ -4,7 +4,10 @@ Calculations
 
 In these examples, we will assume that the `janus-core <https://github.com/stfc/janus-core>`_ package is installed and saved in the AiiDA database as an `InstalledCode` instance named 'janus@localhost'.
 
-The structure file on which to run a calculation can be anything that `ASE <https://wiki.fysik.dtu.dk/ase/>`_ can read, indicated with the path `path/to/structure`.
+The structure should be a path to a file. Here, the structure file is specified as `path/to/structure`.
+
+.. note::
+   Any format that `ASE <https://wiki.fysik.dtu.dk/ase/>`_ can read is a valid structure file for a calculation.
 
 The model file is a local file or a file to download, depending on the specific MLIP that is being used. In these examples, it is referred to as a local file `path/to/model`.
 
