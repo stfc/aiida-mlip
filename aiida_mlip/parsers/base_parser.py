@@ -68,8 +68,7 @@ class BaseParser(Parser):
         files_retrieved = self.retrieved.list_object_names()
 
         files_expected = {output_filename, logoutput}
-        # Note: set(A) <= set(B) checks whether A is a subset of B
-        if not set(files_expected) <= set(files_retrieved):
+        if not files_expected.issubset(files_retrieved):
             self.logger.error(
                 f"Found files '{files_retrieved}', expected to find '{files_expected}'"
             )
