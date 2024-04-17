@@ -245,7 +245,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             # Store the other parameters
             self.inputs.config.store_content(skip=list(overlapping_params))
             # Add config file to command line
-            cmd_line.update({"config": "config.yaml"})
+            cmd_line["config"] = "config.yaml"
             config_parse = self.inputs.config.get_content()
             # Copy config file content inside the folder where the calculation is run
             with folder.open("config.yaml", "w", encoding="utf-8") as configfile:
