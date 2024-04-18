@@ -2,4 +2,3 @@ properties:
   - "energy"
 out: "results.xyz"
 arch: mace_mp
-model: "/home/federica/.cache/mlips/mace_mp/46jrkm3v"

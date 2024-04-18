@@ -36,7 +36,7 @@ def validate_inputs(
             raise InputValidationError(
                 "Either 'struct' or 'config' must be specified in the inputs"
             )
-        if "config" in inputs and "struct" not in inputs["config"].as_dictionary:
+        if "config" in inputs and "struct" not in inputs["config"]:
             raise InputValidationError(
                 "Structure must be specified through 'struct' or 'config'"
             )
@@ -217,7 +217,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         if "model" in self.inputs:
             model_path = self.inputs.model.filepath
         else:
-            if "config" in self.inputs and "model" in self.inputs.config.as_dictionary:
+            if "config" in self.inputs and "model" in self.inputs.config:
                 model_path = None
             else:
                 if "arch" in self.inputs:

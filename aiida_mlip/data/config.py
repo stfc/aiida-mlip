@@ -67,6 +67,23 @@ class JanusConfigfile(SinglefileData):
         super().__init__(file, filename, **kwargs)
         self.base.attributes.set("filepath", str(file))
 
+    def __contains__(self, key):
+        """
+        Check if a key exists in the config file.
+
+        Parameters
+        ----------
+        key : str
+            Key to check.
+
+        Returns
+        -------
+        bool
+            True if the key exists in the config file, False otherwise.
+        """
+        config = self.as_dictionary
+        return key in config
+
     def set_file(
         self,
         file: Union[str, Path],
