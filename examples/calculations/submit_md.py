@@ -44,7 +44,7 @@ def MD(params: dict) -> None:
         "precision": Str(params["precision"]),
         "device": Str(params["device"]),
         "ensemble": Str(params["ensemble"]),
-        "md_dict": Dict(params["md_dict"]),
+        "md_kwargs": Dict(params["md_dict"]),
     }
 
     # Run calculation

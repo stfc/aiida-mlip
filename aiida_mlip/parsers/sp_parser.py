@@ -75,14 +75,18 @@ class SPParser(BaseParser):
             An exit code.
         """
 
+        exit_code = super().parse(**kwargs)
+
+        if exit_code != ExitCode(0):
+            return exit_code
+
         xyzoutput = (self.node.inputs.out).value
 
         # Check that folder content is as expected
         files_retrieved = self.retrieved.list_object_names()
 
         files_expected = {xyzoutput}
-        # Note: set(A) <= set(B) checks whether A is a subset of B
-        if not set(files_expected) <= set(files_retrieved):
+        if not files_expected.issubset(files_retrieved):
             self.logger.error(
                 f"Found files '{files_retrieved}', expected to find '{files_expected}'"
             )

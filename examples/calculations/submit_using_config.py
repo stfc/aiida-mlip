@@ -12,13 +12,11 @@ metadata = {"options": {"resources": {"num_machines": 1}}}
 code = load_code("janus@localhost")
 
 # This structure will overwrite the one in the config file if present
-structure = load_structure("/home/federica/prova_janus/waterxyz/water.xyz")
+structure = load_structure("../tests/calculations/structures/NaCl.cif")
 
 # All the other paramenters we want them from the config file
 # We want to pass it as a AiiDA data type for the provenance
-config = JanusConfigfile(
-    "/home/federica/aiida-mlip/tests/calculations/configs/config_janus.yaml"
-)
+config = JanusConfigfile("../tests/calculations/configs/config_janus.yaml")
 
 # Define calculation to run
 singlePointCalculation = CalculationFactory("janus.sp")

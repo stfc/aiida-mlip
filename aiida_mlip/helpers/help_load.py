@@ -50,7 +50,7 @@ def load_model(
     return loaded_model
 
 
-def load_structure(struct: Union[str, Path, int] = None) -> StructureData:
+def load_structure(struct: Optional[Union[str, Path, int]] = None) -> StructureData:
     """
     Load a StructureData instance from the given input.
 

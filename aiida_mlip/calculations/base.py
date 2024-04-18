@@ -12,7 +12,9 @@ from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
 
 
-def validate_inputs(inputs: dict):
+def validate_inputs(
+    inputs: dict, port_namespace: aiida.engine.processes.ports.PortNamespace
+):
     """
     Check if the inputs are valid.
 
@@ -21,29 +23,22 @@ def validate_inputs(inputs: dict):
     inputs : dict
         The inputs dictionary.
 
+    port_namespace : `aiida.engine.processes.ports.PortNamespace`
+        An instance of aiida's `PortNameSpace`.
+
     Raises
     ------
     ValueError
         Error message if validation fails, None otherwise.
     """
-    # Wrapping processes may choose to exclude certain input ports
-    # If the ports have been excluded, skip the validation.
-
-    if not "struct" in inputs and not "config" in inputs:
-        raise InputValidationError(
-            "Structure must be specified through struct or config"
-        )
-    if "config" in inputs and "struct" not in inputs["config"].as_dictionary:
-        raise InputValidationError(
-            "Structure must be specified through struct or config"
-        )
-
-   if (
-           "input_filename" in inputs["metadata"]["options"] and
-           not inputs["metadata"]["options"]["input_filename"].endswith(".xyz")
-   ):
+    if "struct" in port_namespace:
+        if "struct" not in inputs and "config" not in inputs:
             raise InputValidationError(
-                "The parameter 'input_filename' must end with '.xyz'"
+                "Either 'struct' or 'config' must be specified in the inputs"
+            )
+        if "config" in inputs and "struct" not in inputs["config"].as_dictionary:
+            raise InputValidationError(
+                "Structure must be specified through 'struct' or 'config'"
             )
 
 
@@ -53,11 +48,11 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
     Attributes
     ----------
-    _DEFAULT_OUTPUT_FILE : str
+    DEFAULT_OUTPUT_FILE : str
         Default stdout file name.
-    _DEFAULT_INPUT_FILE : str
+    DEFAULT_INPUT_FILE : str
         Default input file name.
-    _LOG_FILE : str
+    LOG_FILE : str
         Default log file name.
 
     Methods
@@ -70,9 +65,9 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         Create the input files for the `CalcJob`.
     """
 
-    _DEFAULT_OUTPUT_FILE = "aiida-stdout.txt"
-    _DEFAULT_INPUT_FILE = "aiida.xyz"
-    _LOG_FILE = "aiida.log"
+    DEFAULT_OUTPUT_FILE = "aiida-stdout.txt"
+    DEFAULT_INPUT_FILE = "aiida.xyz"
+    LOG_FILE = "aiida.log"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
@@ -122,18 +117,18 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             "log_filename",
             valid_type=Str,
             required=False,
-            default=lambda: Str(cls._LOG_FILE),
+            default=lambda: Str(cls.LOG_FILE),
             help="Name of the log output file",
         )
         spec.input(
             "metadata.options.output_filename",
             valid_type=str,
-            default=cls._DEFAULT_OUTPUT_FILE,
+            default=cls.DEFAULT_OUTPUT_FILE,
         )
         spec.input(
             "metadata.options.input_filename",
             valid_type=str,
-            default=cls._DEFAULT_INPUT_FILE,
+            default=cls.DEFAULT_INPUT_FILE,
         )
         spec.input(
             "metadata.options.scheduler_stdout",
@@ -178,8 +173,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
         # Create needed inputs
 
-        # Transform the structure data in xyz file called input_filename
-
         if "struct" in self.inputs:
             structure = self.inputs.struct
         elif "config" in self.inputs and "struct" in self.inputs.config.as_dictionary:
@@ -187,10 +180,12 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
                 ase=read(self.inputs.config.as_dictionary["struct"])
             ).store()
 
+        # Transform the structure data in xyz file called input_filename
         input_filename = self.inputs.metadata.options.input_filename
         atoms = structure.get_ase()
-        with folder.open(input_filename, "w", encoding="utf-8") as inputfile:
-            write(inputfile, images=atoms)
+        # with folder.open(input_filename, mode="w", encoding='utf8') as file:
+        print(folder.abspath + "/" + input_filename)
+        write(folder.abspath + "/" + input_filename, images=atoms)
 
         log_filename = (self.inputs.log_filename).value
         cmd_line = {
@@ -208,6 +203,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
         # Define architecture from model if model is given,
         # otherwise get architecture from inputs and download default model
+        architecture = None
         architecture = (
             str((self.inputs.model).architecture)
             if "model" in self.inputs and hasattr(self.inputs.model, "architecture")
@@ -217,23 +213,19 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         if architecture:
             cmd_line["arch"] = architecture
 
-        model_path = (
-            self.inputs.model.filepath
-            if "model" in self.inputs
-            else (
-                None
-                if "config" in self.inputs
-                and "model" in self.inputs.config.as_dictionary
-                else (
-                    ModelData.download(
+        model_path = None
+        if "model" in self.inputs:
+            model_path = self.inputs.model.filepath
+        else:
+            if "config" in self.inputs and "model" in self.inputs.config.as_dictionary:
+                model_path = None
+            else:
+                if "arch" in self.inputs:
+                    model_path = ModelData.download(
                         "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",  # pylint: disable=line-too-long
                         architecture,
                     ).filepath
-                    if "arch" in self.inputs
-                    else None
-                )
-            )
-        )
+
         if model_path:
             cmd_line.setdefault("calc-kwargs", {})["model"] = model_path
 
@@ -243,7 +235,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             config_dict = self.inputs.config.as_dictionary
             overlapping_params = cmd_line.keys() & config_dict.keys()
             # Store the other parameters
-            self.inputs.config.store_content(skip=list(overlapping_params))
+            self.inputs.config.store_content(skip=overlapping_params)
             # Add config file to command line
             cmd_line["config"] = "config.yaml"
             config_parse = self.inputs.config.get_content()

@@ -20,7 +20,7 @@ from aiida_mlip.calculations.singlepoint import Singlepoint
 
 class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
     """
-    Calcjob implementation to run geometry optimization calculations using mlips.
+    Calcjob implementation to run geometry optimisation calculations using mlips.
 
     Methods
     -------
@@ -30,7 +30,7 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
         Create the input files for the `CalcJob`.
     """
 
-    _DEFAULT_TRAJ_FILE = "aiida-traj.xyz"
+    DEFAULT_TRAJ_FILE = "aiida-traj.xyz"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
@@ -44,27 +44,27 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
         """
         super().define(spec)
 
-        # Additional inputs for geometry optimization
+        # Additional inputs for geometry optimisation
         spec.input(
             "traj",
             valid_type=Str,
             required=False,
-            default=lambda: Str(cls._DEFAULT_TRAJ_FILE),
-            help="Path to save optimization frames to",
+            default=lambda: Str(cls.DEFAULT_TRAJ_FILE),
+            help="Path to save optimisation frames to",
         )
         spec.input(
             "fully_opt",
             valid_type=Bool,
             required=False,
             default=lambda: Bool(False),
-            help="Fully optimize the cell vectors, angles, and atomic positions",
+            help="Fully optimise the cell vectors, angles, and atomic positions",
         )
         spec.input(
             "vectors_only",
             valid_type=Bool,
             required=False,
             default=lambda: Bool(False),
-            help="Optimize cell vectors, as well as atomic positions",
+            help="Optimise cell vectors, as well as atomic positions",
         )
         spec.input(
             "fmax",

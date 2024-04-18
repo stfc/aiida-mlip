@@ -12,9 +12,7 @@ metadata = {"options": {"resources": {"num_machines": 1}}}
 code = load_code("janus@localhost")
 
 # This structure will overwrite the one in the config file if present
-structure = load_structure(
-    "/home/federica/aiida-mlip/tests/calculations/structures/NaCl.cif"
-)
+structure = load_structure()
 
 # All the other paramenters we want them from the config file
 # We want to pass it as a AiiDA data type for the provenance

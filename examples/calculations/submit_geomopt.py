@@ -88,16 +88,16 @@ def geomopt(params: dict) -> None:
     "--vectors_only",
     default=False,
     type=bool,
-    help="Optimize cell vectors, as well as atomic positions.",
+    help="Optimise cell vectors, as well as atomic positions.",
 )
 @click.option(
     "--fully_opt",
     default=False,
     type=bool,
-    help="Fully optimize the cell vectors, angles, and atomic positions.",
+    help="Fully optimise the cell vectors, angles, and atomic positions.",
 )
 @click.option(
-    "--steps", default=1000, type=int, help="Maximum number of optimization steps."
+    "--steps", default=1000, type=int, help="Maximum number of optimisation steps."
 )
 def cli(
     codelabel,

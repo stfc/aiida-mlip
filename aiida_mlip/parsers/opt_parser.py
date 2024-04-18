@@ -18,7 +18,7 @@ geomoptCalculation = CalculationFactory("janus.opt")
 
 class GeomOptParser(SPParser):
     """
-    Parser class for parsing output of geometry optimization calculation.
+    Parser class for parsing output of geometry optimisation calculation.
 
     Inherits from SPParser.
 

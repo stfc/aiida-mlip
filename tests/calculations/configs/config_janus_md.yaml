@@ -1,8 +1,8 @@
 properties:
   - "energy"
 arch: mace_mp
+struct: "NaCl.cif"
 ensemble: "nvt"
-struct: "./tests/calculations/structures/NaCl.cif"
 temp: 200
 minimize-kwargs:
   filter-kwargs:

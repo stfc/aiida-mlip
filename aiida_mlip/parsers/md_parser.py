@@ -76,41 +76,41 @@ class MDParser(BaseParser):
         """
         # Call the parent parse method to handle common parsing logic
         exit_code = super().parse(**kwargs)
-        if exit_code == ExitCode(0):
 
-            md_dictionary = self.node.inputs.md_kwargs.get_dict()
+        if exit_code != ExitCode(0):
+            return exit_code
 
-            # Process trajectory file saving both the file and trajectory as aiida data
-            traj_filepath = md_dictionary.get("traj-file", MD.DEFAULT_TRAJ_FILE)
-            with self.retrieved.open(traj_filepath, "rb") as handle:
-                self.out("traj_file", SinglefileData(file=handle))
-            final_str, traj_output = xyz_to_aiida_traj(
-                Path(self.node.get_remote_workdir(), traj_filepath)
-            )
-            self.out("traj_output", traj_output)
-            self.out("final_structure", final_str)
+        md_dictionary = self.node.inputs.md_kwargs.get_dict()
 
-            # Process stats file as singlefiledata
-            stats_filepath = md_dictionary.get("stats-file", MD.DEFAULT_STATS_FILE)
-            with self.retrieved.open(stats_filepath, "rb") as handle:
-                self.out("stats_file", SinglefileData(file=handle))
+        # Process trajectory file saving both the file and trajectory as aiida data
+        traj_filepath = md_dictionary.get("traj-file", MD.DEFAULT_TRAJ_FILE)
+        with self.retrieved.open(traj_filepath, "rb") as handle:
+            self.out("traj_file", SinglefileData(file=handle))
+        final_str, traj_output = xyz_to_aiida_traj(
+            Path(self.node.get_remote_workdir(), traj_filepath)
+        )
+        self.out("traj_output", traj_output)
+        self.out("final_structure", final_str)
 
-            # Process summary as both singlefiledata and results dictionary
-            summary_filepath = md_dictionary.get("summary", MD.DEFAULT_SUMMARY_FILE)
-            print(self.node.get_remote_workdir(), summary_filepath)
-            with self.retrieved.open(summary_filepath, "rb") as handle:
-                self.out("summary", SinglefileData(file=handle))
-                handle.close()
+        # Process stats file as singlefiledata
+        stats_filepath = md_dictionary.get("stats-file", MD.DEFAULT_STATS_FILE)
+        with self.retrieved.open(stats_filepath, "rb") as handle:
+            self.out("stats_file", SinglefileData(file=handle))
 
-            with self.retrieved.open(summary_filepath, "r") as handle:
-                try:
-                    res_dict = yaml.safe_load(handle.read())
-                except yaml.YAMLError as exc:
-                    print("Error loading YAML:", exc)
-                if res_dict is None:
-                    self.logger.error("Results dictionary empty")
-                    return self.exit_codes.ERROR_MISSING_OUTPUT_FILES
-                results_node = Dict(res_dict)
-                self.out("results_dict", results_node)
+        # Process summary as both singlefiledata and results dictionary
+        summary_filepath = md_dictionary.get("summary", MD.DEFAULT_SUMMARY_FILE)
+        print(self.node.get_remote_workdir(), summary_filepath)
+        with self.retrieved.open(summary_filepath, "rb") as handle:
+            self.out("summary", SinglefileData(file=handle))
 
-        return exit_code
+        with self.retrieved.open(summary_filepath, "r") as handle:
+            try:
+                res_dict = yaml.safe_load(handle.read())
+            except yaml.YAMLError as exc:
+                print("Error loading YAML:", exc)
+            if res_dict is None:
+                self.logger.error("Results dictionary empty")
+                return self.exit_codes.ERROR_MISSING_OUTPUT_FILES
+            results_node = Dict(res_dict)
+            self.out("results_dict", results_node)
+        return ExitCode(0)

@@ -15,7 +15,7 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
 
     Attributes
     ----------
-    _XYZ_OUTPUT : str
+    XYZ_OUTPUT : str
         Default xyz output file name.
 
     Methods
@@ -28,7 +28,7 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
         Create the input files for the `CalcJob`.
     """
 
-    _XYZ_OUTPUT = "aiida-results.xyz"
+    XYZ_OUTPUT = "aiida-results.xyz"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
@@ -48,7 +48,7 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
             "out",
             valid_type=Str,
             required=False,
-            default=lambda: Str(cls._XYZ_OUTPUT),
+            default=lambda: Str(cls.XYZ_OUTPUT),
             help="Name of the xyz output file",
         )
 
@@ -72,35 +72,6 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
         spec.output("xyz_output", valid_type=SinglefileData)
         print("defining outputnode")
         spec.default_output_node = "results_dict"
-
-    @classmethod
-    def validate_inputs(
-        cls, inputs: dict, port_namespace: aiida.engine.processes.ports.PortNamespace
-    ):
-        """
-        Check if the inputs are valid.
-
-        Parameters
-        ----------
-        inputs : dict
-            The inputs dictionary.
-
-        port_namespace : `aiida.engine.processes.ports.PortNamespace`
-            An instance of aiida's `PortNameSpace`.
-
-        Raises
-        ------
-        ValueError
-            Error message if validation fails, None otherwise.
-        """
-        # Wrapping processes may choose to exclude certain input ports
-        # If the ports have been excluded, skip the validation.
-        if "structure" not in port_namespace and "config" not in port_namespace:
-            raise ValueError("'Structure' namespaces is required.")
-
-        if "input_filename" in inputs:
-            if not inputs["input_filename"].value.endswith(".xyz"):
-                raise ValueError("The parameter 'input_filename' must end with '.xyz'")
 
     # pylint: disable=too-many-locals
     def prepare_for_submission(

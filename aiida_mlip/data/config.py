@@ -147,4 +147,4 @@ class JanusConfigfile(SinglefileData):
         dict
             Config file as a dictionary.
         """
-        return dict(self.read_yaml())
+        return self.read_yaml()

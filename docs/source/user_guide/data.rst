@@ -81,7 +81,7 @@ Usage
 
 .. code-block:: python
 
-    config_file.store_content(store_all: False, skip: [])
+    config_file.store_content(store_all=False, skip=[])
 
 The `store_content()` method accepts the following parameters:
 

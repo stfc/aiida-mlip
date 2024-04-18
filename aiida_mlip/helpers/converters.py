@@ -76,18 +76,19 @@ def convert_to_nodes(dictionary: dict, convert_all: bool = False) -> dict:
     dict
         Returns the converted dictionary.
     """
-    arch = dictionary["arch"]
-    for key, value in dictionary.items():
-        if key == "code":
-            value = load_code(value)
-        elif key == "struct":
-            value = load_structure(value)
-        elif key == "model":
-            value = load_model(value, arch)
-        elif key == "arch":
-            value = Str(value)
-        elif key == "metadata":
-            continue
+    new_dict = dictionary.copy()
+    arch = new_dict["arch"]
+    conv = {
+        "code": load_code,
+        "struct": load_structure,
+        "model": lambda v: load_model(v, arch),
+        "arch": Str,
+        "ensemble": Str,
+        "fully_opt": Bool,
+    }
+    for key, value in new_dict.items():
+        if key in conv:
+            value = conv[key](value)
         # This is only in the case in which we use the run_from_config function, in that
         # case the config file would be made for aiida specifically not for janus
         elif convert_all:
@@ -96,11 +97,7 @@ def convert_to_nodes(dictionary: dict, convert_all: bool = False) -> dict:
                 value = Dict(value)
             else:
                 value = Str(value)
-        elif key == "ensemble":
-            value = Str(value)
-        elif key == "fully_opt": 
-            value = Bool(value)
         else:
             continue
-        dictionary[key] = value
-    return dictionary
+        new_dict[key] = value
+    return new_dict

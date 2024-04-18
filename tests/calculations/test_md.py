@@ -1,10 +1,10 @@
 """Tests for geometry optimisation calculation."""
 
-import os
+from pathlib import Path
 import subprocess
 
 from ase.build import bulk
-from ase.io import read
+from ase.io import read, write
 import pytest
 
 from aiida.common import datastructures
@@ -84,10 +84,8 @@ def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "md_summary.yml",
     ]
 
-    print(sorted(map(str, calc_info.codes_info[0].cmdline_params)))
-    print(sorted(map(str, cmdline_params)))
     # Check the attributes of the returned `CalcInfo`
-    assert sorted(fixture_sandbox.get_content_list()) == ["aiida.xyz"]
+    assert fixture_sandbox.get_content_list() == ["aiida.xyz"]
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
     assert len(calc_info.codes_info[0].cmdline_params) == len(cmdline_params)
@@ -101,10 +99,12 @@ def test_MD_with_config(
     fixture_sandbox, generate_calc_job, janus_code, model_folder, config_folder
 ):
     """Test generating MD calculation job."""
-    print(os.getcwd())
+    # Create a temporary cif file to use as input
+    nacl = bulk("NaCl", "rocksalt", a=5.63)
+    write("NaCl.cif", nacl)
+
     entry_point_name = "janus.md"
     model_file = model_folder / "mace_mp_small.model"
-    print(model_file)
     inputs = {
         "code": janus_code,
         "model": ModelData.local_file(file=model_file, architecture="mace"),
@@ -145,7 +145,6 @@ def test_MD_with_config(
         "md_summary.yml",
     ]
 
-    print(f"Cmd line md config: {calc_info.codes_info[0].cmdline_params}")
     # Check the attributes of the returned `CalcInfo`
     assert sorted(fixture_sandbox.get_content_list()) == ["aiida.xyz", "config.yaml"]
     assert isinstance(calc_info, datastructures.CalcInfo)
@@ -155,6 +154,7 @@ def test_MD_with_config(
         map(str, cmdline_params)
     )
     assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
+    Path("NaCl.cif").unlink()
 
 
 def test_run_md(model_folder, structure_folder, janus_code):

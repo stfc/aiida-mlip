@@ -28,7 +28,7 @@ Below is a usage example with the minimum required parameters. These parameters 
 .. code-block:: python
 
     SinglePointCalculation = CalculationFactory("janus.sp")
-    submit(SinglePointCalculation, code=InstalledCode, structure=StructureData, metadata="{"options": {"resources": {"num_machines": 1}}}")
+    submit(SinglePointCalculation, code=InstalledCode, structure=StructureData, metadata={"options": {"resources": {"num_machines": 1}}})
 
 The inputs can be grouped into a dictionary:
 
