@@ -7,7 +7,7 @@ import pytest
 
 from aiida.common import datastructures
 from aiida.engine import run
-from aiida.orm import Bool, Str, StructureData
+from aiida.orm import Bool, Float, Int, Str, StructureData
 from aiida.plugins import CalculationFactory
 
 from aiida_mlip.data.model import ModelData
@@ -46,12 +46,6 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         f"{{'default_dtype': 'float64', 'model': '{model_file}'}}",
         "--traj",
         "aiida-traj.xyz",
-        "--fmax",
-        0.1,
-        "--steps",
-        1000,
-        "--opt-kwargs",
-        {},
     ]
 
     retrieve_list = [
@@ -86,11 +80,13 @@ def test_run_opt(model_folder, janus_code):
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
         "fully_opt": Bool(True),
+        "fmax": Float(0.1),
+        "steps": Int(1000),
     }
 
     geomoptCalculation = CalculationFactory("janus.opt")
     result = run(geomoptCalculation, **inputs)
-
+    print(result)
     assert "results_dict" in result
     assert "final_structure" in result
     assert "traj_output" in result

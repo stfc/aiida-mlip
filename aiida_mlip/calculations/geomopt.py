@@ -116,14 +116,15 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
         if "opt_kwargs" in self.inputs:
             opt_kwargs = self.inputs.opt_kwargs.get_dict()
             geom_opt_cmdline["opt-kwargs"] = opt_kwargs
-        if "fully-opt" in self.inputs:
-            geom_opt_cmdline["fully-opt"] = (self.inputs.fully_opt.value,)
-        if "vectors-only" in self.inputs:
-            geom_opt_cmdline["vectors-only"] = (self.inputs.vectors_only.value,)
+        if "fully_opt" in self.inputs:
+            geom_opt_cmdline["fully-opt"] = self.inputs.fully_opt.value
+        if "vectors_only" in self.inputs:
+            geom_opt_cmdline["vectors-only"] = self.inputs.vectors_only.value
         if "fmax" in self.inputs:
-            geom_opt_cmdline["fmax"] = (self.inputs.fmax.value,)
+            print()
+            geom_opt_cmdline["fmax"] = self.inputs.fmax.value
         if "steps" in self.inputs:
-            geom_opt_cmdline["steps"] = (self.inputs.steps.value,)
+            geom_opt_cmdline["steps"] = self.inputs.steps.value
 
         # geom_opt_cmdline = {
         #     "traj": self.inputs.traj.value,
