@@ -56,21 +56,18 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             "fully_opt",
             valid_type=Bool,
             required=False,
-            default=lambda: Bool(False),
             help="Fully optimise the cell vectors, angles, and atomic positions",
         )
         spec.input(
             "vectors_only",
             valid_type=Bool,
             required=False,
-            default=lambda: Bool(False),
             help="Optimise cell vectors, as well as atomic positions",
         )
         spec.input(
             "fmax",
             valid_type=Float,
             required=False,
-            default=lambda: Float(0.1),
             help="Maximum force for convergence",
         )
 
@@ -78,7 +75,6 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             "steps",
             valid_type=Int,
             required=False,
-            default=lambda: Int(1000),
             help="Number of optimisation steps",
         )
 
@@ -86,7 +82,6 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             "opt_kwargs",
             valid_type=Dict,
             required=False,
-            default=lambda: Dict({}),
             help="Other optimisation keywords",
         )
 
@@ -117,16 +112,27 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
         calcinfo = super().prepare_for_submission(folder)
         codeinfo = calcinfo.codes_info[0]
 
-        opt_kwargs = self.inputs.opt_kwargs.get_dict()
+        geom_opt_cmdline = {"traj": self.inputs.traj.value}
+        if "opt_kwargs" in self.inputs:
+            opt_kwargs = self.inputs.opt_kwargs.get_dict()
+            geom_opt_cmdline["opt-kwargs"] = opt_kwargs
+        if "fully-opt" in self.inputs:
+            geom_opt_cmdline["fully-opt"] = (self.inputs.fully_opt.value,)
+        if "vectors-only" in self.inputs:
+            geom_opt_cmdline["vectors-only"] = (self.inputs.vectors_only.value,)
+        if "fmax" in self.inputs:
+            geom_opt_cmdline["fmax"] = (self.inputs.fmax.value,)
+        if "steps" in self.inputs:
+            geom_opt_cmdline["steps"] = (self.inputs.steps.value,)
 
-        geom_opt_cmdline = {
-            "traj": self.inputs.traj.value,
-            "fully-opt": self.inputs.fully_opt.value,
-            "vectors-only": self.inputs.vectors_only.value,
-            "fmax": self.inputs.fmax.value,
-            "steps": self.inputs.steps.value,
-            "opt-kwargs": opt_kwargs,
-        }
+        # geom_opt_cmdline = {
+        #     "traj": self.inputs.traj.value,
+        #     "fully-opt": self.inputs.fully_opt.value,
+        #     "vectors-only": self.inputs.vectors_only.value,
+        #     "fmax": self.inputs.fmax.value,
+        #     "steps": self.inputs.steps.value,
+        #     "opt-kwargs": opt_kwargs,
+        # }
 
         # Adding command line params for when we run janus
         # 'geomopt' is overwriting the placeholder "calculation" from the base.py file

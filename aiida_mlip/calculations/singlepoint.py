@@ -56,9 +56,9 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
             "properties",
             valid_type=Str,
             required=False,
-            default=lambda: Str("energy"),
             help="Properties to calculate",
         )
+
         spec.inputs["metadata"]["options"]["parser_name"].default = "janus.sp_parser"
 
         # Define outputs. The default is a dictionary with the content of the xyz file
@@ -90,9 +90,6 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
         aiida.common.datastructures.CalcInfo
             An instance of `aiida.common.datastructures.CalcInfo`.
         """
-        # The inputs are saved in the node, but we want their value as a string
-        xyz_filename = (self.inputs.out).value
-
         # Call the parent class method to prepare common inputs
         calcinfo = super().prepare_for_submission(folder)
         codeinfo = calcinfo.codes_info[0]
@@ -100,7 +97,14 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
         # Adding command line params for when we run janus
         # singlepoint is overwriting the placeholder "calculation" from the base.py file
         codeinfo.cmdline_params[0] = "singlepoint"
+
+        # The inputs are saved in the node, but we want their value as a string
+        xyz_filename = (self.inputs.out).value
         codeinfo.cmdline_params += ["--out", xyz_filename]
+
+        if "properties" in self.inputs:
+            properties = self.inputs.properties.value
+            codeinfo.cmdline_params += ["--properties", properties]
 
         calcinfo.retrieve_list.append(xyz_filename)
 

@@ -36,7 +36,11 @@ def validate_inputs(
             raise InputValidationError(
                 "Either 'struct' or 'config' must be specified in the inputs"
             )
-        if "config" in inputs and "struct" not in inputs["config"]:
+        if (
+            "struct" not in inputs
+            and "config" in inputs
+            and "struct" not in inputs["config"]
+        ):
             raise InputValidationError(
                 "Structure must be specified through 'struct' or 'config'"
             )
@@ -225,7 +229,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
                         "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",  # pylint: disable=line-too-long
                         architecture,
                     ).filepath
-
         if model_path:
             cmd_line.setdefault("calc-kwargs", {})["model"] = model_path
 

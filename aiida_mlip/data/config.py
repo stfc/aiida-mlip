@@ -140,6 +140,7 @@ class JanusConfigfile(SinglefileData):
         for key, value in config.items():
             if issubclass(type(value), Data) and key not in skip:
                 value.store()
+                print(value)
         return config
 
     @property
