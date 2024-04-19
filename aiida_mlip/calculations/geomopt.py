@@ -121,19 +121,9 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
         if "vectors_only" in self.inputs:
             geom_opt_cmdline["vectors-only"] = self.inputs.vectors_only.value
         if "fmax" in self.inputs:
-            print()
             geom_opt_cmdline["fmax"] = self.inputs.fmax.value
         if "steps" in self.inputs:
             geom_opt_cmdline["steps"] = self.inputs.steps.value
-
-        # geom_opt_cmdline = {
-        #     "traj": self.inputs.traj.value,
-        #     "fully-opt": self.inputs.fully_opt.value,
-        #     "vectors-only": self.inputs.vectors_only.value,
-        #     "fmax": self.inputs.fmax.value,
-        #     "steps": self.inputs.steps.value,
-        #     "opt-kwargs": opt_kwargs,
-        # }
 
         # Adding command line params for when we run janus
         # 'geomopt' is overwriting the placeholder "calculation" from the base.py file

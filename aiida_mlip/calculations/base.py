@@ -188,7 +188,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         input_filename = self.inputs.metadata.options.input_filename
         atoms = structure.get_ase()
         # with folder.open(input_filename, mode="w", encoding='utf8') as file:
-        print(folder.abspath + "/" + input_filename)
         write(folder.abspath + "/" + input_filename, images=atoms)
 
         log_filename = (self.inputs.log_filename).value

@@ -86,7 +86,6 @@ def test_run_opt(model_folder, janus_code):
 
     geomoptCalculation = CalculationFactory("janus.opt")
     result = run(geomoptCalculation, **inputs)
-    print(result)
     assert "results_dict" in result
     assert "final_structure" in result
     assert "traj_output" in result
