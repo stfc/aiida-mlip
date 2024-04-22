@@ -26,7 +26,7 @@ def MD(params: dict) -> None:
     None
     """
 
-    structure = load_structure(params["file"])
+    structure = load_structure(params["struct"])
 
     # Select model to use
     model = load_model(params["model"], params["architecture"])
@@ -57,7 +57,7 @@ def MD(params: dict) -> None:
 @click.command("cli")
 @click.argument("codelabel", type=str)
 @click.option(
-    "--file",
+    "--struct",
     default=None,
     type=str,
     help="Specify the structure (aiida node or path to a structure file)",
@@ -90,7 +90,7 @@ def MD(params: dict) -> None:
     help="String containing a dictionary with other md parameters",
 )
 def cli(
-    codelabel, file, model, architecture, device, precision, ensemble, md_dict_str
+    codelabel, struct, model, architecture, device, precision, ensemble, md_dict_str
 ) -> None:
     """Click interface."""
     # pylint: disable=too-many-arguments
@@ -103,7 +103,7 @@ def cli(
 
     params = {
         "code": code,
-        "file": file,
+        "struct": struct,
         "model": model,
         "architecture": architecture,
         "device": device,

@@ -91,6 +91,12 @@ Submission
 To facilitate the submission process and prepare inputs as AiiDA data types, example scripts are provided.
 The submit_singlepoint.py script can be used as is, submitted to verdi, and the parameters passed as strings to the CLI.
 They will be converted to AiiDA data types by the script itself.
+.. note::
+
+
+    The example files are set up with default values, ensuring that calculations runs even if no input is provided via the cli.
+    However, the aiida-mlip code itself does require certain certain parameters, (e.g. the structure on which to perform the calculation).
+
 
 .. code-block:: python
 

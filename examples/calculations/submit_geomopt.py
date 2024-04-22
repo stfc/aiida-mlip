@@ -24,7 +24,7 @@ def geomopt(params: dict) -> None:
     None
     """
 
-    structure = load_structure(params["file"])
+    structure = load_structure(params["struct"])
 
     # Select model to use
     model = load_model(params["model"], params["architecture"])
@@ -58,7 +58,7 @@ def geomopt(params: dict) -> None:
 @click.command("cli")
 @click.argument("codelabel", type=str)
 @click.option(
-    "--file",
+    "--struct",
     default=None,
     type=str,
     help="Specify the structure (aiida node or path to a structure file)",
@@ -101,7 +101,7 @@ def geomopt(params: dict) -> None:
 )
 def cli(
     codelabel,
-    file,
+    struct,
     model,
     architecture,
     device,
@@ -121,7 +121,7 @@ def cli(
 
     params = {
         "code": code,
-        "file": file,
+        "struct": struct,
         "model": model,
         "architecture": architecture,
         "device": device,

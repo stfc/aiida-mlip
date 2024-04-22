@@ -24,7 +24,7 @@ def singlepoint(params: dict) -> None:
         None
     """
 
-    structure = load_structure(params["file"])
+    structure = load_structure(params["struct"])
 
     # Select model to use
     model = load_model(params["model"], params["architecture"])
@@ -53,7 +53,7 @@ def singlepoint(params: dict) -> None:
 @click.command("cli")
 @click.argument("codelabel", type=str)
 @click.option(
-    "--file",
+    "--struct",
     default=None,
     type=str,
     help="Specify the structure (aiida node or path to a structure file)",
@@ -76,7 +76,7 @@ def singlepoint(params: dict) -> None:
 @click.option(
     "--precision", default="float64", type=str, help="Chosen level of precision."
 )
-def cli(codelabel, file, model, architecture, device, precision) -> None:
+def cli(codelabel, struct, model, architecture, device, precision) -> None:
     # pylint: disable=too-many-arguments
     """Click interface."""
     try:
@@ -87,7 +87,7 @@ def cli(codelabel, file, model, architecture, device, precision) -> None:
 
     params = {
         "code": code,
-        "file": file,
+        "struct": struct,
         "model": model,
         "architecture": architecture,
         "device": device,
