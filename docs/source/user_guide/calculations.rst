@@ -9,7 +9,7 @@ The structure should be a path to a file. Here, the structure file is specified 
 .. note::
    Any format that `ASE <https://wiki.fysik.dtu.dk/ase/>`_ can read is a valid structure file for a calculation.
 
-The model file determines the specific MLIP to be used. I can be a local file or a URI to a file to download. In these examples, it is assumed to be a local file located at `path/to/model`.
+The model file determines the specific MLIP to be used. It can be a local file or a URI to a file to download. In these examples, it is assumed to be a local file located at `path/to/model`.
 
 
 SinglePoint Calculation
@@ -47,7 +47,7 @@ The inputs can be grouped into a dictionary:
     submit(SinglePointCalculation, **inputs)
 
 
-Or they can be passed as a config file. The config file has to be structured as it would be for a janus calculation (refer to janus documentation) and passed as an AiiDA data type itself.
+Or they can be passed as a config file. The config file has to be structured as it would be for a janus calculation (refer to `janus documentation <https://stfc.github.io/janus-core/apidoc/janus_core.html>`_ ) and passed as an AiiDA data type itself.
 The config file contains the parameters in yaml format:
 
 .. code-block:: yaml
