@@ -55,7 +55,7 @@ The config file contains the parameters in yaml format:
     properties:
       - "energy"
     arch: "mace_mp"
-    ensemble: "nvt"
+    device: "cpu"
     struct: "path/to/structure.cif"
     model: "path/to/model.model"
 
@@ -72,17 +72,37 @@ And it is used as shown below. Note that some parameters, which are specific to 
     config = JanusConfigfile("path/to/config.yaml")
 
     # Define calculation to run
-    singlePointCalculation = CalculationFactory("janus.sp")
+    SinglePointCalculation = CalculationFactory("janus.sp")
 
     # Run calculation
     result, node = run_get_node(
-        singlePointCalculation,
+        SinglePointCalculation,
         code=code,
         metadata=metadata,
         config=config,
     )
 
+If a parameter is defined twice, in the config file and manually, the manually defined one will overwrite the config one.
+If for example the same config file as before is used, but this time the parameter "struct" is added to the launch function, the code would look like this:
+
+.. code-block:: python
+
+    # Run calculation
+    result, node = run_get_node(
+        SinglePointCalculation,
+        code=code,
+        struct=StructureData(ase=read("path/to/structure2.xyz"))
+        metadata=metadata,
+        config=config,
+    )
+
+In this case  the structure used is going to be "path/to/structure2.xyz" rather than ""path/to/structure.cif", which was defined in the config file.
+
 Refer to the API documentation for additional parameters that can be passed.
+Some parameters are not required and don't have a default value set in aiida-mlip. In that case the default values will be the same as `janus <https://stfc.github.io/janus-core/>`_ 
+The only default parameters defined in aiida-mlip are the names of the input and output files, are they do not affect the results of the calculation itself, and are needed in AiiDA to parse the results.
+For example in the code above the parameter "precision" is never defined, neither in the config nor in the run_get_node function. 
+The parameter will default to the janus default, which is "float64"
 
 
 Submission
@@ -95,7 +115,7 @@ They will be converted to AiiDA data types by the script itself.
 
 
     The example files are set up with default values, ensuring that calculations runs even if no input is provided via the cli.
-    However, the aiida-mlip code itself does require certain certain parameters, (e.g. the structure on which to perform the calculation).
+    However, the aiida-mlip code itself does require certain parameters, (e.g. the structure on which to perform the calculation).
 
 
 .. code-block:: python
