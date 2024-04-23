@@ -100,7 +100,7 @@ In this case  the structure used is going to be "path/to/structure2.xyz" rather 
 
 Refer to the API documentation for additional parameters that can be passed.
 Some parameters are not required and don't have a default value set in aiida-mlip. In that case the default values will be the same as `janus <https://stfc.github.io/janus-core/>`_
-The only default parameters defined in aiida-mlip are the names of the input and output files, are they do not affect the results of the calculation itself, and are needed in AiiDA to parse the results.
+The only default parameters defined in aiida-mlip are the names of the input and output files, as they do not affect the results of the calculation itself, and are needed in AiiDA to parse the results.
 For example in the code above the parameter "precision" is never defined, neither in the config nor in the run_get_node function.
 The parameter will default to the janus default, which is "float64"
 
