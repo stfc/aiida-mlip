@@ -47,7 +47,7 @@ The inputs can be grouped into a dictionary:
     submit(SinglePointCalculation, **inputs)
 
 
-Or they can be passed as a config file. The config file has to be structured as it would be for a janus calculation (refer to `janus documentation <https://stfc.github.io/janus-core/apidoc/janus_core.html>`_ ) and passed as an AiiDA data type itself.
+Or they can be passed as a config file. The config file has to be structured as it would be for a janus calculation (refer to `janus documentation <https://stfc.github.io/janus-core/>`_ ) and passed as an AiiDA data type itself.
 The config file contains the parameters in yaml format:
 
 .. code-block:: yaml
