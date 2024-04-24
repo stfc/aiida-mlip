@@ -9,6 +9,7 @@ Subpackages
 
    aiida_mlip.calculations
    aiida_mlip.data
+   aiida_mlip.helpers
    aiida_mlip.parsers
 
 Module contents

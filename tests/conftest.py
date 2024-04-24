@@ -195,24 +195,57 @@ def generate_calc_job():
     return _generate_calc_job
 
 
+@pytest.fixture
+def test_folder():
+    """
+    Fixture to provide the path of the tests folder.
+
+    Returns:
+        Path: the path of the tests folder.
+    """
+    return Path(__file__).resolve().parent
+
+
 # Fixture to provide the path to the example file
 @pytest.fixture
-def example_path():
+def example_path(test_folder):
     """
     Fixture to provide the path to the example file.
 
     Returns:
         Path: The path to the example file.
     """
-    return Path(__file__).resolve().parent.parent / "examples" / "calculations"
+    return test_folder.parent / "examples" / "calculations"
 
 
 @pytest.fixture
-def model_folder():
+def model_folder(test_folder):
     """
     Fixture to provide the path to the example file.
 
     Returns:
         Path: The path to the example file.
     """
-    return Path(__file__).resolve().parent / "data" / "input_files" / "mace"
+    return test_folder / "data" / "input_files" / "mace"
+
+
+@pytest.fixture
+def structure_folder(test_folder):
+    """
+    Fixture to provide the path to the example file.
+
+    Returns:
+        Path: The path to the example file.
+    """
+    return test_folder / "calculations" / "structures"
+
+
+@pytest.fixture
+def config_folder(test_folder):
+    """
+    Fixture to provide the path to the example file.
+
+    Returns:
+        Path: The path to the example file.
+    """
+    return test_folder / "calculations" / "configs"

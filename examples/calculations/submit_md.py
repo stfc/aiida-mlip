@@ -1,16 +1,18 @@
 """Example code for submitting single point calculation"""
 
+import ast
+
 import click
 
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
-from aiida.orm import Str, load_code
+from aiida.orm import Dict, Str, load_code
 from aiida.plugins import CalculationFactory
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
 
-def singlepoint(params: dict) -> None:
+def MD(params: dict) -> None:
     """
     Prepare inputs and run a single point calculation.
 
@@ -21,7 +23,7 @@ def singlepoint(params: dict) -> None:
 
     Returns
     -------
-        None
+    None
     """
 
     structure = load_structure(params["struct"])
@@ -30,21 +32,23 @@ def singlepoint(params: dict) -> None:
     model = load_model(params["model"], params["architecture"])
 
     # Select calculation to use
-    singlePointCalculation = CalculationFactory("janus.sp")
+    MDCalculation = CalculationFactory("janus.md")
 
     # Define inputs
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": params["code"],
-        "architecture": Str(params["architecture"]),
-        "structure": structure,
+        "arch": Str(params["architecture"]),
+        "struct": structure,
         "model": model,
         "precision": Str(params["precision"]),
         "device": Str(params["device"]),
+        "ensemble": Str(params["ensemble"]),
+        "md_kwargs": Dict(params["md_dict"]),
     }
 
     # Run calculation
-    result, node = run_get_node(singlePointCalculation, **inputs)
+    result, node = run_get_node(MDCalculation, **inputs)
     print(f"Printing results from calculation: {result}")
     print(f"Printing node of calculation: {node}")
 
@@ -76,9 +80,21 @@ def singlepoint(params: dict) -> None:
 @click.option(
     "--precision", default="float64", type=str, help="Chosen level of precision."
 )
-def cli(codelabel, struct, model, architecture, device, precision) -> None:
-    # pylint: disable=too-many-arguments
+@click.option(
+    "--ensemble", default="nve", type=str, help="Name of thermodynamic ensemble."
+)
+@click.option(
+    "--md_dict_str",
+    default="{}",
+    type=str,
+    help="String containing a dictionary with other md parameters",
+)
+def cli(
+    codelabel, struct, model, architecture, device, precision, ensemble, md_dict_str
+) -> None:
     """Click interface."""
+    # pylint: disable=too-many-arguments
+    md_dict = ast.literal_eval(md_dict_str)
     try:
         code = load_code(codelabel)
     except NotExistent as exc:
@@ -92,10 +108,12 @@ def cli(codelabel, struct, model, architecture, device, precision) -> None:
         "architecture": architecture,
         "device": device,
         "precision": precision,
+        "ensemble": ensemble,
+        "md_dict": md_dict,
     }
 
     # Submit single point
-    singlepoint(params)
+    MD(params)
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ import subprocess
 from ase.build import bulk
 import pytest
 
-from aiida.common import datastructures
+from aiida.common import InputValidationError, datastructures
 from aiida.engine import run
 from aiida.orm import Str, StructureData
 from aiida.plugins import CalculationFactory
@@ -21,9 +21,9 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
-        "architecture": Str("mace"),
+        "arch": Str("mace"),
         "precision": Str("float64"),
-        "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
@@ -43,7 +43,7 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "--out",
         "aiida-results.xyz",
         "--calc-kwargs",
-        f"{{'model': '{model_file}', 'default_dtype': 'float64'}}",
+        f"{{'default_dtype': 'float64', 'model': '{model_file}'}}",
     ]
 
     retrieve_list = [
@@ -54,59 +54,68 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
     ]
 
     # Check the attributes of the returned `CalcInfo`
-    assert sorted(fixture_sandbox.get_content_list()) == ["aiida.xyz"]
+    assert fixture_sandbox.get_content_list() == ["aiida.xyz"]
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
     assert sorted(calc_info.codes_info[0].cmdline_params) == sorted(cmdline_params)
     assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
 
 
-def test_sp_error(fixture_sandbox, generate_calc_job, model_folder, fixture_code):
+def test_singlepoint_model_download(fixture_sandbox, generate_calc_job, janus_code):
+    """Test generating singlepoint calculation job."""
+
+    entry_point_name = "janus.sp"
+    inputs = {
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "code": janus_code,
+        "arch": Str("mace"),
+        "precision": Str("float64"),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "device": Str("cpu"),
+    }
+
+    calc_info = generate_calc_job(fixture_sandbox, entry_point_name, inputs)
+
+    retrieve_list = [
+        calc_info.uuid,
+        "aiida.log",
+        "aiida-results.xyz",
+        "aiida-stdout.txt",
+    ]
+
+    # Check the attributes of the returned `CalcInfo`
+    assert fixture_sandbox.get_content_list() == ["aiida.xyz"]
+    assert isinstance(calc_info, datastructures.CalcInfo)
+    assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
+    assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
+
+
+def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, janus_code):
     """Test singlepoint calculation with error input"""
     entry_point_name = "janus.sp"
     model_file = model_folder / "mace_mp_small.model"
     # pylint:disable=line-too-long
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
-        "code": fixture_code,
-        "input_filename": "wrongname",
-        "architecture": Str("mace"),
-        "precision": Str("float64"),
-        "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
-        "model": ModelData.local_file(model_file, architecture="mace"),
-        "device": Str("cpu"),
-    }
-    with pytest.raises(ValueError):
-        generate_calc_job(fixture_sandbox, entry_point_name, inputs)
-
-
-def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, fixture_code):
-    """Test singlepoint calculation with error input"""
-    entry_point_name = "janus.sp"
-    model_file = model_folder / "mace_mp_small.model"
-    # pylint:disable=line-too-long
-    inputs = {
-        "metadata": {"options": {"resources": {"num_machines": 1}}},
-        "code": fixture_code,
-        "architecture": Str("mace"),
+        "code": janus_code,
+        "arch": Str("mace"),
         "precision": Str("float64"),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
-    with pytest.raises(ValueError):
+    with pytest.raises(InputValidationError):
         generate_calc_job(fixture_sandbox, entry_point_name, inputs)
 
 
 def test_run_sp(model_folder, janus_code):
     """Test running singlepoint calculation"""
     model_file = model_folder / "mace_mp_small.model"
-    print(model_file)
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
-        "architecture": Str("mace"),
+        "arch": Str("mace"),
         "precision": Str("float64"),
-        "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
@@ -116,16 +125,14 @@ def test_run_sp(model_folder, janus_code):
 
     assert "results_dict" in result
     obtained_res = result["results_dict"].get_dict()
-    assert "log_output" in result
     assert "xyz_output" in result
-    assert "std_output" in result
     assert obtained_res["info"]["energy"] == pytest.approx(-6.7575203839729)
     assert obtained_res["info"]["stress"][0][0] == pytest.approx(-0.005816546985101)
 
 
 def test_example(example_path):
     """
-    Test function to execute the example file with specific command arguments.
+    Test function to run md calculation through the use of the example file provided.
     """
 
     example_file_path = example_path / "submit_singlepoint.py"

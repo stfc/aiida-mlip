@@ -1,0 +1,9 @@
+properties:
+  - "energy"
+arch: mace_mp
+struct: "NaCl.cif"
+ensemble: "nvt"
+temp: 200
+minimize-kwargs:
+  filter-kwargs:
+    hydrostatic-strain: True

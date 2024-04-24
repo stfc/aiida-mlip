@@ -2,23 +2,13 @@
 Parsers provided by aiida_mlip.
 """
 
-from pathlib import Path
-
-from ase.io import read
-
-from aiida.common import exceptions
 from aiida.engine import ExitCode
-from aiida.orm import Dict, SinglefileData
+from aiida.orm import SinglefileData
 from aiida.orm.nodes.process.process import ProcessNode
-from aiida.plugins import CalculationFactory
-
-from aiida_mlip.helpers.converters import convert_numpy
-from aiida_mlip.parsers.base_parser import BaseParser
-
-singlePointCalculation = CalculationFactory("janus.sp")
+from aiida.parsers.parser import Parser
 
 
-class SPParser(BaseParser):
+class BaseParser(Parser):
     """
     Parser class for parsing output of calculation.
 
@@ -57,9 +47,6 @@ class SPParser(BaseParser):
         """
         super().__init__(node)
 
-        if not issubclass(node.process_class, singlePointCalculation):
-            raise exceptions.ParsingError("Can only parse `Singlepoint` calculations")
-
     def parse(self, **kwargs) -> int:
         """
         Parse outputs, store results in the database.
@@ -74,18 +61,13 @@ class SPParser(BaseParser):
         int
             An exit code.
         """
-
-        exit_code = super().parse(**kwargs)
-
-        if exit_code != ExitCode(0):
-            return exit_code
-
-        xyz_output = (self.node.inputs.out).value
+        output_filename = self.node.get_option("output_filename")
+        log_output = (self.node.inputs.log_filename).value
 
         # Check that folder content is as expected
         files_retrieved = self.retrieved.list_object_names()
 
-        files_expected = {xyz_output}
+        files_expected = {output_filename, log_output}
         if not files_expected.issubset(files_retrieved):
             self.logger.error(
                 f"Found files '{files_retrieved}', expected to find '{files_expected}'"
@@ -93,14 +75,12 @@ class SPParser(BaseParser):
             return self.exit_codes.ERROR_MISSING_OUTPUT_FILES
 
         # Add output file to the outputs
-        self.logger.info(f"Parsing '{xyz_output}'")
 
-        with self.retrieved.open(xyz_output, "rb") as handle:
-            self.out("xyz_output", SinglefileData(file=handle))
-
-        content = read(Path(self.node.get_remote_workdir(), xyz_output))
-        results = convert_numpy(content.todict())
-        results_node = Dict(results)
-        self.out("results_dict", results_node)
+        with (
+            self.retrieved.open(log_output, "rb") as log,
+            self.retrieved.open(output_filename, "rb") as output,
+        ):
+            self.out("log_output", SinglefileData(file=log))
+            self.out("std_output", SinglefileData(file=output))
 
         return ExitCode(0)

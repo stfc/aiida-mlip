@@ -1,6 +1,4 @@
-"""Example code for submitting single point calculation"""
-
-from pathlib import Path
+"""Example code for submitting geometry optimisation calculation"""
 
 import click
 
@@ -14,7 +12,7 @@ from aiida_mlip.helpers.help_load import load_model, load_structure
 
 def geomopt(params: dict) -> None:
     """
-    Prepare inputs and run a single point calculation.
+    Prepare inputs and run a geometry optimisation calculation.
 
     Parameters
     ----------
@@ -26,7 +24,7 @@ def geomopt(params: dict) -> None:
     None
     """
 
-    structure = load_structure(params["file"])
+    structure = load_structure(params["struct"])
 
     # Select model to use
     model = load_model(params["model"], params["architecture"])
@@ -60,7 +58,7 @@ def geomopt(params: dict) -> None:
 @click.command("cli")
 @click.argument("codelabel", type=str)
 @click.option(
-    "--file",
+    "--struct",
     default=None,
     type=str,
     help="Specify the structure (aiida node or path to a structure file)",
@@ -68,19 +66,42 @@ def geomopt(params: dict) -> None:
 @click.option(
     "--model",
     default=None,
-    type=Path,
+    type=str,
     help="Specify path or url of the model to use",
 )
-@click.option("--architecture", default="mace_mp", type=str)
-@click.option("--device", default="cpu", type=str)
-@click.option("--precision", default="float64", type=str)
-@click.option("--max_force", default=0.1, type=float)
-@click.option("--vectors_only", default=False, type=bool)
-@click.option("--fully_opt", default=False, type=bool)
-@click.option("--steps", default=1000, type=int)
+@click.option(
+    "--architecture",
+    default="mace_mp",
+    type=str,
+    help="MLIP architecture to use for calculations.",
+)
+@click.option(
+    "--device", default="cpu", type=str, help="Device to run calculations on."
+)
+@click.option(
+    "--precision", default="float64", type=str, help="Chosen level of precision."
+)
+@click.option(
+    "--max_force", default=0.1, type=float, help="Maximum force for convergence."
+)
+@click.option(
+    "--vectors_only",
+    default=False,
+    type=bool,
+    help="Optimise cell vectors, as well as atomic positions.",
+)
+@click.option(
+    "--fully_opt",
+    default=False,
+    type=bool,
+    help="Fully optimise the cell vectors, angles, and atomic positions.",
+)
+@click.option(
+    "--steps", default=1000, type=int, help="Maximum number of optimisation steps."
+)
 def cli(
     codelabel,
-    file,
+    struct,
     model,
     architecture,
     device,
@@ -100,7 +121,7 @@ def cli(
 
     params = {
         "code": code,
-        "file": file,
+        "struct": struct,
         "model": model,
         "architecture": architecture,
         "device": device,

@@ -20,7 +20,7 @@ from aiida_mlip.calculations.singlepoint import Singlepoint
 
 class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
     """
-    Calcjob implementation to run geometry optimization calculations using mlips.
+    Calcjob implementation to run geometry optimisation calculations using mlips.
 
     Methods
     -------
@@ -30,7 +30,7 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
         Create the input files for the `CalcJob`.
     """
 
-    _DEFAULT_TRAJ_FILE = "aiida-traj.xyz"
+    DEFAULT_TRAJ_FILE = "aiida-traj.xyz"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
@@ -44,33 +44,30 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
         """
         super().define(spec)
 
-        # Additional inputs for geometry optimization
+        # Additional inputs for geometry optimisation
         spec.input(
             "traj",
             valid_type=Str,
             required=False,
-            default=lambda: Str(cls._DEFAULT_TRAJ_FILE),
-            help="Path to save optimization frames to",
+            default=lambda: Str(cls.DEFAULT_TRAJ_FILE),
+            help="Path to save optimisation frames to",
         )
         spec.input(
             "fully_opt",
             valid_type=Bool,
             required=False,
-            default=lambda: Bool(False),
-            help="Fully optimize the cell vectors, angles, and atomic positions",
+            help="Fully optimise the cell vectors, angles, and atomic positions",
         )
         spec.input(
             "vectors_only",
             valid_type=Bool,
             required=False,
-            default=lambda: Bool(False),
-            help="Optimize cell vectors, as well as atomic positions",
+            help="Optimise cell vectors, as well as atomic positions",
         )
         spec.input(
-            "max_force",
+            "fmax",
             valid_type=Float,
             required=False,
-            default=lambda: Float(0.1),
             help="Maximum force for convergence",
         )
 
@@ -78,7 +75,6 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             "steps",
             valid_type=Int,
             required=False,
-            default=lambda: Int(1000),
             help="Number of optimisation steps",
         )
 
@@ -86,7 +82,6 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             "opt_kwargs",
             valid_type=Dict,
             required=False,
-            default=lambda: Dict({}),
             help="Other optimisation keywords",
         )
 
@@ -117,17 +112,21 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
         calcinfo = super().prepare_for_submission(folder)
         codeinfo = calcinfo.codes_info[0]
 
-        opt_kwargs = self.inputs.opt_kwargs.get_dict()
+        geom_opt_cmdline = {"traj": self.inputs.traj.value}
+        if "opt_kwargs" in self.inputs:
+            opt_kwargs = self.inputs.opt_kwargs.get_dict()
+            geom_opt_cmdline["opt-kwargs"] = opt_kwargs
+        if "fully_opt" in self.inputs:
+            geom_opt_cmdline["fully-opt"] = self.inputs.fully_opt.value
+        if "vectors_only" in self.inputs:
+            geom_opt_cmdline["vectors-only"] = self.inputs.vectors_only.value
+        if "fmax" in self.inputs:
+            geom_opt_cmdline["fmax"] = self.inputs.fmax.value
+        if "steps" in self.inputs:
+            geom_opt_cmdline["steps"] = self.inputs.steps.value
 
-        geom_opt_cmdline = {
-            "traj": self.inputs.traj.value,
-            "fully-opt": self.inputs.fully_opt.value,
-            "vectors-only": self.inputs.vectors_only.value,
-            "max-force": self.inputs.max_force.value,
-            "steps": self.inputs.steps.value,
-            "opt-kwargs": opt_kwargs,
-        }
-
+        # Adding command line params for when we run janus
+        # 'geomopt' is overwriting the placeholder "calculation" from the base.py file
         codeinfo.cmdline_params[0] = "geomopt"
 
         for flag, value in geom_opt_cmdline.items():

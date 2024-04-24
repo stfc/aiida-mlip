@@ -7,7 +7,7 @@ import pytest
 
 from aiida.common import datastructures
 from aiida.engine import run
-from aiida.orm import Bool, Str, StructureData
+from aiida.orm import Bool, Float, Int, Str, StructureData
 from aiida.plugins import CalculationFactory
 
 from aiida_mlip.data.model import ModelData
@@ -21,9 +21,9 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
-        "architecture": Str("mace"),
+        "arch": Str("mace"),
         "precision": Str("float64"),
-        "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
@@ -43,15 +43,9 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "--out",
         "aiida-results.xyz",
         "--calc-kwargs",
-        f"{{'model': '{model_file}', 'default_dtype': 'float64'}}",
+        f"{{'default_dtype': 'float64', 'model': '{model_file}'}}",
         "--traj",
         "aiida-traj.xyz",
-        "--max-force",
-        0.1,
-        "--steps",
-        1000,
-        "--opt-kwargs",
-        {},
     ]
 
     retrieve_list = [
@@ -62,16 +56,14 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "aiida-traj.xyz",
     ]
 
-    print(calc_info.codes_info[0].cmdline_params)
-    print(cmdline_params)
-
     # Check the attributes of the returned `CalcInfo`
-    assert sorted(fixture_sandbox.get_content_list()) == ["aiida.xyz"]
+    assert fixture_sandbox.get_content_list() == ["aiida.xyz"]
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
     assert len(calc_info.codes_info[0].cmdline_params) == len(cmdline_params)
-    for x, y in zip((calc_info.codes_info[0].cmdline_params), (cmdline_params)):
-        assert x == y
+    assert sorted(map(str, calc_info.codes_info[0].cmdline_params)) == sorted(
+        map(str, cmdline_params)
+    )
     assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
 
 
@@ -82,17 +74,18 @@ def test_run_opt(model_folder, janus_code):
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
-        "architecture": Str("mace"),
+        "arch": Str("mace"),
         "precision": Str("float64"),
-        "structure": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.local_file(model_file, architecture="mace"),
         "device": Str("cpu"),
         "fully_opt": Bool(True),
+        "fmax": Float(0.1),
+        "steps": Int(1000),
     }
 
     geomoptCalculation = CalculationFactory("janus.opt")
     result = run(geomoptCalculation, **inputs)
-
     assert "results_dict" in result
     assert "final_structure" in result
     assert "traj_output" in result
@@ -103,7 +96,7 @@ def test_run_opt(model_folder, janus_code):
 
 def test_example_opt(example_path):
     """
-    Test function to execute the example file with specific command arguments.
+    Test function to run md calculation through the use of the example file provided.
     """
     example_file_path = example_path / "submit_geomopt.py"
     command = ["verdi", "run", example_file_path, "janus@localhost"]

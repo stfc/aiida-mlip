@@ -14,7 +14,11 @@ from aiida.orm import StructureData, load_node
 from aiida_mlip.data.model import ModelData
 
 
-def load_model(model: Optional[Union[str, Path]], architecture: str) -> ModelData:
+def load_model(
+    model: Optional[Union[str, Path]],
+    architecture: str,
+    cache_dir: Optional[Union[str, Path]] = None,
+) -> ModelData:
     """
     Load a model from a file path or URL.
 
@@ -27,6 +31,8 @@ def load_model(model: Optional[Union[str, Path]], architecture: str) -> ModelDat
         Model file path or a URL for downloading the model.
     architecture : str
         The architecture of the model.
+    cache_dir : Optional[Union[str, Path]]
+        Directory where to save the dowloaded model.
 
     Returns
     -------
@@ -38,11 +44,13 @@ def load_model(model: Optional[Union[str, Path]], architecture: str) -> ModelDat
     elif (file_path := Path(model)).is_file():
         loaded_model = ModelData.local_file(file_path, architecture=architecture)
     else:
-        loaded_model = ModelData.download(model, architecture=architecture)
+        loaded_model = ModelData.download(
+            model, architecture=architecture, cache_dir=cache_dir
+        )
     return loaded_model
 
 
-def load_structure(struct: Optional[Union[str, Path, int]]) -> StructureData:
+def load_structure(struct: Optional[Union[str, Path, int]] = None) -> StructureData:
     """
     Load a StructureData instance from the given input.
 
