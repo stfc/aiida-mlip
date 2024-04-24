@@ -80,12 +80,12 @@ class SPParser(BaseParser):
         if exit_code != ExitCode(0):
             return exit_code
 
-        xyzoutput = (self.node.inputs.out).value
+        xyz_output = (self.node.inputs.out).value
 
         # Check that folder content is as expected
         files_retrieved = self.retrieved.list_object_names()
 
-        files_expected = {xyzoutput}
+        files_expected = {xyz_output}
         if not files_expected.issubset(files_retrieved):
             self.logger.error(
                 f"Found files '{files_retrieved}', expected to find '{files_expected}'"
@@ -93,12 +93,12 @@ class SPParser(BaseParser):
             return self.exit_codes.ERROR_MISSING_OUTPUT_FILES
 
         # Add output file to the outputs
-        self.logger.info(f"Parsing '{xyzoutput}'")
+        self.logger.info(f"Parsing '{xyz_output}'")
 
-        with self.retrieved.open(xyzoutput, "rb") as handle:
+        with self.retrieved.open(xyz_output, "rb") as handle:
             self.out("xyz_output", SinglefileData(file=handle))
 
-        content = read(Path(self.node.get_remote_workdir(), xyzoutput))
+        content = read(Path(self.node.get_remote_workdir(), xyz_output))
         results = convert_numpy(content.todict())
         results_node = Dict(results)
         self.out("results_dict", results_node)
