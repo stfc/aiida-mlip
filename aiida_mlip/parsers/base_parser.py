@@ -62,12 +62,12 @@ class BaseParser(Parser):
             An exit code.
         """
         output_filename = self.node.get_option("output_filename")
-        logoutput = (self.node.inputs.log_filename).value
+        log_output = (self.node.inputs.log_filename).value
 
         # Check that folder content is as expected
         files_retrieved = self.retrieved.list_object_names()
 
-        files_expected = {output_filename, logoutput}
+        files_expected = {output_filename, log_output}
         if not files_expected.issubset(files_retrieved):
             self.logger.error(
                 f"Found files '{files_retrieved}', expected to find '{files_expected}'"
@@ -77,7 +77,7 @@ class BaseParser(Parser):
         # Add output file to the outputs
 
         with (
-            self.retrieved.open(logoutput, "rb") as log,
+            self.retrieved.open(log_output, "rb") as log,
             self.retrieved.open(output_filename, "rb") as output,
         ):
             self.out("log_output", SinglefileData(file=log))
