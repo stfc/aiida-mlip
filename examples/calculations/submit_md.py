@@ -29,7 +29,7 @@ def MD(params: dict) -> None:
     structure = load_structure(params["struct"])
 
     # Select model to use
-    model = load_model(params["model"], params["architecture"])
+    model = load_model(params["model"], params["arch"])
 
     # Select calculation to use
     MDCalculation = CalculationFactory("janus.md")
@@ -38,14 +38,15 @@ def MD(params: dict) -> None:
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": params["code"],
-        "arch": Str(params["architecture"]),
+        "arch": Str(params["arch"]),
         "struct": structure,
-        "model": model,
         "precision": Str(params["precision"]),
         "device": Str(params["device"]),
         "ensemble": Str(params["ensemble"]),
         "md_kwargs": Dict(params["md_dict"]),
     }
+    if model is not None:
+        inputs["model"] = model
 
     # Run calculation
     result, node = run_get_node(MDCalculation, **inputs)
@@ -69,7 +70,7 @@ def MD(params: dict) -> None:
     help="Specify path or url of the model to use",
 )
 @click.option(
-    "--architecture",
+    "--arch",
     default="mace_mp",
     type=str,
     help="MLIP architecture to use for calculations.",
@@ -90,7 +91,7 @@ def MD(params: dict) -> None:
     help="String containing a dictionary with other md parameters",
 )
 def cli(
-    codelabel, struct, model, architecture, device, precision, ensemble, md_dict_str
+    codelabel, struct, model, arch, device, precision, ensemble, md_dict_str
 ) -> None:
     """Click interface."""
     # pylint: disable=too-many-arguments
@@ -105,7 +106,7 @@ def cli(
         "code": code,
         "struct": struct,
         "model": model,
-        "architecture": architecture,
+        "arch": arch,
         "device": device,
         "precision": precision,
         "ensemble": ensemble,

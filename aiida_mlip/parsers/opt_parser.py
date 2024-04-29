@@ -79,7 +79,7 @@ class GeomOptParser(SPParser):
 
             # Parse the trajectory file and save it as `SingleFileData`
             with self.retrieved.open(traj_file, "rb") as handle:
-                self.out("traj_file", SinglefileData(file=handle))
+                self.out("traj_file", SinglefileData(file=handle, filename=traj_file))
             # Parse trajectory and save it as `TrajectoryData`
             opt, traj_output = xyz_to_aiida_traj(
                 Path(self.node.get_remote_workdir(), traj_file)

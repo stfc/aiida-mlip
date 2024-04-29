@@ -92,6 +92,7 @@ def test_run_opt(model_folder, janus_code):
     assert "traj_file" in result
     assert result["traj_output"].numsteps == 3
     assert result["final_structure"].cell[0][1] == pytest.approx(2.8442048309822)
+    assert result["xyz_output"].filename == "aiida-results.xyz"
 
 
 def test_example_opt(example_path):

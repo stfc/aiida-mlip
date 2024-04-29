@@ -80,7 +80,9 @@ class BaseParser(Parser):
             self.retrieved.open(log_output, "rb") as log,
             self.retrieved.open(output_filename, "rb") as output,
         ):
-            self.out("log_output", SinglefileData(file=log))
-            self.out("std_output", SinglefileData(file=output))
+            self.out("log_output", SinglefileData(file=log, filename=log_output))
+            self.out(
+                "std_output", SinglefileData(file=output, filename=output_filename)
+            )
 
         return ExitCode(0)
