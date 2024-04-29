@@ -27,7 +27,7 @@ def geomopt(params: dict) -> None:
     structure = load_structure(params["struct"])
 
     # Select model to use
-    model = load_model(params["model"], params["architecture"])
+    model = load_model(params["model"], params["arch"])
 
     # Select calculation to use
     geomoptCalculation = CalculationFactory("janus.opt")
@@ -36,12 +36,12 @@ def geomopt(params: dict) -> None:
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": params["code"],
-        "architecture": Str(params["architecture"]),
-        "structure": structure,
+        "arch": Str(params["arch"]),
+        "struct": structure,
         "model": model,
         "precision": Str(params["precision"]),
         "device": Str(params["device"]),
-        "max_force": Float(params["max_force"]),
+        "fmax": Float(params["fmax"]),
         "vectors_only": Bool(params["vectors_only"]),
         "fully_opt": Bool(params["fully_opt"]),
         "opt_kwargs": Dict({"restart": "rest.pkl"}),
@@ -70,7 +70,7 @@ def geomopt(params: dict) -> None:
     help="Specify path or url of the model to use",
 )
 @click.option(
-    "--architecture",
+    "--arch",
     default="mace_mp",
     type=str,
     help="MLIP architecture to use for calculations.",
@@ -81,9 +81,7 @@ def geomopt(params: dict) -> None:
 @click.option(
     "--precision", default="float64", type=str, help="Chosen level of precision."
 )
-@click.option(
-    "--max_force", default=0.1, type=float, help="Maximum force for convergence."
-)
+@click.option("--fmax", default=0.1, type=float, help="Maximum force for convergence.")
 @click.option(
     "--vectors_only",
     default=False,
@@ -103,10 +101,10 @@ def cli(
     codelabel,
     struct,
     model,
-    architecture,
+    arch,
     device,
     precision,
-    max_force,
+    fmax,
     vectors_only,
     fully_opt,
     steps,
@@ -123,10 +121,10 @@ def cli(
         "code": code,
         "struct": struct,
         "model": model,
-        "architecture": architecture,
+        "arch": arch,
         "device": device,
         "precision": precision,
-        "max_force": max_force,
+        "fmax": fmax,
         "vectors_only": vectors_only,
         "fully_opt": fully_opt,
         "steps": steps,

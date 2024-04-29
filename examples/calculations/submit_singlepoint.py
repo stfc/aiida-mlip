@@ -27,7 +27,7 @@ def singlepoint(params: dict) -> None:
     structure = load_structure(params["struct"])
 
     # Select model to use
-    model = load_model(params["model"], params["architecture"])
+    model = load_model(params["model"], params["arch"])
 
     # Select calculation to use
     singlePointCalculation = CalculationFactory("janus.sp")
@@ -36,7 +36,7 @@ def singlepoint(params: dict) -> None:
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": params["code"],
-        "architecture": Str(params["architecture"]),
+        "arch": Str(params["arch"]),
         "structure": structure,
         "model": model,
         "precision": Str(params["precision"]),
@@ -65,7 +65,7 @@ def singlepoint(params: dict) -> None:
     help="Specify path or url of the model to use",
 )
 @click.option(
-    "--architecture",
+    "--arch",
     default="mace_mp",
     type=str,
     help="MLIP architecture to use for calculations.",
@@ -76,7 +76,7 @@ def singlepoint(params: dict) -> None:
 @click.option(
     "--precision", default="float64", type=str, help="Chosen level of precision."
 )
-def cli(codelabel, struct, model, architecture, device, precision) -> None:
+def cli(codelabel, struct, model, arch, device, precision) -> None:
     # pylint: disable=too-many-arguments
     """Click interface."""
     try:
@@ -89,7 +89,7 @@ def cli(codelabel, struct, model, architecture, device, precision) -> None:
         "code": code,
         "struct": struct,
         "model": model,
-        "architecture": architecture,
+        "arch": arch,
         "device": device,
         "precision": precision,
     }
