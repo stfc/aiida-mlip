@@ -37,7 +37,7 @@ def singlepoint(params: dict) -> None:
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": params["code"],
         "arch": Str(params["arch"]),
-        "structure": structure,
+        "struct": structure,
         "model": model,
         "precision": Str(params["precision"]),
         "device": Str(params["device"]),
