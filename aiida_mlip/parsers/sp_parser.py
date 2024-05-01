@@ -96,7 +96,7 @@ class SPParser(BaseParser):
         self.logger.info(f"Parsing '{xyz_output}'")
 
         with self.retrieved.open(xyz_output, "rb") as handle:
-            self.out("xyz_output", SinglefileData(file=handle))
+            self.out("xyz_output", SinglefileData(file=handle, filename=xyz_output))
 
         content = read(Path(self.node.get_remote_workdir(), xyz_output))
         results = convert_numpy(content.todict())

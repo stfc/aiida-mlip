@@ -85,7 +85,7 @@ class MDParser(BaseParser):
         # Process trajectory file saving both the file and trajectory as aiida data
         traj_filepath = md_dictionary.get("traj-file", MD.DEFAULT_TRAJ_FILE)
         with self.retrieved.open(traj_filepath, "rb") as handle:
-            self.out("traj_file", SinglefileData(file=handle))
+            self.out("traj_file", SinglefileData(file=handle, filename=traj_filepath))
         final_str, traj_output = xyz_to_aiida_traj(
             Path(self.node.get_remote_workdir(), traj_filepath)
         )
@@ -95,13 +95,13 @@ class MDParser(BaseParser):
         # Process stats file as singlefiledata
         stats_filepath = md_dictionary.get("stats-file", MD.DEFAULT_STATS_FILE)
         with self.retrieved.open(stats_filepath, "rb") as handle:
-            self.out("stats_file", SinglefileData(file=handle))
+            self.out("stats_file", SinglefileData(file=handle, filename=stats_filepath))
 
         # Process summary as both singlefiledata and results dictionary
         summary_filepath = md_dictionary.get("summary", MD.DEFAULT_SUMMARY_FILE)
         print(self.node.get_remote_workdir(), summary_filepath)
         with self.retrieved.open(summary_filepath, "rb") as handle:
-            self.out("summary", SinglefileData(file=handle))
+            self.out("summary", SinglefileData(file=handle, filename=summary_filepath))
 
         with self.retrieved.open(summary_filepath, "r") as handle:
             try:
