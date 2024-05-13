@@ -219,11 +219,15 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         model_path = None
         if "model" in self.inputs and self.inputs.model is not None:
             model_path = self.inputs.model.filepath
+        # Raising error if model is None
+        elif "model" in self.inputs and self.inputs.model is None:
+            raise ValueError("Model cannot be None")
         else:
             if "config" in self.inputs and "model" in self.inputs.config:
                 model_path = None
             else:
                 if "arch" in self.inputs:
+                    # if model is not given (which is different than it being None)
                     model_path = ModelData.download(
                         "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",  # pylint: disable=line-too-long
                         architecture,
