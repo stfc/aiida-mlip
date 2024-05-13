@@ -217,11 +217,11 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             cmd_line["arch"] = architecture
 
         model_path = None
-        if "model" in self.inputs and self.inputs.model is not None:
+        if "model" in self.inputs:
+            # Raise error if model is None
+            if self.inputs.model is None:
+                raise ValueError("Model cannot be None")
             model_path = self.inputs.model.filepath
-        # Raising error if model is None
-        elif "model" in self.inputs and self.inputs.model is None:
-            raise ValueError("Model cannot be None")
         else:
             if "config" in self.inputs and "model" in self.inputs.config:
                 model_path = None
