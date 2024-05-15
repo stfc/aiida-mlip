@@ -72,12 +72,11 @@ class TrainParser(Parser):
         """
         remote_dir = Path(self.node.get_remote_workdir())
         mlip_dict = self.node.get_option("mlip_config").as_dictionary()
-        log_dir = remote_dir / Path(mlip_dict.get("log_dir", "logs"))
-        checkpoint_dir = remote_dir / Path(
-            mlip_dict.get("checkpoint_dir", "checkpoints")
-        )
-        results_dir = remote_dir / Path(mlip_dict.get("results_dir", "results"))
-        model_dir = remote_dir / Path(mlip_dict.get("model_dir", ""))
+        remote_dirs = {typ: remote_dir / mlip_dict.get(f"{typ}_dir", default)
+                       for typ, default in (("log", "logs"), 
+                                            ("checkpoint", "checkpoints"),
+                                            ("results", "results"),
+                                            ("model", ""))}
 
         output_filename = self.node.get_option("output_filename")
         model_output = model_dir / f"{mlip_dict['name']}.model"

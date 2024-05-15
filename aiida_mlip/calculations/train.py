@@ -35,7 +35,7 @@ def validate_inputs(
         if "mlip_config" not in inputs:
             raise InputValidationError("No config file given")
         mlip_dict = inputs.mlip_config.as_dictionary()
-        required_keys = ["train_file", "valid_file", "test_file", "name"]
+        required_keys = ("train_file", "valid_file", "test_file", "name")
         for key in required_keys:
             if key not in mlip_dict:
                 raise InputValidationError(f"Mandatory key {key} not in config file")
