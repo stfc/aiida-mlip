@@ -116,7 +116,7 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         spec.output(
             "results_dict",
             valid_type=Dict,
-            help="The `results_dict` output node of the successful calculation.",
+            help="The `results_dict` output node of the training.",
         )
         spec.output("logs", valid_type=FolderData)
         spec.output("checkpoints", valid_type=FolderData)
