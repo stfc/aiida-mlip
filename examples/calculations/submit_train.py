@@ -12,7 +12,7 @@ from aiida_mlip.data.config import JanusConfigfile
 metadata = {"options": {"resources": {"num_machines": 1}}}
 code = load_code("janus@localhost")
 
-# All the other paramenters we want them from the config file
+# All the other parameters we want them from the config file
 # We want to pass it as a AiiDA data type for the provenance
 mlip_config = JanusConfigfile(
     (

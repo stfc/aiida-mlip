@@ -55,10 +55,6 @@ class Train(CalcJob):  # numpydoc ignore=PR01
     ----------
     DEFAULT_OUTPUT_FILE : str
         Default stdout file name.
-    DEFAULT_INPUT_FILE : str
-        Default input file name.
-    LOG_FILE : str
-        Default log file name.
 
     Methods
     -------
@@ -71,8 +67,6 @@ class Train(CalcJob):  # numpydoc ignore=PR01
     """
 
     DEFAULT_OUTPUT_FILE = "aiida-stdout.txt"
-    DEFAULT_INPUT_FILE = "aiida.xyz"
-    LOG_FILE = "aiida.log"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
@@ -90,19 +84,15 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         spec.input(
             "mlip_config",
             valid_type=JanusConfigfile,
-            required=False,
-            help="Mlip architecture to use for calculation, defaults to mace",
+            required=True,
+            help="Config file with parameters for training",
         )
         spec.input(
             "metadata.options.output_filename",
             valid_type=str,
             default=cls.DEFAULT_OUTPUT_FILE,
         )
-        spec.input(
-            "metadata.options.input_filename",
-            valid_type=str,
-            default=cls.DEFAULT_INPUT_FILE,
-        )
+
         spec.input(
             "metadata.options.scheduler_stdout",
             valid_type=str,
@@ -145,10 +135,8 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         aiida.common.datastructures.CalcInfo
             An instance of `aiida.common.datastructures.CalcInfo`.
         """
-        cmd_line = {}
-
-        cmd_line["mlip-config"] = "mlip_train.yml"
-
+        # The config file needs to be copied in the working folder
+        # Read content
         mlip_dict = self.inputs.mlip_config.as_dictionary
         config_parse = self.inputs.mlip_config.get_content()
         # Extract paths from the config
@@ -172,15 +160,14 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         with folder.open("mlip_train.yml", "w", encoding="utf-8") as configfile:
             configfile.write(config_parse)
 
-        model_dir = Path(mlip_dict.get("model_dir", "."))
-        model_output = model_dir / f"{mlip_dict['name']}.model"
-        compiled_model_output = model_dir / f"{mlip_dict['name']}_compiled.model"
-
         codeinfo = datastructures.CodeInfo()
 
         # Initialize cmdline_params with train command
         codeinfo.cmdline_params = ["train"]
-
+        # Create the rest of the command line
+        cmd_line = {}
+        cmd_line["mlip-config"] = "mlip_train.yml"
+        # Add cmd line params to codeinfo
         for flag, value in cmd_line.items():
             codeinfo.cmdline_params += [f"--{flag}", str(value)]
 
@@ -194,6 +181,9 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         # Save the info about the node where the calc is stored
         calcinfo.uuid = str(self.uuid)
         # Retrieve output files
+        model_dir = Path(mlip_dict.get("model_dir", "."))
+        model_output = model_dir / f"{mlip_dict['name']}.model"
+        compiled_model_output = model_dir / f"{mlip_dict['name']}_compiled.model"
         calcinfo.retrieve_list = [
             self.metadata.options.output_filename,
             self.uuid,
