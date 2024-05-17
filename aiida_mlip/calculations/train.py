@@ -34,16 +34,17 @@ def validate_inputs(
     if "mlip_config" in port_namespace:
         if "mlip_config" not in inputs:
             raise InputValidationError("No config file given")
-        mlip_dict = inputs.mlip_config.as_dictionary()
-        required_keys = ("train_file", "valid_file", "test_file", "name")
+        config_file = inputs["mlip_config"]
+        if "name" not in config_file:
+            raise InputValidationError("key 'name' must be defined in the config file")
+        required_keys = ("train_file", "valid_file", "test_file")
         for key in required_keys:
-            if key not in mlip_dict:
+            if key not in config_file:
                 raise InputValidationError(f"Mandatory key {key} not in config file")
             # Check if the keys actually correspond to a path except name which is
             # just the name to use for the output files
-            if key != "name":
-                if not Path(key).exists():
-                    raise InputValidationError(f"Path given for {key} does not exist")
+            if not Path(config_file.as_dictionary[key]).exists():
+                raise InputValidationError(f"Path given for {key} does not exist")
 
 
 class Train(CalcJob):  # numpydoc ignore=PR01
@@ -84,7 +85,7 @@ class Train(CalcJob):  # numpydoc ignore=PR01
             The calculation job process spec to define.
         """
         super().define(spec)
-        spec.inputs.validator = validate_inputs
+
         # Define inputs
         spec.input(
             "mlip_config",
@@ -92,6 +93,24 @@ class Train(CalcJob):  # numpydoc ignore=PR01
             required=False,
             help="Mlip architecture to use for calculation, defaults to mace",
         )
+        spec.input(
+            "metadata.options.output_filename",
+            valid_type=str,
+            default=cls.DEFAULT_OUTPUT_FILE,
+        )
+        spec.input(
+            "metadata.options.input_filename",
+            valid_type=str,
+            default=cls.DEFAULT_INPUT_FILE,
+        )
+        spec.input(
+            "metadata.options.scheduler_stdout",
+            valid_type=str,
+            default="_scheduler-stdout.txt",
+            help="Filename to which the content of stdout of the scheduler is written.",
+        )
+        spec.inputs["metadata"]["options"]["parser_name"].default = "janus.train_parser"
+        spec.inputs.validator = validate_inputs
         spec.output("model", valid_type=ModelData)
         spec.output("compiled_model", valid_type=SinglefileData)
         spec.output(
@@ -128,11 +147,29 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         """
         cmd_line = {}
 
-        cmd_line["mlip-config"] = "mlip_train.yaml"
-        config_parse = self.inputs.config.get_content()
-        mlip_dict = self.inputs.mlip_config.as_dictionary()
+        cmd_line["mlip-config"] = "mlip_train.yml"
+
+        mlip_dict = self.inputs.mlip_config.as_dictionary
+        config_parse = self.inputs.mlip_config.get_content()
+        # Extract paths from the config
+        abs_train_folder = (Path(mlip_dict["train_file"])).resolve()
+
+        abs_test_folder = (Path(mlip_dict["test_file"])).resolve()
+
+        abs_valid_folder = (Path(mlip_dict["valid_file"])).resolve()
+        # Update the config file with absolute paths
+        config_parse = config_parse.replace(
+            mlip_dict["train_file"], str(abs_train_folder)
+        )
+        config_parse = config_parse.replace(
+            mlip_dict["test_file"], str(abs_test_folder)
+        )
+        config_parse = config_parse.replace(
+            mlip_dict["valid_file"], str(abs_valid_folder)
+        )
+
         # Copy config file content inside the folder where the calculation is run
-        with folder.open("mlip_config.yaml", "w", encoding="utf-8") as configfile:
+        with folder.open("mlip_train.yml", "w", encoding="utf-8") as configfile:
             configfile.write(config_parse)
 
         model_dir = Path(mlip_dict.get("model_dir", "."))
@@ -160,11 +197,11 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         calcinfo.retrieve_list = [
             self.metadata.options.output_filename,
             self.uuid,
-            mlip_dict["log_dir"],
-            mlip_dict["result_dir"],
-            mlip_dict["checkpoint_dir"],
-            model_output,
-            compiled_model_output,
+            mlip_dict.get("log_dir", "logs"),
+            mlip_dict.get("result_dir", "results"),
+            mlip_dict.get("checkpoint_dir", "checkpoints"),
+            str(model_output),
+            str(compiled_model_output),
         ]
 
         return calcinfo
