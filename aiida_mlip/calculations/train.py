@@ -32,18 +32,20 @@ def validate_inputs(
         Error message if validation fails, None otherwise.
     """
     if "mlip_config" in port_namespace:
+        # Check if a config file is given
         if "mlip_config" not in inputs:
             raise InputValidationError("No config file given")
         config_file = inputs["mlip_config"]
+        # Check if 'name' keyword is given
         if "name" not in config_file:
             raise InputValidationError("key 'name' must be defined in the config file")
+        # Check if the xyz files paths are given
         required_keys = ("train_file", "valid_file", "test_file")
         for key in required_keys:
             if key not in config_file:
                 raise InputValidationError(f"Mandatory key {key} not in config file")
-            # Check if the keys actually correspond to a path except name which is
-            # just the name to use for the output files
-            if not Path(config_file.as_dictionary[key]).exists():
+            # Check if the keys actually correspond to a path
+            if not ((Path(config_file.as_dictionary[key])).resolve()).exists():
                 raise InputValidationError(f"Path given for {key} does not exist")
 
 

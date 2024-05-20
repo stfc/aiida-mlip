@@ -1,8 +1,8 @@
 name: 'test'
 model: ScaleShiftMACE
-train_file: "../../tests/calculations/structures/mlip_train.xyz"
-valid_file: "../../tests/calculations/structures/mlip_valid.xyz"
-test_file: "../../tests/calculations/structures/mlip_test.xyz"
+train_file: "./tests/calculations/structures/mlip_train.xyz"
+valid_file: "./tests/calculations/structures/mlip_valid.xyz"
+test_file: "./tests/calculations/structures/mlip_test.xyz"
 loss: 'universal'
 energy_weight: 1
 forces_weight: 10
