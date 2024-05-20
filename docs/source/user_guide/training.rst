@@ -27,7 +27,7 @@ The parameters are provided in a config file. Tha mandatory parameters are:
 
 while the other parameters are optional. Here is an example (can be found in the tests folder) of a config file with more parameters:
 .. code-block:: yaml
-    
+
     name: 'test'
     train_file: "./tests/calculations/structures/mlip_train.xyz"
     valid_file: "./tests/calculations/structures/mlip_valid.xyz"
