@@ -142,22 +142,13 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         mlip_dict = self.inputs.mlip_config.as_dictionary
         config_parse = self.inputs.mlip_config.get_content()
         # Extract paths from the config
-        abs_train_folder = (Path(mlip_dict["train_file"])).resolve()
-
-        abs_test_folder = (Path(mlip_dict["test_file"])).resolve()
-
-        abs_valid_folder = (Path(mlip_dict["valid_file"])).resolve()
-        # Update the config file with absolute paths
-        config_parse = config_parse.replace(
-            mlip_dict["train_file"], str(abs_train_folder)
-        )
-        config_parse = config_parse.replace(
-            mlip_dict["test_file"], str(abs_test_folder)
-        )
-        config_parse = config_parse.replace(
-            mlip_dict["valid_file"], str(abs_valid_folder)
-        )
-
+        for file in ("train_file", "test_file", "valid_file"):
+            abs_path = Path(mlip_dict[file]).resolve()
+            
+            # Update the config file with absolute paths
+            config_parse = config_parse.replace(
+                mlip_dict[file], str(abs_folder)
+            )
         # Copy config file content inside the folder where the calculation is run
         with folder.open("mlip_train.yml", "w", encoding="utf-8") as configfile:
             configfile.write(config_parse)
