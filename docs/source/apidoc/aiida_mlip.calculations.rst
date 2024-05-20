@@ -44,6 +44,16 @@ aiida\_mlip.calculations.singlepoint module
    :undoc-members:
    :show-inheritance:
 
+aiida\_mlip.calculations.train module
+-------------------------------------
+
+.. automodule:: aiida_mlip.calculations.train
+   :members:
+   :special-members:
+   :private-members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

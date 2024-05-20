@@ -9,3 +9,4 @@ User guide
     tutorial
     data
     calculations
+    training
