@@ -15,9 +15,9 @@ code = load_code("janus@localhost")
 # All the other parameters we want them from the config file
 # We want to pass it as a AiiDA data type for the provenance
 mlip_config = JanusConfigfile(
-    (
-        Path(__file__).parent / "../../tests/calculations/configs/mlip_train.yml"
-    ).resolve()
+    Path("~/aiida-mlip/tests/calculations/configs/mlip_train.yml")
+    .expanduser()
+    .resolve()
 )
 
 # Define calculation to run

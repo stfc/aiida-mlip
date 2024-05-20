@@ -2,7 +2,7 @@
 Parser for mlip train.
 """
 
-import ast
+import json
 from pathlib import Path
 from typing import Any
 
@@ -185,8 +185,8 @@ class TrainParser(Parser):
             last_dict_str = None
             for line in file:
                 try:
-                    last_dict_str = ast.literal_eval(line.strip())
-                except (SyntaxError, ValueError):
+                    last_dict_str = json.loads(line.strip())
+                except json.JSONDecodeError:
                     continue
 
         if last_dict_str is not None:
