@@ -24,7 +24,7 @@ def load_model(
 
     If the string represents a file path, the model will be loaded from that path.
     If it's a URL, the model will be downloaded from the specified location.
-    If the inoput model is None it returns a default model corresponding to the
+    If the input model is None it returns a default model corresponding to the
     default used in the Calcjobs.
 
     Parameters
