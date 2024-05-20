@@ -90,7 +90,7 @@ class TrainParser(Parser):
         compiled_model_output = (
             remote_dirs["model"] / f"{mlip_dict['name']}_compiled.model"
         )
-        result_name = remote_dirs["results"] / f"{mlip_dict['name']}_run-2024_train.txt"
+        result_name = remote_dirs["results"] / f"{mlip_dict['name']}_run-123_train.txt"
 
         if not self._validate_retrieved_files(output_filename, mlip_dict["name"]):
             return self.exit_codes.ERROR_MISSING_OUTPUT_FILES
