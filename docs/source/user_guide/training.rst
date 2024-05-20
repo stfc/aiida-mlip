@@ -1,6 +1,6 @@
-===============================
-Training machne learning models
-===============================
+================================
+Training machine learning models
+================================
 
 The `Train` class represents a `CalcJob` object within the AiiDA framework, designed for training machine learning models.
 
@@ -26,6 +26,7 @@ The parameters are provided in a config file. Tha mandatory parameters are:
     test_file: "./tests/calculations/structures/mlip_test.xyz"
 
 while the other parameters are optional. Here is an example (can be found in the tests folder) of a config file with more parameters:
+
 .. code-block:: yaml
 
     name: 'test'
