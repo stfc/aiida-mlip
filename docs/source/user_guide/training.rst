@@ -80,8 +80,8 @@ Submission
 ^^^^^^^^^^
 
 To facilitate the submission process and prepare inputs as AiiDA data types, an example script is provided.
-This script can be used as is, submitted to `verdi` as shown
+This script can be used as is or by changing, in the file, the path to the config file, then submitted to `verdi` as shown
 
 .. code-block:: python
 
-    verdi run submit_train.py "path/to/mlip_train.yml"
+    verdi run submit_train.py 
