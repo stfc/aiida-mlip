@@ -84,4 +84,4 @@ This script can be used as is or by changing, in the file, the path to the confi
 
 .. code-block:: python
 
-    verdi run submit_train.py 
+    verdi run submit_train.py
