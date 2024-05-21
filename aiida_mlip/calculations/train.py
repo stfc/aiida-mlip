@@ -149,7 +149,8 @@ class Train(CalcJob):  # numpydoc ignore=PR01
             # Update the config file with absolute paths
             config_parse = config_parse.replace(mlip_dict[file], str(abs_path))
         # Copy config file content inside the folder where the calculation is run
-        with folder.open("mlip_train.yml", "w", encoding="utf-8") as configfile:
+        config_copy = "mlip_train.yml"
+        with folder.open(config_copy, "w", encoding="utf-8") as configfile:
             configfile.write(config_parse)
 
         codeinfo = datastructures.CodeInfo()
@@ -158,7 +159,7 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         codeinfo.cmdline_params = ["train"]
         # Create the rest of the command line
         cmd_line = {}
-        cmd_line["mlip-config"] = "mlip_train.yml"
+        cmd_line["mlip-config"] = config_copy
         # Add cmd line params to codeinfo
         for flag, value in cmd_line.items():
             codeinfo.cmdline_params += [f"--{flag}", str(value)]
