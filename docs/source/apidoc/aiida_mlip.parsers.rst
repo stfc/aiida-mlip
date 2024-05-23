@@ -44,6 +44,16 @@ aiida\_mlip.parsers.sp\_parser module
    :undoc-members:
    :show-inheritance:
 
+aiida\_mlip.parsers.train\_parser module
+----------------------------------------
+
+.. automodule:: aiida_mlip.parsers.train_parser
+   :members:
+   :special-members:
+   :private-members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

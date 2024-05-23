@@ -20,7 +20,7 @@ class BaseParser(Parser):
     Methods
     -------
     __init__(node: aiida.orm.nodes.process.process.ProcessNode)
-        Initialize the SPParser instance.
+        Initialize the BaseParser instance.
 
     parse(**kwargs: Any) -> int:
         Parse outputs, store results in the database.
@@ -33,12 +33,12 @@ class BaseParser(Parser):
     Raises
     ------
     exceptions.ParsingError
-        If the ProcessNode being passed was not produced by a singlePointCalculation.
+        If the ProcessNode being passed was not produced by a `Base` Calcjob.
     """
 
     def __init__(self, node: ProcessNode):
         """
-        Check that the ProcessNode being passed was produced by a `Singlepoint`.
+        Check that the ProcessNode being passed was produced by a `Base` Calcjob.
 
         Parameters
         ----------

@@ -22,7 +22,7 @@ machine learning interatomic potentials aiida plugin
   - NVE
   - NVT (Langevin(Eijnden/Ciccotti flavour) and Nosé-Hoover (Melchionna flavour))
   - NPT (Nosé-Hoover (Melchiona flavour))
-- [ ] Training ML potentials (MACE only planned)
+- [x] Training ML potentials (MACE only planned)
 - [ ] Fine tunning MLIPs (MACE only planned)
 
 The code relies heavily on [janus-core](https://github.com/stfc/janus-core), which handles mlip calculations using ASE.
@@ -45,6 +45,7 @@ Registered entry points for aiida.calculations:
 * janus.opt
 * janus.sp
 * janus.md
+* janus.train
 ```
 
 
@@ -60,6 +61,11 @@ verdi run submit_md.py "janus@localhost" --struct "path/to/structure" --model "p
 
 verdi process list -a  # check record of calculation
 ```
+Models can be trained by using the Train calcjob. In that case the needed inputs are a config file containig the path to train, test and validation xyz file and other optional parameters. Running
+```shell
+verdi run submit_train.py
+```
+a model will be trained using the provided example config file and xyz files (can be found in the tests folder)
 
 ## Development
 
@@ -97,6 +103,7 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
     * [`sp_parser.py`](aiida_mlip/parsers/sp_parser.py): `Parser` for `Singlepoint` calculation.
     * [`opt_parser.py`](aiida_mlip/parsers/opt_parser.py): `Parser` for `Geomopt` calculation.
     * [`md_parser.py`](aiida_mlip/parsers/md_parser.py): `Parser` for `MD` calculation.
+    * [`train_parser.py`](aiida_mlip/parsers/train_parser.py): `Parser` for `Train` calculation.
   * [`helpers/`](aiida_mlip/helpers/): `Helpers` to run calculations.
 * [`docs/`](docs/source/): Code documentation
   * [`apidoc/`](docs/source/apidoc/): API documentation
@@ -108,14 +115,17 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
     * [`submit_singlepoint.py`](examples/calculations/submit_singlepoint.py): Script for submitting a singlepoint calculation
     * [`submit_geomopt.py`](examples/calculations/submit_geomopt.py): Script for submitting a geometry optimisation calculation
     * [`submit_md.py`](examples/calculations/submit_md.py): Script for submitting a molecular dynamics calculation
+    * [`submit_train.py`](examples/calculations/submit_train.py): Script for submitting a train calculation.
 * [`tests/`](tests/): Basic regression tests using the [pytest](https://docs.pytest.org/en/latest/) framework (submitting a calculation, ...). Install `pip install -e .[testing]` and run `pytest`.
   * [`conftest.py`](tests/conftest.py): Configuration of fixtures for [pytest](https://docs.pytest.org/en/latest/)
   * [`calculations/`](tests/calculations): Calculations
     * [`test_singlepoint.py`](tests/calculations/test_singlepoint.py): Test `SinglePoint` calculation
     * [`test_geomopt.py`](tests/calculations/test_geomopt.py): Test `Geomopt` calculation
     * [`test_md.py`](tests/calculations/test_md.py): Test `MD` calculation
+    * [`test_train.py`](tests/calculations/test_train.py): Test `Train` calculation
   * [`data/`](tests/data): `ModelData`
     * [`test_model.py`](tests/data/test_model.py): Test `ModelData` type
+    * [`test_config.py`](tests/data/test_config.py): Test `JanusConfigfile` type
 * [`.gitignore`](.gitignore): Telling git which files to ignore
 * [`.pre-commit-config.yaml`](.pre-commit-config.yaml): Configuration of [pre-commit hooks](https://pre-commit.com/) that sanitize coding style and check for syntax errors. Enable via `pip install -e .[pre-commit] && pre-commit install`
 * [`LICENSE`](LICENSE): License for the plugin
