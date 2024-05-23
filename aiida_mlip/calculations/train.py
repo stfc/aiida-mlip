@@ -6,7 +6,7 @@ from aiida.common import InputValidationError, datastructures
 import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
 import aiida.engine.processes
-from aiida.orm import Dict, FolderData, SinglefileData
+from aiida.orm import Bool, Dict, FolderData, SinglefileData
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
@@ -47,6 +47,12 @@ def validate_inputs(
             # Check if the keys actually correspond to a path
             if not ((Path(config_file.as_dictionary[key])).resolve()).exists():
                 raise InputValidationError(f"Path given for {key} does not exist")
+        # Check if fine-tuning is enabled and validate accordingly
+        if "fine_tune" in inputs:
+            if "foundation_model" not in config_file and "model" not in inputs:
+                raise InputValidationError(
+                    "Undefined Model to fine-tune in inputs or config file"
+                )
 
 
 class Train(CalcJob):  # numpydoc ignore=PR01
@@ -89,6 +95,18 @@ class Train(CalcJob):  # numpydoc ignore=PR01
             required=True,
             help="Config file with parameters for training",
         )
+
+        spec.input(
+            "fine_tune",
+            valid_type=Bool,
+            required=False,
+            default=Bool(False),
+            help="Fine-tuning of a model",
+        )
+        spec.input(
+            "model", valid_type=ModelData, required=False, help="Model to fine-tune"
+        )
+
         spec.input(
             "metadata.options.output_filename",
             valid_type=str,
@@ -148,6 +166,13 @@ class Train(CalcJob):  # numpydoc ignore=PR01
 
             # Update the config file with absolute paths
             config_parse = config_parse.replace(mlip_dict[file], str(abs_path))
+
+        # Add foundation_model to the config file if fine-tuning is enabled
+        if self.inputs.fine_tune and "model" in self.inputs:
+            model_data = self.inputs.model
+            foundation_model_path = model_data.filepath
+            config_parse += f"\nfoundation_model: {foundation_model_path}"
+
         # Copy config file content inside the folder where the calculation is run
         config_copy = "mlip_train.yml"
         with folder.open(config_copy, "w", encoding="utf-8") as configfile:
@@ -158,11 +183,16 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         # Initialize cmdline_params with train command
         codeinfo.cmdline_params = ["train"]
         # Create the rest of the command line
-        cmd_line = {}
-        cmd_line["mlip-config"] = config_copy
+        cmd_line = {"mlip-config": config_copy}
+        if self.inputs.fine_tune:
+            cmd_line["fine-tune"] = None
+
         # Add cmd line params to codeinfo
         for flag, value in cmd_line.items():
-            codeinfo.cmdline_params += [f"--{flag}", str(value)]
+            if value is None:
+                codeinfo.cmdline_params += [f"--{flag}"]
+            else:
+                codeinfo.cmdline_params += [f"--{flag}", str(value)]
 
         # Node where the code is saved
         codeinfo.code_uuid = self.inputs.code.uuid
