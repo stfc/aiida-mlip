@@ -38,7 +38,7 @@ def test_prepare_tune(fixture_sandbox, generate_calc_job, janus_code, config_fol
         "test_compiled.model",
     ]
     print(calc_info.codes_info[0].cmdline_params)
-    print(cmdline_params)
+
     # Check the attributes of the returned `CalcInfo`
     assert fixture_sandbox.get_content_list() == ["mlip_train.yml"]
     assert isinstance(calc_info, datastructures.CalcInfo)

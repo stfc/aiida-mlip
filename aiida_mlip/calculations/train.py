@@ -48,11 +48,14 @@ def validate_inputs(
             if not ((Path(config_file.as_dictionary[key])).resolve()).exists():
                 raise InputValidationError(f"Path given for {key} does not exist")
         # Check if fine-tuning is enabled and validate accordingly
-        if inputs["fine_tune"] is True:
-            if "foundation_model" not in config_file and "model" not in inputs:
-                raise InputValidationError(
-                    "Undefined Model to fine-tune in inputs or config file"
-                )
+        if (
+            inputs["fine_tune"]
+            and "foundation_model" not in config_file
+            and "model" not in inputs
+        ):
+            raise InputValidationError(
+                "Undefined Model to fine-tune in inputs or config file"
+            )
 
 
 class Train(CalcJob):  # numpydoc ignore=PR01
