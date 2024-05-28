@@ -10,6 +10,13 @@ from aiida.plugins import CalculationFactory
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
 
+try:
+    from mace.cli.run_train import run as run_train  # pylint: disable=unused-import
+
+    MACE_IMPORT_ERROR = False
+except ImportError:
+    MACE_IMPORT_ERROR = True
+
 
 def test_prepare_train(fixture_sandbox, generate_calc_job, janus_code, config_folder):
     """Test generating singlepoint calculation job."""
@@ -35,8 +42,6 @@ def test_prepare_train(fixture_sandbox, generate_calc_job, janus_code, config_fo
         "test_compiled.model",
     ]
 
-    print(sorted(calc_info.retrieve_list))
-    print(retrieve_list)
     # Check the attributes of the returned `CalcInfo`
     assert fixture_sandbox.get_content_list() == ["mlip_train.yml"]
     assert isinstance(calc_info, datastructures.CalcInfo)
@@ -131,7 +136,6 @@ def test_prepare_tune(fixture_sandbox, generate_calc_job, janus_code, config_fol
         "test.model",
         "test_compiled.model",
     ]
-    print(calc_info.codes_info[0].cmdline_params)
 
     # Check the attributes of the returned `CalcInfo`
     assert fixture_sandbox.get_content_list() == ["mlip_train.yml"]
@@ -158,6 +162,7 @@ def test_finetune_error(fixture_sandbox, generate_calc_job, janus_code, config_f
         generate_calc_job(fixture_sandbox, entry_point_name, inputs)
 
 
+@pytest.mark.skipif(MACE_IMPORT_ERROR, reason="Requires updated version of MACE")
 def test_run_train(janus_code, config_folder):
     """Test running train with fine-tuning calculation"""
 
@@ -174,7 +179,7 @@ def test_run_train(janus_code, config_folder):
 
     trainfinetuneCalc = CalculationFactory("janus.train")
     result = run(trainfinetuneCalc, **inputs)
-    print(result["results_dict"].get_dict())
+
     assert "results_dict" in result
     obtained_res = result["results_dict"].get_dict()
     assert "logs" in result
