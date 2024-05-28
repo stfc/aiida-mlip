@@ -3,7 +3,9 @@
 import pytest
 
 from aiida.common import InputValidationError, datastructures
+from aiida.engine import run
 from aiida.orm import Bool
+from aiida.plugins import CalculationFactory
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
@@ -154,3 +156,26 @@ def test_finetune_error(fixture_sandbox, generate_calc_job, janus_code, config_f
 
     with pytest.raises(InputValidationError):
         generate_calc_job(fixture_sandbox, entry_point_name, inputs)
+
+
+def test_run_train(janus_code, config_folder):
+    """Test running train with fine-tuning calculation"""
+
+    model_file = config_folder / "test.model"
+    config_path = config_folder / "mlip_train.yml"
+    config = JanusConfigfile(file=config_path)
+    inputs = {
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "fine_tune": Bool(True),
+        "code": janus_code,
+        "mlip_config": config,
+        "model": ModelData.local_file(file=model_file, architecture="mace_mp"),
+    }
+
+    trainfinetuneCalc = CalculationFactory("janus.train")
+    result = run(trainfinetuneCalc, **inputs)
+    print(result["results_dict"].get_dict())
+    assert "results_dict" in result
+    obtained_res = result["results_dict"].get_dict()
+    assert "logs" in result
+    assert obtained_res["loss"] == pytest.approx(0.062798671424389)
