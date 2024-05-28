@@ -10,6 +10,7 @@ from aiida.plugins import CalculationFactory
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
 
+# this is just a temporary solution till mace gets a tag on current main.
 try:
     from mace.cli.run_train import run as run_train  # pylint: disable=unused-import
 
