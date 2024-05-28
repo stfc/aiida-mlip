@@ -94,7 +94,7 @@ In that case some additional parameters must be used:
     submit(TrainCalculation,inputs)
 
 A model to fine-tune has to be provided as an input, either as a `ModelData` type (in which case it has to be a model file), or in the config file at the keyword `foundation_model`.
-If the keyword `fine_tune` is True but no model is given wither way, it will return an error.
+If the keyword `fine_tune` is True but no model is given either way, it will return an error.
 
 Submission
 ^^^^^^^^^^
