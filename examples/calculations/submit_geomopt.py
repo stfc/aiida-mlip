@@ -30,7 +30,7 @@ def geomopt(params: dict) -> None:
     model = load_model(params["model"], params["arch"])
 
     # Select calculation to use
-    geomoptCalculation = CalculationFactory("janus.opt")
+    geomoptCalculation = CalculationFactory("mlip.opt")
 
     # Define inputs
     inputs = {

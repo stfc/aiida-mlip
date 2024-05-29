@@ -19,7 +19,7 @@ from aiida_mlip.data.model import ModelData
 def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     """Test generating MD calculation job."""
 
-    entry_point_name = "janus.md"
+    entry_point_name = "mlip.md"
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
@@ -103,7 +103,7 @@ def test_MD_with_config(
     nacl = bulk("NaCl", "rocksalt", a=5.63)
     write("NaCl.cif", nacl)
 
-    entry_point_name = "janus.md"
+    entry_point_name = "mlip.md"
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
         "code": janus_code,
@@ -182,7 +182,7 @@ def test_run_md(model_folder, structure_folder, janus_code):
         ),
     }
 
-    MDCalculation = CalculationFactory("janus.md")
+    MDCalculation = CalculationFactory("mlip.md")
     result, node = run_get_node(MDCalculation, **inputs)
 
     assert "final_structure" in result

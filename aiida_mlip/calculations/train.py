@@ -125,7 +125,7 @@ class Train(CalcJob):  # numpydoc ignore=PR01
             default="_scheduler-stdout.txt",
             help="Filename to which the content of stdout of the scheduler is written.",
         )
-        spec.inputs["metadata"]["options"]["parser_name"].default = "janus.train_parser"
+        spec.inputs["metadata"]["options"]["parser_name"].default = "mlip.train_parser"
         spec.inputs.validator = validate_inputs
         spec.output("model", valid_type=ModelData)
         spec.output("compiled_model", valid_type=SinglefileData)

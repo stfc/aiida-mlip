@@ -36,16 +36,16 @@ pip install aiida-mlip
 verdi quicksetup  # better to set up a new profile
 verdi plugin list aiida.calculations
 ```
-The last command should show a list of AiiDA pre-installed calculations and the aiida-mlip plugin calculations (janus.opt, janus.sp)
+The last command should show a list of AiiDA pre-installed calculations and the aiida-mlip plugin calculations (mlip.opt, mlip.sp)
 ```
 Registered entry points for aiida.calculations:
 * core.arithmetic.add
 * core.templatereplacer
 * core.transfer
-* janus.opt
-* janus.sp
-* janus.md
-* janus.train
+* mlip.opt
+* mlip.sp
+* mlip.md
+* mlip.train
 ```
 
 

@@ -16,7 +16,7 @@ from aiida_mlip.calculations.md import MD
 from aiida_mlip.helpers.converters import xyz_to_aiida_traj
 from aiida_mlip.parsers.base_parser import BaseParser
 
-MDCalculation = CalculationFactory("janus.md")
+MDCalculation = CalculationFactory("mlip.md")
 
 
 class MDParser(BaseParser):

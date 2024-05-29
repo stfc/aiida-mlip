@@ -19,7 +19,7 @@ structure = load_structure("../tests/calculations/structures/NaCl.cif")
 config = JanusConfigfile("../tests/calculations/configs/config_janus.yaml")
 
 # Define calculation to run
-singlePointCalculation = CalculationFactory("janus.sp")
+singlePointCalculation = CalculationFactory("mlip.sp")
 
 # Run calculation
 result, node = run_get_node(

@@ -32,7 +32,7 @@ def MD(params: dict) -> None:
     model = load_model(params["model"], params["arch"])
 
     # Select calculation to use
-    MDCalculation = CalculationFactory("janus.md")
+    MDCalculation = CalculationFactory("mlip.md")
 
     # Define inputs
     inputs = {
