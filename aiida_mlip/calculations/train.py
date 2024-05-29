@@ -104,7 +104,7 @@ class Train(CalcJob):  # numpydoc ignore=PR01
             valid_type=Bool,
             required=False,
             default=lambda: Bool(False),
-            help="Fine-tuning of a model",
+            help="Whether fine-tuning a model",
         )
         spec.input(
             "model", valid_type=ModelData, required=False, help="Model to fine-tune"
