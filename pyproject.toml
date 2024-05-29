@@ -30,7 +30,6 @@ python = "^3.9"
 aiida-core = "^2.5"
 ase = "^3.22.1"
 voluptuous = "^0.14"
-mace-torch = {git = "https://github.com/ACEsuit/mace.git", rev = "develop"}
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "^7.4.1"}

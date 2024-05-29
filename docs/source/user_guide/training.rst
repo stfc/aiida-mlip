@@ -76,6 +76,33 @@ while the other parameters are optional. Here is an example (can be found in the
     keep_isolated_atoms: True
     save_cpu: True
 
+It is also possible to fine-tune models using the same type of `Calcjob`.
+In that case some additional parameters must be used: foundation_model and fine_tune.
+
+
+.. code-block:: python
+
+    inputs = {
+         code=InstalledCode,
+         mlip_config=JanusConfigfile,
+         metadata=Dict({'options': {'output_filename': 'aiida-stdout.txt'}}),
+         fine_tune=Bool(True),
+         foundation_model=ModelData
+         }
+
+    TrainCalculation = CalculationFactory("janus.train")
+    submit(TrainCalculation,inputs)
+
+A model to fine-tune has to be provided as an input, either as a `ModelData` type (in which case it has to be a model file), or in the config file at the keyword `foundation_model`.
+If the keyword `fine_tune` is True but no model is given either way, it will return an error.
+
+.. note::
+
+    The keyword 'model' and 'foundation_model' refer to two different things.
+    'foundation_model' is the path to the model to fine-tune (or a shortcut like 'small', etc).
+    'model' refers to the model-type (see `MACE <https://mace-docs.readthedocs.io/en/latest/guide/training.html#model>`_ documentation)
+
+
 Submission
 ^^^^^^^^^^
 
