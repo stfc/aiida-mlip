@@ -77,7 +77,7 @@ while the other parameters are optional. Here is an example (can be found in the
     save_cpu: True
 
 It is also possible to fine-tune models using the same type of `Calcjob`.
-In that case some additional parameters must be used:
+In that case some additional parameters must be used: foundation_model and fine_tune.
 
 
 .. code-block:: python
@@ -87,7 +87,7 @@ In that case some additional parameters must be used:
          mlip_config=JanusConfigfile,
          metadata=Dict({'options': {'output_filename': 'aiida-stdout.txt'}}),
          fine_tune=Bool(True),
-         model=ModelData
+         foundation_model=ModelData
          }
 
     TrainCalculation = CalculationFactory("janus.train")
