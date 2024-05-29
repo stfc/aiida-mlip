@@ -100,7 +100,7 @@ If the keyword `fine_tune` is True but no model is given either way, it will ret
 
     The keyword 'model' and 'foundation_model' refer to two different things.
     'foundation_model' is the path to the model to fine-tune (or a shortcut like 'small', etc).
-    'model' refers to the model-type (see `MACE <https://mace-docs.readthedocs.io/en/latest/>`_ documentation)
+    'model' refers to the model-type (see `MACE <https://mace-docs.readthedocs.io/en/latest/guide/training.html#model>`_ documentation)
 
 
 Submission
