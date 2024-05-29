@@ -121,7 +121,9 @@ def test_prepare_tune(fixture_sandbox, generate_calc_job, janus_code, config_fol
         "code": janus_code,
         "mlip_config": config,
         "fine_tune": Bool(True),
-        "model": ModelData.local_file(file=model_file, architecture="mace_mp"),
+        "foundation_model": ModelData.local_file(
+            file=model_file, architecture="mace_mp"
+        ),
     }
 
     calc_info = generate_calc_job(fixture_sandbox, entry_point_name, inputs)
@@ -175,7 +177,9 @@ def test_run_train(janus_code, config_folder):
         "fine_tune": Bool(True),
         "code": janus_code,
         "mlip_config": config,
-        "model": ModelData.local_file(file=model_file, architecture="mace_mp"),
+        "foundation_model": ModelData.local_file(
+            file=model_file, architecture="mace_mp"
+        ),
     }
 
     trainfinetuneCalc = CalculationFactory("janus.train")

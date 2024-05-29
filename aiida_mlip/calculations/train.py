@@ -51,7 +51,7 @@ def validate_inputs(
         if (
             inputs["fine_tune"]
             and "foundation_model" not in config_file
-            and "model" not in inputs
+            and "foundation_model" not in inputs
         ):
             raise InputValidationError(
                 "Undefined Model to fine-tune in inputs or config file"
@@ -107,7 +107,10 @@ class Train(CalcJob):  # numpydoc ignore=PR01
             help="Whether fine-tuning a model",
         )
         spec.input(
-            "model", valid_type=ModelData, required=False, help="Model to fine-tune"
+            "foundation_model",
+            valid_type=ModelData,
+            required=False,
+            help="Model to fine-tune",
         )
 
         spec.input(
@@ -171,8 +174,8 @@ class Train(CalcJob):  # numpydoc ignore=PR01
             config_parse = config_parse.replace(mlip_dict[file], str(abs_path))
 
         # Add foundation_model to the config file if fine-tuning is enabled
-        if self.inputs.fine_tune and "model" in self.inputs:
-            model_data = self.inputs.model
+        if self.inputs.fine_tune and "foundation_model" in self.inputs:
+            model_data = self.inputs.foundation_model
             foundation_model_path = model_data.filepath
             config_parse += f"\nfoundation_model: {foundation_model_path}"
 
