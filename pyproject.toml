@@ -2,12 +2,11 @@
 name = "aiida-mlip"
 version = "0.2.0"
 description = "machine learning interatomic potentials aiida plugin"
-authors = [
-    "Federica Zanca",
-    "Elliott Kasoar",
-    "Jacob Wilkins",
-    "Alin M. Elena",
-]
+authors = [{name = "Federica Zanca", email = "federica.zanca@stfc.ac.uk"},
+           {name = "Elliott Kasoar"},
+           {name = "Jacob Wilkins"},
+           {name = "Alin M. Elena}]
+
 readme = "README.md"
 packages = [{include = "aiida_mlip"}]
 classifiers = [
