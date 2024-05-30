@@ -77,7 +77,7 @@ The calculation must be set:
     from aiida.plugins import CalculationFactory
     geomoptCalculation = CalculationFactory("janus.opt")
 
-In this case, since we are running a geometry optimisation, the entry point for the calculation is `janus.opt`. For a single point calculation, the entry point would be `janus.sp`.
+In this case, since we are running a geometry optimisation, the entry point for the calculation is `mlip.opt`. For a single point calculation, the entry point would be `mlip.sp`.
 
 Finally, run the calculation:
 
@@ -129,7 +129,7 @@ while `node` is the node of the calculation
     Out : aiida.orm.nodes.process.calculation.calcjob.CalcJobNode
 
     In : print(node)
-    Out: uuid: 1d46ad08-2ea7-4892-9dd6-0240b9aeda8b (pk: 1130) (aiida.calculations:janus.opt)
+    Out: uuid: 1d46ad08-2ea7-4892-9dd6-0240b9aeda8b (pk: 1130) (aiida.calculations:mlip.opt)
 
 
 The calculation can also be interacted with through verdi cli. Use `verdi process list` to show the list of calculations.
