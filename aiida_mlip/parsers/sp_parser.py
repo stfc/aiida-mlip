@@ -15,7 +15,7 @@ from aiida.plugins import CalculationFactory
 from aiida_mlip.helpers.converters import convert_numpy
 from aiida_mlip.parsers.base_parser import BaseParser
 
-singlePointCalculation = CalculationFactory("janus.sp")
+singlePointCalculation = CalculationFactory("mlip.sp")
 
 
 class SPParser(BaseParser):

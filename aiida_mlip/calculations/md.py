@@ -59,7 +59,7 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
             help="Keywords for molecular dynamics",
         )
 
-        spec.inputs["metadata"]["options"]["parser_name"].default = "janus.md_parser"
+        spec.inputs["metadata"]["options"]["parser_name"].default = "mlip.md_parser"
 
         spec.output(
             "results_dict",

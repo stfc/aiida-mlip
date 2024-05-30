@@ -21,7 +21,7 @@ config = JanusConfigfile(
 )
 
 # Define calculation to run
-MDCalculation = CalculationFactory("janus.md")
+MDCalculation = CalculationFactory("mlip.md")
 
 # Run calculation
 result, node = run_get_node(

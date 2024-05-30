@@ -30,7 +30,7 @@ def singlepoint(params: dict) -> None:
     model = load_model(params["model"], params["arch"])
 
     # Select calculation to use
-    singlePointCalculation = CalculationFactory("janus.sp")
+    singlePointCalculation = CalculationFactory("mlip.sp")
 
     # Define inputs
     inputs = {

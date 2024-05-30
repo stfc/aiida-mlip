@@ -22,7 +22,7 @@ except ImportError:
 def test_prepare_train(fixture_sandbox, generate_calc_job, janus_code, config_folder):
     """Test generating singlepoint calculation job."""
 
-    entry_point_name = "janus.train"
+    entry_point_name = "mlip.train"
     config_path = config_folder / "mlip_train.yml"
     config = JanusConfigfile(file=config_path)
     inputs = {
@@ -55,7 +55,7 @@ def test_file_error(
 ):
     """Test error if path for xyz is non existent."""
 
-    entry_point_name = "janus.train"
+    entry_point_name = "mlip.train"
     config_path = config_folder / "mlip_train.yml"
 
     # Temporarily modify config file to introduce an error
@@ -82,7 +82,7 @@ def test_noname(
 ):
     """Test error if no 'name' keyword is given in config."""
 
-    entry_point_name = "janus.train"
+    entry_point_name = "mlip.train"
     config_path = config_folder / "mlip_train.yml"
 
     # Temporarily modify config file to introduce an error
@@ -113,7 +113,7 @@ def test_prepare_tune(fixture_sandbox, generate_calc_job, janus_code, config_fol
     """Test generating fine tuning calculation job."""
 
     model_file = config_folder / "test.model"
-    entry_point_name = "janus.train"
+    entry_point_name = "mlip.train"
     config_path = config_folder / "mlip_train.yml"
     config = JanusConfigfile(file=config_path)
     inputs = {
@@ -151,7 +151,7 @@ def test_prepare_tune(fixture_sandbox, generate_calc_job, janus_code, config_fol
 def test_finetune_error(fixture_sandbox, generate_calc_job, janus_code, config_folder):
     """Test error if no model is given."""
 
-    entry_point_name = "janus.train"
+    entry_point_name = "mlip.train"
     config_path = config_folder / "mlip_train.yml"
     config = JanusConfigfile(file=config_path)
     inputs = {
@@ -182,7 +182,7 @@ def test_run_train(janus_code, config_folder):
         ),
     }
 
-    trainfinetuneCalc = CalculationFactory("janus.train")
+    trainfinetuneCalc = CalculationFactory("mlip.train")
     result = run(trainfinetuneCalc, **inputs)
 
     assert "results_dict" in result
