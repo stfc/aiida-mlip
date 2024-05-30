@@ -85,7 +85,7 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             help="Other optimisation keywords",
         )
 
-        spec.inputs["metadata"]["options"]["parser_name"].default = "janus.opt_parser"
+        spec.inputs["metadata"]["options"]["parser_name"].default = "mlip.opt_parser"
 
         spec.output("traj_file", valid_type=SinglefileData)
         spec.output("traj_output", valid_type=TrajectoryData)

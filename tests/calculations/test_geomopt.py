@@ -16,7 +16,7 @@ from aiida_mlip.data.model import ModelData
 def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     """Test generating singlepoint calculation job"""
 
-    entry_point_name = "janus.opt"
+    entry_point_name = "mlip.opt"
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
@@ -84,7 +84,7 @@ def test_run_opt(model_folder, janus_code):
         "steps": Int(1000),
     }
 
-    geomoptCalculation = CalculationFactory("janus.opt")
+    geomoptCalculation = CalculationFactory("mlip.opt")
     result = run(geomoptCalculation, **inputs)
     assert "results_dict" in result
     assert "final_structure" in result

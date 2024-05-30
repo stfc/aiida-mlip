@@ -59,7 +59,7 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
             help="Properties to calculate",
         )
 
-        spec.inputs["metadata"]["options"]["parser_name"].default = "janus.sp_parser"
+        spec.inputs["metadata"]["options"]["parser_name"].default = "mlip.sp_parser"
 
         # Define outputs. The default is a dictionary with the content of the xyz file
         spec.output(

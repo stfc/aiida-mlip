@@ -16,7 +16,7 @@ from aiida_mlip.data.model import ModelData
 def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     """Test generating singlepoint calculation job"""
 
-    entry_point_name = "janus.sp"
+    entry_point_name = "mlip.sp"
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
@@ -64,7 +64,7 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
 def test_singlepoint_model_download(fixture_sandbox, generate_calc_job, janus_code):
     """Test generating singlepoint calculation job."""
 
-    entry_point_name = "janus.sp"
+    entry_point_name = "mlip.sp"
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
@@ -92,7 +92,7 @@ def test_singlepoint_model_download(fixture_sandbox, generate_calc_job, janus_co
 
 def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, janus_code):
     """Test singlepoint calculation with error input"""
-    entry_point_name = "janus.sp"
+    entry_point_name = "mlip.sp"
     model_file = model_folder / "mace_mp_small.model"
     # pylint:disable=line-too-long
     inputs = {
@@ -120,7 +120,7 @@ def test_run_sp(model_folder, janus_code):
         "device": Str("cpu"),
     }
 
-    singlePointCalculation = CalculationFactory("janus.sp")
+    singlePointCalculation = CalculationFactory("mlip.sp")
     result = run(singlePointCalculation, **inputs)
 
     assert "results_dict" in result

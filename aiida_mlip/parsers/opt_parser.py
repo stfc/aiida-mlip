@@ -13,7 +13,7 @@ from aiida.plugins import CalculationFactory
 from aiida_mlip.helpers.converters import xyz_to_aiida_traj
 from aiida_mlip.parsers.sp_parser import SPParser
 
-geomoptCalculation = CalculationFactory("janus.opt")
+geomoptCalculation = CalculationFactory("mlip.opt")
 
 
 class GeomOptParser(SPParser):
