@@ -75,7 +75,7 @@ The calculation must be set:
 .. code-block:: python
 
     from aiida.plugins import CalculationFactory
-    geomoptCalculation = CalculationFactory("janus.opt")
+    geomoptCalculation = CalculationFactory("mlip.opt")
 
 In this case, since we are running a geometry optimisation, the entry point for the calculation is `mlip.opt`. For a single point calculation, the entry point would be `mlip.sp`.
 
