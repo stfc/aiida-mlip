@@ -27,7 +27,7 @@ Below is a usage example with the minimum required parameters. These parameters 
 
 .. code-block:: python
 
-    SinglePointCalculation = CalculationFactory("janus.sp")
+    SinglePointCalculation = CalculationFactory("mlip.sp")
     submit(SinglePointCalculation, code=InstalledCode, structure=StructureData, metadata={"options": {"resources": {"num_machines": 1}}})
 
 The inputs can be grouped into a dictionary:
@@ -43,7 +43,7 @@ The inputs can be grouped into a dictionary:
             "precision": Str,
             "device": Str,
         }
-    SinglePointCalculation = CalculationFactory("janus.sp")
+    SinglePointCalculation = CalculationFactory("mlip.sp")
     submit(SinglePointCalculation, **inputs)
 
 
@@ -72,7 +72,7 @@ And it is used as shown below. Note that some parameters, which are specific to 
     config = JanusConfigfile("path/to/config.yaml")
 
     # Define calculation to run
-    SinglePointCalculation = CalculationFactory("janus.sp")
+    SinglePointCalculation = CalculationFactory("mlip.sp")
 
     # Run calculation
     result, node = run_get_node(
@@ -140,7 +140,7 @@ Below is a usage example with some additional geometry optimisation parameters. 
 .. code-block:: python
 
 
-    GeomOptCalculation = CalculationFactory("janus.opt")
+    GeomOptCalculation = CalculationFactory("mlip.opt")
     submit(GeomOptCalculation, code=InstalledCode, structure=StructureData, max_force=Float(0.1), vectors_only=Bool(True))
 
 
@@ -177,7 +177,7 @@ Below is a usage example with some additional geometry optimisation parameters. 
 .. code-block:: python
 
 
-    MDCalculation = CalculationFactory("janus.md")
+    MDCalculation = CalculationFactory("mlip.md")
     submit(MDCalculation, code=InstalledCode, structure=StructureData, ensemble=Str("nve"), md_dict=Dict({'temp':300,'steps': 4,'traj-every':3,'stats-every':1}))
 
 .. note::
