@@ -12,7 +12,7 @@ Below is a usage example with some additional training parameters. These paramet
 
 .. code-block:: python
 
-    TrainCalculation = CalculationFactory("janus.train")
+    TrainCalculation = CalculationFactory("mlip.train")
     submit(TrainCalculation, code=InstalledCode, mlip_config=JanusConfigfile, metadata=Dict({'options': {'output_filename': 'aiida-stdout.txt'}}))
 
 
@@ -90,7 +90,7 @@ In that case some additional parameters must be used: foundation_model and fine_
          foundation_model=ModelData
          }
 
-    TrainCalculation = CalculationFactory("janus.train")
+    TrainCalculation = CalculationFactory("mlip.train")
     submit(TrainCalculation,inputs)
 
 A model to fine-tune has to be provided as an input, either as a `ModelData` type (in which case it has to be a model file), or in the config file at the keyword `foundation_model`.
