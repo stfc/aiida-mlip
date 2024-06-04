@@ -1,0 +1,3 @@
+properties:
+  - "energy"
+struct: "NaCl.cif"

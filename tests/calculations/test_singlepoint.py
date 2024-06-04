@@ -3,6 +3,7 @@
 import subprocess
 
 from ase.build import bulk
+from ase.io import write
 import pytest
 
 from aiida.common import InputValidationError, datastructures
@@ -11,7 +12,7 @@ from aiida.orm import Str, StructureData
 from aiida.plugins import CalculationFactory
 
 from aiida_mlip.data.model import ModelData
-
+from aiida_mlip.data.config import JanusConfigfile
 
 def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     """Test generating singlepoint calculation job"""
@@ -106,6 +107,22 @@ def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, janus_cod
     with pytest.raises(InputValidationError):
         generate_calc_job(fixture_sandbox, entry_point_name, inputs)
 
+
+def test_sp_nomodel(fixture_sandbox, generate_calc_job, config_folder, janus_code):
+    """Test singlepoint calculation with error input"""
+    entry_point_name = "mlip.sp"
+
+    nacl = bulk("NaCl", "rocksalt", a=5.63)
+    write("NaCl.cif", nacl)
+
+    inputs = {
+        "code": janus_code,
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "config": JanusConfigfile(config_folder / "config_error.yml"),
+    }
+
+    with pytest.raises(InputValidationError):
+        generate_calc_job(fixture_sandbox, entry_point_name, inputs)
 
 def test_run_sp(model_folder, janus_code):
     """Test running singlepoint calculation"""
