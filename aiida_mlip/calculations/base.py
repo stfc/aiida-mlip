@@ -24,7 +24,7 @@ def validate_inputs(
         The inputs dictionary.
 
     port_namespace : `aiida.engine.processes.ports.PortNamespace`
-        An instance of aiida's `PortNameSpace`.
+        An instance of aiida's `PortNamespace`.
 
     Raises
     ------
@@ -44,6 +44,17 @@ def validate_inputs(
             raise InputValidationError(
                 "Structure must be specified through 'struct' or 'config'"
             )
+    if (
+        "arch" not in inputs
+        and "model" not in inputs
+        and (
+            "config" not in inputs
+            or ("arch" not in inputs["config"] and "model" not in inputs["config"])
+        )
+    ):
+        raise InputValidationError(
+            "Either 'arch' or 'model' must be specified in the inputs or config"
+        )
 
 
 class BaseJanus(CalcJob):  # numpydoc ignore=PR01
@@ -207,13 +218,19 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         # Define architecture from model if model is given,
         # otherwise get architecture from inputs and download default model
         architecture = None
-        architecture = (
-            str((self.inputs.model).architecture)
-            if "model" in self.inputs and hasattr(self.inputs.model, "architecture")
-            else str(self.inputs.arch.value) if "arch" in self.inputs else None
-        )
-
-        if architecture:
+        if "model" in self.inputs and hasattr(self.inputs.model, "architecture"):
+            architecture = str((self.inputs.model).architecture)
+            cmd_line["arch"] = architecture
+        elif "arch" in self.inputs:
+            architecture = str(self.inputs.arch.value)
+            cmd_line["arch"] = architecture
+        # At this point we must have the model in the config and the arch in the config
+        # or nowhere, so we don't need to write in the cmd line if in config
+        elif "config" in self.inputs and "arch" in self.inputs.config:
+            architecture = self.inputs.config.as_dictionary["arch"]
+        # And we need a default value if it's nowhere
+        else:
+            architecture = "mace_mp"
             cmd_line["arch"] = architecture
 
         model_path = None
@@ -224,24 +241,20 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             model_path = self.inputs.model.filepath
         else:
             if "config" in self.inputs and "model" in self.inputs.config:
+                # No need for command line
                 model_path = None
+            # If we have not found the model anywhere let's use a default
             else:
-                if "arch" in self.inputs:
-                    # if model is not given (which is different than it being None)
-                    model_path = ModelData.download(
-                        "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",  # pylint: disable=line-too-long
-                        architecture,
-                    ).filepath
+                # if model is not given (which is different than it being None)
+                model_path = ModelData.download(
+                    "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",  # pylint: disable=line-too-long
+                    architecture,
+                ).filepath
+
         if model_path:
             cmd_line.setdefault("calc-kwargs", {})["model"] = model_path
 
         if "config" in self.inputs:
-            # Check if there are values in the config file that are also in the command
-            # line and do not store them as only the cmd line parameters will be used
-            config_dict = self.inputs.config.as_dictionary
-            overlapping_params = cmd_line.keys() & config_dict.keys()
-            # Store the other parameters
-            self.inputs.config.store_content(skip=overlapping_params)
             # Add config file to command line
             cmd_line["config"] = "config.yaml"
             config_parse = self.inputs.config.get_content()

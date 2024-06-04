@@ -1,5 +1,6 @@
 """Tests for singlepoint calculation."""
 
+from pathlib import Path
 import subprocess
 
 from ase.build import bulk
@@ -11,8 +12,9 @@ from aiida.engine import run
 from aiida.orm import Str, StructureData
 from aiida.plugins import CalculationFactory
 
-from aiida_mlip.data.model import ModelData
 from aiida_mlip.data.config import JanusConfigfile
+from aiida_mlip.data.model import ModelData
+
 
 def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     """Test generating singlepoint calculation job"""
@@ -123,6 +125,8 @@ def test_sp_nomodel(fixture_sandbox, generate_calc_job, config_folder, janus_cod
 
     with pytest.raises(InputValidationError):
         generate_calc_job(fixture_sandbox, entry_point_name, inputs)
+    Path("NaCl.cif").unlink()
+
 
 def test_run_sp(model_folder, janus_code):
     """Test running singlepoint calculation"""
