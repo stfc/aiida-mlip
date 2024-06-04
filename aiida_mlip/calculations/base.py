@@ -1,7 +1,5 @@
 """Base class for features common to most calculations."""
 
-from typing import Union
-
 from ase.io import read, write
 
 from aiida.common import InputValidationError, datastructures
@@ -55,7 +53,7 @@ def validate_inputs(
         )
     ):
         raise InputValidationError(
-            "Either 'arch' or 'model' must be specified in the inputs or config"
+            "'arch' and 'model' must both be specified in either the inputs or config"
         )
 
 
@@ -256,7 +254,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
         return calcinfo
 
-    def _define_architecture(self, cmd_line: dict) -> Union[dict, str]:
+    def _define_architecture(self, cmd_line: dict) -> tuple[dict, str]:
         """
         Find architecture in inputs or config file and add to command line if needed.
 
@@ -267,10 +265,9 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
         Returns
         -------
-        cmd_line_updated: dict
-            Dictionary containing the cmd line keys updated with the architecture.
-        architecture: str
-            Architecture type, either from inputs/config or a default value ("mace_mp").
+        tuple[dict, str]
+            Dictionary containing the cmd line keys updated with the architecture, and
+            architecture type, either from inputs/config or a default value ("mace_mp").
         """
         architecture = None
         cmd_line_updated = cmd_line
@@ -303,8 +300,8 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
         Returns
         -------
-            dict
-                Dictionary containing the cmd line keys updated with the model.
+        dict
+            Dictionary containing the cmd line keys updated with the model.
         """
         model_path = None
         cmd_line_updated = cmd_line
