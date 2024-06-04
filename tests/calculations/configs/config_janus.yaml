@@ -1,4 +1,3 @@
 properties:
   - "energy"
-out: "results.xyz"
 arch: mace_mp
