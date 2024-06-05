@@ -122,7 +122,7 @@ def test_run_sp(model_folder, janus_code):
 
     singlePointCalculation = CalculationFactory("mlip.sp")
     result = run(singlePointCalculation, **inputs)
-
+    print(result)
     assert "results_dict" in result
     obtained_res = result["results_dict"].get_dict()
     assert "xyz_output" in result
