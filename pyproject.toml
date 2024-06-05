@@ -79,6 +79,9 @@ build-backend = "poetry.core.masonry.api"
 "mlip.md_parser" = "aiida_mlip.parsers.md_parser:MDParser"
 "mlip.train_parser" = "aiida_mlip.parsers.train_parser:TrainParser"
 
+[tool.poetry.plugins."aiida.workflows"]
+"mlip.hts" = "aiida_mlip.workflows.hts:HTSWorkChain"
+
 [tool.black]
 line-length = 88
 
