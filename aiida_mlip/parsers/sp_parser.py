@@ -98,7 +98,9 @@ class SPParser(BaseParser):
         with self.retrieved.open(xyz_output, "rb") as handle:
             self.out("xyz_output", SinglefileData(file=handle, filename=xyz_output))
 
-        content = read(Path(self.node.get_remote_workdir(), xyz_output))
+        content = read(
+            Path(self.node.get_remote_workdir(), xyz_output), format="extxyz"
+        )
         results = convert_numpy(content.todict())
         results_node = Dict(results)
         self.out("results_dict", results_node)

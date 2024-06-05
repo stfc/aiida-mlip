@@ -122,12 +122,11 @@ def test_run_sp(model_folder, janus_code):
 
     singlePointCalculation = CalculationFactory("mlip.sp")
     result = run(singlePointCalculation, **inputs)
-
     assert "results_dict" in result
     obtained_res = result["results_dict"].get_dict()
     assert "xyz_output" in result
-    assert obtained_res["info"]["energy"] == pytest.approx(-6.7575203839729)
-    assert obtained_res["info"]["stress"][0][0] == pytest.approx(-0.005816546985101)
+    assert obtained_res["info"]["mace_energy"] == pytest.approx(-6.7575203839729)
+    assert obtained_res["info"]["mace_stress"][0] == pytest.approx(-0.005816546985101)
 
 
 def test_example(example_path):
