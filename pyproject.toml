@@ -28,9 +28,9 @@ documentation = "https://stfc.github.io/aiida-mlip/"
 [tool.poetry.dependencies]
 python = "^3.9"
 aiida-core = "^2.5"
-ase = "^3.22.1"
+ase = "^3.23.0"
 voluptuous = "^0.14"
-janus-core = "^v0.5.0b0"
+janus-core = "^v0.6.0b0"
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "^7.4.1"}
