@@ -60,8 +60,7 @@ def validate_inputs(
             "'model' must be specified either in the inputs or in the config file"
         )
 
-    if "arch" in inputs and "model" in inputs:
-        if inputs["arch"].value is not inputs["model"].architecture:
+    if "arch" in inputs and "model" in inputs and inputs["arch"].value is not inputs["model"].architecture:
             raise InputValidationError(
                 "'arch' in ModelData and in 'arch' input must be the same"
             )
