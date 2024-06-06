@@ -1,10 +1,8 @@
 """Tests for singlepoint calculation."""
 
-from pathlib import Path
 import subprocess
 
 from ase.build import bulk
-from ase.io import write
 import pytest
 
 from aiida.common import InputValidationError, datastructures
@@ -111,21 +109,50 @@ def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, janus_cod
 
 
 def test_sp_nomodel(fixture_sandbox, generate_calc_job, config_folder, janus_code):
-    """Test singlepoint calculation with error input"""
+    """Test singlepoint calculation with missing model"""
     entry_point_name = "mlip.sp"
-
-    nacl = bulk("NaCl", "rocksalt", a=5.63)
-    write("NaCl.cif", nacl)
 
     inputs = {
         "code": janus_code,
         "metadata": {"options": {"resources": {"num_machines": 1}}},
-        "config": JanusConfigfile(config_folder / "config_error.yml"),
+        "config": JanusConfigfile(config_folder / "config_nomodel.yml"),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
     }
 
     with pytest.raises(InputValidationError):
         generate_calc_job(fixture_sandbox, entry_point_name, inputs)
-    Path("NaCl.cif").unlink()
+
+
+def test_sp_noarch(fixture_sandbox, generate_calc_job, config_folder, janus_code):
+    """Test singlepoint calculation with missing architecture"""
+    entry_point_name = "mlip.sp"
+
+    inputs = {
+        "code": janus_code,
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "config": JanusConfigfile(config_folder / "config_noarch.yml"),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+    }
+
+    with pytest.raises(InputValidationError):
+        generate_calc_job(fixture_sandbox, entry_point_name, inputs)
+
+
+def test_two_arch(fixture_sandbox, generate_calc_job, model_folder, janus_code):
+    """Test singlepoint calculation with two defined architectures"""
+    entry_point_name = "mlip.sp"
+    model_file = model_folder / "mace_mp_small.model"
+
+    inputs = {
+        "code": janus_code,
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "model": ModelData.local_file(model_file, architecture="mace_mp"),
+        "arch": Str("chgnet"),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+    }
+
+    with pytest.raises(InputValidationError):
+        generate_calc_job(fixture_sandbox, entry_point_name, inputs)
 
 
 def test_run_sp(model_folder, janus_code):

@@ -47,14 +47,24 @@ def validate_inputs(
     if (
         "arch" not in inputs
         and "model" not in inputs
-        and (
-            "config" not in inputs
-            or ("arch" not in inputs["config"] and "model" not in inputs["config"])
-        )
+        and ("config" not in inputs or "arch" not in inputs["config"])
     ):
         raise InputValidationError(
-            "'arch' and 'model' must both be specified in either the inputs or config"
+            "'arch' must be specified in inputs, config file or ModelData"
         )
+
+    if "model" not in inputs and (
+        "config" not in inputs or "model" not in inputs["config"]
+    ):
+        raise InputValidationError(
+            "'model' must be specified either in the inputs or in the config file"
+        )
+
+    if "arch" in inputs and "model" in inputs:
+        if inputs["arch"] is not inputs["model"].architecture:
+            raise InputValidationError(
+                "'arch' in ModelData and in 'arch' input must be the same"
+            )
 
 
 class BaseJanus(CalcJob):  # numpydoc ignore=PR01
@@ -217,8 +227,8 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
         # Define architecture from model if model is given,
         # otherwise get architecture from inputs and download default model
-        cmd_line, architecture = self._define_architecture(cmd_line)
-        cmd_line = self._add_model_to_cmdline(cmd_line, architecture)
+        cmd_line = self._add_arch_to_cmdline(cmd_line)
+        cmd_line = self._add_model_to_cmdline(cmd_line)
 
         if "config" in self.inputs:
             # Add config file to command line
@@ -254,7 +264,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
         return calcinfo
 
-    def _define_architecture(self, cmd_line: dict) -> tuple[dict, str]:
+    def _add_arch_to_cmdline(self, cmd_line: dict) -> dict:
         """
         Find architecture in inputs or config file and add to command line if needed.
 
@@ -265,29 +275,27 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
         Returns
         -------
-        tuple[dict, str]
-            Dictionary containing the cmd line keys updated with the architecture, and
-            architecture type, either from inputs/config or a default value ("mace_mp").
+        dict
+            Dictionary containing the cmd line keys updated with the architecture.
         """
         architecture = None
-        cmd_line_updated = cmd_line
+        cmd_line_updated = cmd_line.copy()
         if "model" in self.inputs and hasattr(self.inputs.model, "architecture"):
             architecture = str((self.inputs.model).architecture)
             cmd_line_updated["arch"] = architecture
         elif "arch" in self.inputs:
             architecture = str(self.inputs.arch.value)
             cmd_line_updated["arch"] = architecture
-        # At this point we must have the model in the config and the arch in the config
-        # or nowhere, so we don't need to write in the cmd line if in config
+        # At this point we must have the arch in the config so we don't need to write
+        # in the cmd line if in config
         elif "config" in self.inputs and "arch" in self.inputs.config:
             architecture = self.inputs.config.as_dictionary["arch"]
-        # And we need a default value if it's nowhere
-        else:
-            architecture = "mace_mp"
-            cmd_line_updated["arch"] = architecture
-        return cmd_line_updated, architecture
+        return cmd_line_updated
 
-    def _add_model_to_cmdline(self, cmd_line: dict, architecture: str) -> dict:
+    def _add_model_to_cmdline(
+        self,
+        cmd_line: dict,
+    ) -> dict:
         """
         Find model in inputs or config file and add to command line if needed.
 
@@ -295,8 +303,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         ----------
         cmd_line : dict
             Dictionary containing the cmd line keys.
-        architecture : str
-            Architecture type.
 
         Returns
         -------
@@ -304,25 +310,15 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             Dictionary containing the cmd line keys updated with the model.
         """
         model_path = None
-        cmd_line_updated = cmd_line
+        cmd_line_updated = cmd_line.copy()
         if "model" in self.inputs:
-            # Raise error if model is None
+            # Raise error if model is None (different than model not given as input)
             if self.inputs.model is None:
                 raise ValueError("Model cannot be None")
             model_path = self.inputs.model.filepath
-        else:
-            if "config" in self.inputs and "model" in self.inputs.config:
-                # No need for command line
-                model_path = None
-            # If we have not found the model anywhere let's use a default
-            else:
-                # if model is not given (which is different than it being None)
-                model_path = ModelData.download(
-                    "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",  # pylint: disable=line-too-long
-                    architecture,
-                ).filepath
-
+        elif "config" in self.inputs and "model" in self.inputs.config:
+            # No need for command line
+            model_path = None
         if model_path:
             cmd_line_updated.setdefault("calc-kwargs", {})["model"] = model_path
-
         return cmd_line_updated

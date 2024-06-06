@@ -1,3 +1,3 @@
 properties:
   - "energy"
-struct: "NaCl.cif"
+arch: "mace_mp"
