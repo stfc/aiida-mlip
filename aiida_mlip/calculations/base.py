@@ -226,8 +226,8 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
         # Define architecture from model if model is given,
         # otherwise get architecture from inputs and download default model
-        cmd_line = self._add_arch_to_cmdline(cmd_line)
-        cmd_line = self._add_model_to_cmdline(cmd_line)
+        self._add_arch_to_cmdline(cmd_line)
+        self._add_model_to_cmdline(cmd_line)
 
         if "config" in self.inputs:
             # Add config file to command line
@@ -278,18 +278,16 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             Dictionary containing the cmd line keys updated with the architecture.
         """
         architecture = None
-        cmd_line_updated = cmd_line.copy()
         if "model" in self.inputs and hasattr(self.inputs.model, "architecture"):
             architecture = str((self.inputs.model).architecture)
-            cmd_line_updated["arch"] = architecture
         elif "arch" in self.inputs:
             architecture = str(self.inputs.arch.value)
-            cmd_line_updated["arch"] = architecture
         # At this point we must have the arch in the config so we don't need to write
         # in the cmd line if in config
         elif "config" in self.inputs and "arch" in self.inputs.config:
-            architecture = self.inputs.config.as_dictionary["arch"]
-        return cmd_line_updated
+            architecture = None
+        if architecture:
+            cmd_line["arch"] = architecture
 
     def _add_model_to_cmdline(
         self,
@@ -309,7 +307,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             Dictionary containing the cmd line keys updated with the model.
         """
         model_path = None
-        cmd_line_updated = cmd_line.copy()
         if "model" in self.inputs:
             # Raise error if model is None (different than model not given as input)
             if self.inputs.model is None:
@@ -319,5 +316,5 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             # No need for command line
             model_path = None
         if model_path:
-            cmd_line_updated.setdefault("calc-kwargs", {})["model"] = model_path
-        return cmd_line_updated
+            cmd_line.setdefault("calc-kwargs", {})["model"] = model_path
+        return cmd_line
