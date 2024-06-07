@@ -286,10 +286,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             architecture = str((self.inputs.model).architecture)
         elif "arch" in self.inputs:
             architecture = str(self.inputs.arch.value)
-        # At this point we must have the arch in the config so we don't need to write
-        # in the cmd line if in config
-        elif "config" in self.inputs and "arch" in self.inputs.config:
-            architecture = None
         if architecture:
             cmd_line["arch"] = architecture
 
@@ -316,8 +312,5 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             if self.inputs.model is None:
                 raise ValueError("Model cannot be None")
             model_path = self.inputs.model.filepath
-        elif "config" in self.inputs and "model" in self.inputs.config:
-            # No need for command line
-            model_path = None
         if model_path:
             cmd_line.setdefault("calc-kwargs", {})["model"] = model_path
