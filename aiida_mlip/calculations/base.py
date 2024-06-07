@@ -24,7 +24,7 @@ def validate_inputs(
         The inputs dictionary.
 
     port_namespace : `aiida.engine.processes.ports.PortNamespace`
-        An instance of aiida's `PortNameSpace`.
+        An instance of aiida's `PortNamespace`.
 
     Raises
     ------
@@ -44,6 +44,30 @@ def validate_inputs(
             raise InputValidationError(
                 "Structure must be specified through 'struct' or 'config'"
             )
+    if (
+        "arch" not in inputs
+        and "model" not in inputs
+        and ("config" not in inputs or "arch" not in inputs["config"])
+    ):
+        raise InputValidationError(
+            "'arch' must be specified in inputs, config file or ModelData"
+        )
+
+    if "model" not in inputs and (
+        "config" not in inputs or "model" not in inputs["config"]
+    ):
+        raise InputValidationError(
+            "'model' must be specified either in the inputs or in the config file"
+        )
+
+    if (
+        "arch" in inputs
+        and "model" in inputs
+        and inputs["arch"].value is not inputs["model"].architecture
+    ):
+        raise InputValidationError(
+            "'arch' in ModelData and in 'arch' input must be the same"
+        )
 
 
 class BaseJanus(CalcJob):  # numpydoc ignore=PR01
@@ -206,42 +230,10 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
         # Define architecture from model if model is given,
         # otherwise get architecture from inputs and download default model
-        architecture = None
-        architecture = (
-            str((self.inputs.model).architecture)
-            if "model" in self.inputs and hasattr(self.inputs.model, "architecture")
-            else str(self.inputs.arch.value) if "arch" in self.inputs else None
-        )
-
-        if architecture:
-            cmd_line["arch"] = architecture
-
-        model_path = None
-        if "model" in self.inputs:
-            # Raise error if model is None
-            if self.inputs.model is None:
-                raise ValueError("Model cannot be None")
-            model_path = self.inputs.model.filepath
-        else:
-            if "config" in self.inputs and "model" in self.inputs.config:
-                model_path = None
-            else:
-                if "arch" in self.inputs:
-                    # if model is not given (which is different than it being None)
-                    model_path = ModelData.download(
-                        "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",  # pylint: disable=line-too-long
-                        architecture,
-                    ).filepath
-        if model_path:
-            cmd_line.setdefault("calc-kwargs", {})["model"] = model_path
+        self._add_arch_to_cmdline(cmd_line)
+        self._add_model_to_cmdline(cmd_line)
 
         if "config" in self.inputs:
-            # Check if there are values in the config file that are also in the command
-            # line and do not store them as only the cmd line parameters will be used
-            config_dict = self.inputs.config.as_dictionary
-            overlapping_params = cmd_line.keys() & config_dict.keys()
-            # Store the other parameters
-            self.inputs.config.store_content(skip=overlapping_params)
             # Add config file to command line
             cmd_line["config"] = "config.yaml"
             config_parse = self.inputs.config.get_content()
@@ -274,3 +266,51 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         ]
 
         return calcinfo
+
+    def _add_arch_to_cmdline(self, cmd_line: dict) -> dict:
+        """
+        Find architecture in inputs or config file and add to command line if needed.
+
+        Parameters
+        ----------
+        cmd_line : dict
+            Dictionary containing the cmd line keys.
+
+        Returns
+        -------
+        dict
+            Dictionary containing the cmd line keys updated with the architecture.
+        """
+        architecture = None
+        if "model" in self.inputs and hasattr(self.inputs.model, "architecture"):
+            architecture = str((self.inputs.model).architecture)
+        elif "arch" in self.inputs:
+            architecture = str(self.inputs.arch.value)
+        if architecture:
+            cmd_line["arch"] = architecture
+
+    def _add_model_to_cmdline(
+        self,
+        cmd_line: dict,
+    ) -> dict:
+        """
+        Find model in inputs or config file and add to command line if needed.
+
+        Parameters
+        ----------
+        cmd_line : dict
+            Dictionary containing the cmd line keys.
+
+        Returns
+        -------
+        dict
+            Dictionary containing the cmd line keys updated with the model.
+        """
+        model_path = None
+        if "model" in self.inputs:
+            # Raise error if model is None (different than model not given as input)
+            if self.inputs.model is None:
+                raise ValueError("Model cannot be None")
+            model_path = self.inputs.model.filepath
+        if model_path:
+            cmd_line.setdefault("calc-kwargs", {})["model"] = model_path
