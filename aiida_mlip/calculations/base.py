@@ -60,10 +60,14 @@ def validate_inputs(
             "'model' must be specified either in the inputs or in the config file"
         )
 
-    if "arch" in inputs and "model" in inputs and inputs["arch"].value is not inputs["model"].architecture:
-            raise InputValidationError(
-                "'arch' in ModelData and in 'arch' input must be the same"
-            )
+    if (
+        "arch" in inputs
+        and "model" in inputs
+        and inputs["arch"].value is not inputs["model"].architecture
+    ):
+        raise InputValidationError(
+            "'arch' in ModelData and in 'arch' input must be the same"
+        )
 
 
 class BaseJanus(CalcJob):  # numpydoc ignore=PR01
@@ -317,4 +321,3 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             model_path = None
         if model_path:
             cmd_line.setdefault("calc-kwargs", {})["model"] = model_path
-        return cmd_line
