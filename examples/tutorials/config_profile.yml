@@ -5,7 +5,7 @@ last_name: tutorial
 institution: dl
 db_engine: postgresql_psycopg2
 db_backend: core.psql_dos
-db_host: localhost            
+db_host: localhost
 db_name: aiida-mlip-tutorial
 db_username: default
 db_password: password
