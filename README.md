@@ -23,7 +23,7 @@ machine learning interatomic potentials aiida plugin
   - NVT (Langevin(Eijnden/Ciccotti flavour) and Nosé-Hoover (Melchionna flavour))
   - NPT (Nosé-Hoover (Melchiona flavour))
 - [x] Training ML potentials (MACE only planned)
-- [ ] Fine tunning MLIPs (MACE only planned)
+- [x] Fine tunning MLIPs (MACE only planned)
 
 The code relies heavily on [janus-core](https://github.com/stfc/janus-core), which handles mlip calculations using ASE.
 
@@ -50,6 +50,8 @@ Registered entry points for aiida.calculations:
 
 
 ## Usage
+
+The example folder provides scripts to submit calculations in the calculations folder, and tutorials in jupyter notebook format in the tutorials folder.
 
 A quick demo of how to submit a calculation using the provided example files:
 ```shell
@@ -111,7 +113,8 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
   * [`user_guide/`](docs/source/user_guide/): Documentation for users
   * [`images/`](docs/source/images/): Logos etc used in the documentation
 * [`examples/`](examples/): Examples for submitting calculations using this plugin
-  * [`calculations/`](examples/calculations/): Scripts for submitting calculations
+  * [`tutorials/`](examples/tutorials/): Scripts for submitting calculations
+  * [`calculations/`](examples/calculations/): Jupyter notebooks with tutorials for running calculations and other files that are used in the tutorial
     * [`submit_singlepoint.py`](examples/calculations/submit_singlepoint.py): Script for submitting a singlepoint calculation
     * [`submit_geomopt.py`](examples/calculations/submit_geomopt.py): Script for submitting a geometry optimisation calculation
     * [`submit_md.py`](examples/calculations/submit_md.py): Script for submitting a molecular dynamics calculation
