@@ -1,0 +1,9 @@
+label: localhost
+description: localhost computer
+hostname: localhost
+transport: core.local
+scheduler: core.slurm
+shebang: '#!/bin/bash'
+work_dir: /home/work_dir
+mpirun_command: srun
+mpiprocs_per_machine: 32
