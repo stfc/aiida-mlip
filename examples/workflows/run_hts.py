@@ -1,15 +1,11 @@
 """Example code for submitting single point calculation"""
 
-from ase.build import bulk
-import ase.io
-
-from aiida.common import NotExistent
-from aiida.engine import WorkChain, run, run_get_node, submit
-from aiida.orm import Dict, Int, KpointsData, Str, StructureData, load_code, load_group
-from aiida.plugins import CalculationFactory
+from aiida.engine import run
+from aiida.orm import Int, Str, load_code
+from aiida.plugins import WorkflowFactory
 
 from aiida_mlip.data.config import JanusConfigfile
-from aiida_mlip.helpers.help_load import load_structure
+from aiida_mlip.helpers.help_load import load_model
 
 HTSWorkChain = WorkflowFactory("mlip.hts")
 
@@ -22,7 +18,7 @@ code = load_code("janus@localhost")
 config = JanusConfigfile(
     "/home/federica/aiida-mlip/tests/calculations/configs/config_janus_opt.yaml"
 )
-
+model = load_model(model=None, architecture="mace_mp")
 # Folder where to get the files
 folder = Str("/home/federica/structures_for_test")
 # Define calculation to run
@@ -30,9 +26,13 @@ entry_point = "mlip.opt"
 
 # Defin inputs for the workchain
 inputs = {
-    "calc_inputs": {"code": code, "metadata": metadata, "config": config},
+    "calc_inputs": {
+        "code": code,
+        "metadata": metadata,
+        "config": config,
+        "model": model,
+    },
     "folder": folder,
-    "launch": Str("run_get_node"),
     "group": Int(1),
     "entrypoint": Str("mlip.opt"),
 }
