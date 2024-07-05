@@ -9,11 +9,12 @@ import time
 from aiida.common import AttributeDict
 from aiida.engine import WorkChain, calcfunction, if_
 from aiida.orm import Dict, Int, SinglefileData, Str, StructureData, load_group
-from aiida.plugins import CalculationFactory
+from aiida.plugins import CalculationFactory, WorkflowFactory
 
 from aiida_mlip.helpers.help_load import load_structure
 
-geomopt = CalculationFactory("mlip.opt")
+geomopt_janus = CalculationFactory("mlip.opt")
+geomopt_qe = WorkflowFactory("quantumespresso.pw.relax")
 
 
 @calcfunction
@@ -116,7 +117,7 @@ class HTSWorkChain(WorkChain):
             help="Filename for the output CSV",
         )
         spec.input("group", valid_type=Int, help="Group to add the nodes to")
-        spec.input("entrypoint", valid_type=Str, help="calculation entry point")
+        # spec.input("entrypoint", valid_type=Str, help="calculation entry point")
         spec.input(
             "settings.sleep_submission_time",
             valid_type=(int, float),
@@ -124,8 +125,13 @@ class HTSWorkChain(WorkChain):
             default=3.0,
             help="Time in seconds to wait before submitting calculations.",
         )
-        calc = CalculationFactory(spec.inputs.entrypoint.value)
-        spec.expose_inputs(calc, namespace="calc_inputs", exclude="struct")
+
+        spec.expose_inputs(
+            geomopt_janus, namespace="janus_inputs", exclude="struct", required=False
+        )
+        spec.expose_inputs(
+            geomopt_qe, namespace="qe_inputs", exclude="struct", required=False
+        )
 
         spec.outline(
             cls.initialize,
@@ -150,7 +156,7 @@ class HTSWorkChain(WorkChain):
             help="The output structures.",
         )
 
-        spec.expose_outputs(geomopt)
+        spec.expose_outputs(geomopt_janus)
         spec.output("node_dict", valid_type=Dict, help="Dict of calculation nodes")
         # spec.output('energies', valid_type=Dict, help='dict with the energies')
         spec.output(
@@ -185,7 +191,9 @@ class HTSWorkChain(WorkChain):
         """
         struct_dict = get_input_structures_dict(self.inputs.folder.value)
         self.out("input_structures", struct_dict)
-        inputs = AttributeDict(self.exposed_inputs(geomopt, namespace="calc_inputs"))
+        inputs = AttributeDict(
+            self.exposed_inputs(geomopt_janus, namespace="calc_inputs")
+        )
 
         for name, structure in struct_dict.items():
             label = f"{name}"
@@ -193,7 +201,7 @@ class HTSWorkChain(WorkChain):
 
             self.report(f"Running calculation for {name}")
 
-            future = self.submit(geomopt, **inputs)
+            future = self.submit(geomopt_janus, **inputs)
             self.report(f"submitting `Geomopt` with submit <PK={future.pk}>")
             inputs.metadata.label = label
             inputs.metadata.call_link_label = label
