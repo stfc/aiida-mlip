@@ -1,4 +1,4 @@
-"""Example code for submitting single point calculation"""
+"""Example code for submitting high-throughput screening workchain with janus"""
 
 from aiida.engine import run
 from aiida.orm import Int, Str, load_code
@@ -11,7 +11,7 @@ HTSWorkChain = WorkflowFactory("mlip.hts")
 
 # Add the required inputs for aiida
 metadata = {"options": {"resources": {"num_machines": 1}}}
-code = load_code("janus@localhost")
+code = load_code("janus@scarf1")
 
 # All the other paramenters we want them from the config file
 # We want to pass it as a AiiDA data type for the provenance
@@ -21,12 +21,11 @@ config = JanusConfigfile(
 model = load_model(model=None, architecture="mace_mp")
 # Folder where to get the files
 folder = Str("/home/federica/structures_for_test")
-# Define calculation to run
-entry_point = "mlip.opt"
+
 
 # Defin inputs for the workchain
 inputs = {
-    "calc_inputs": {
+    "janus_inputs": {
         "code": code,
         "metadata": metadata,
         "config": config,
@@ -34,7 +33,6 @@ inputs = {
     },
     "folder": folder,
     "group": Int(1),
-    "entrypoint": Str("mlip.opt"),
 }
 
 result = run(HTSWorkChain, inputs)
