@@ -117,7 +117,7 @@ class HTSWorkChain(WorkChain):
             help="Filename for the output CSV",
         )
         spec.input("group", valid_type=Int, help="Group to add the nodes to")
-        # spec.input("entrypoint", valid_type=Str, help="calculation entry point")
+        spec.input("entrypoint", valid_type=Str, help="calculation entry point")
         spec.input(
             "settings.sleep_submission_time",
             valid_type=(int, float),
@@ -126,12 +126,16 @@ class HTSWorkChain(WorkChain):
             help="Time in seconds to wait before submitting calculations.",
         )
 
-        spec.expose_inputs(
-            geomopt_janus, namespace="janus_inputs", exclude="struct", required=False
-        )
-        spec.expose_inputs(
-            geomopt_qe, namespace="qe_inputs", exclude="struct", required=False
-        )
+        # entrypoint = spec.inputs["entrypoint"]
+        print("PRINTING STUFF FOR DEBUG")
+        print(spec.inputs)
+        print(type(spec.inputs.entrypoint))
+
+        # geomopt_janus = CalculationFactory(entrypoint)
+        spec.expose_inputs(geomopt_janus, namespace="janus_inputs", exclude="struct")
+        # spec.expose_inputs(
+        #     geomopt_qe, namespace="qe_inputs", exclude="struct", required=False
+        # )
 
         spec.outline(
             cls.initialize,
@@ -167,7 +171,6 @@ class HTSWorkChain(WorkChain):
         """Initialize the workchain context."""
         # self.ctx.calculation_cls = CalculationFactory(self.inputs.entrypoint.value)
         self.ctx.folder = Path(self.inputs.folder.value)
-        self.ctx.launch = self.inputs.launch.value
         self.ctx.group = load_group(pk=self.inputs.group.value)
         # self.ctx.calcjob_inputs = dict(self.inputs.calc_inputs)
         self.ctx.dict_of_nodes = {}
@@ -192,7 +195,7 @@ class HTSWorkChain(WorkChain):
         struct_dict = get_input_structures_dict(self.inputs.folder.value)
         self.out("input_structures", struct_dict)
         inputs = AttributeDict(
-            self.exposed_inputs(geomopt_janus, namespace="calc_inputs")
+            self.exposed_inputs(geomopt_janus, namespace="janus_inputs")
         )
 
         for name, structure in struct_dict.items():

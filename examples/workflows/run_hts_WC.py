@@ -33,6 +33,7 @@ inputs = {
     },
     "folder": folder,
     "group": Int(1),
+    "entrypoint": Str("mlip.opt"),
 }
 
 result = run(HTSWorkChain, inputs)
