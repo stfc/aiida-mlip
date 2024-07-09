@@ -199,6 +199,7 @@ html_search_language = "en"
 # We should ignore any python built-in exception, for instance
 nitpick_ignore = [
     ("py:class", "Logger"),
+    ("py:class", "QbFields")
 ]
 
 
