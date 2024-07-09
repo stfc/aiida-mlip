@@ -197,10 +197,7 @@ html_search_language = "en"
 
 # Warnings to ignore when using the -n (nitpicky) option
 # We should ignore any python built-in exception, for instance
-nitpick_ignore = [
-    ("py:class", "Logger"),
-    ("py:class", "QbFields")
-]
+nitpick_ignore = [("py:class", "Logger"), ("py:class", "QbFields")]
 
 
 def run_apidoc(_):
