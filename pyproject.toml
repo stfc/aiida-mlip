@@ -30,7 +30,9 @@ python = "^3.9"
 aiida-core = "^2.6"
 ase = "^3.23.0"
 voluptuous = "^0.14"
-janus-core = "^v0.6.0b0"
+janus-core = "^v0.6.2"
+aiida-workgraph = "^0.3.7"
+#aiida-quantumespresso = "^4.6.0"
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "^7.4.1"}
