@@ -44,7 +44,7 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "--out",
         "aiida-results.xyz",
         "--calc-kwargs",
-        f"{{'default_dtype': 'float64', 'model': '{model_file}'}}",
+        "{'default_dtype': 'float64', 'model': 'modelcopy.model'}",
     ]
 
     retrieve_list = [
@@ -55,7 +55,7 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
     ]
 
     # Check the attributes of the returned `CalcInfo`
-    assert fixture_sandbox.get_content_list() == ["aiida.xyz"]
+    assert fixture_sandbox.get_content_list() == ["aiida.xyz", "modelcopy.model"]
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
     assert sorted(calc_info.codes_info[0].cmdline_params) == sorted(cmdline_params)

@@ -70,7 +70,9 @@ class ModelData(SinglefileData):
         return file_hash
 
     @classmethod
-    def _check_existing_file(cls, file: Union[str, Path]) -> Path:
+    def _check_existing_file(
+        cls, file: Union[str, Path]
+    ) -> Path:  # just don't do this, do the hash and then the querybuilder
         """
         Check if a file already exists and return the path of the existing file.
 
@@ -136,7 +138,7 @@ class ModelData(SinglefileData):
         """
         super().__init__(file, filename, **kwargs)
         self.base.attributes.set("architecture", architecture)
-        self.base.attributes.set("filepath", str(file))
+        self.base.attributes.set("filepath", str(file))  # no need
 
     def set_file(
         self,
@@ -164,9 +166,11 @@ class ModelData(SinglefileData):
         """
         super().set_file(file, filename, **kwargs)
         self.base.attributes.set("architecture", architecture)
-        self.base.attributes.set("filepath", str(file))
+        # here compute hash and set attribute
+        model_hash = self._calculate_hash(file)
+        self.base.attributes.set("model_hash", model_hash)
 
-    @classmethod
+    @classmethod  # if I change I won't need this
     def local_file(
         cls,
         file: Union[str, Path],
@@ -195,7 +199,7 @@ class ModelData(SinglefileData):
 
     @classmethod
     # pylint: disable=too-many-arguments
-    def download(
+    def download(  # change names with from (from_local and from_url)
         cls,
         url: str,
         architecture: str,
@@ -230,6 +234,11 @@ class ModelData(SinglefileData):
             Path(cache_dir) if cache_dir else Path("~/.cache/mlips/").expanduser()
         )
         arch_dir = (cache_dir / architecture) if architecture else cache_dir
+
+        # do it with the temp file I download the file
+        # sha witrh querybuilder
+        # don't need to have the file
+        # all this check I do here would be different, it's not robust like this
 
         # cache_path = cache_dir.resolve()
         arch_path = arch_dir.resolve()
@@ -271,13 +280,13 @@ class ModelData(SinglefileData):
         return self.base.attributes.get("architecture")
 
     @property
-    def filepath(self) -> str:
+    def model_hash(self) -> str:
         """
-        Return the filepath.
+        Return the architecture.
 
         Returns
         -------
         str
-            Path of the mlip model.
+            Architecture of the mlip model.
         """
-        return self.base.attributes.get("filepath")
+        return self.base.attributes.get("model_hash")

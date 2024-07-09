@@ -1,5 +1,7 @@
 """Base class for features common to most calculations."""
 
+import shutil
+
 from ase.io import read, write
 
 from aiida.common import InputValidationError, datastructures
@@ -199,8 +201,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             An instance of `aiida.common.datastructures.CalcInfo`.
         """
 
-        # Create needed inputs
-
         if "struct" in self.inputs:
             structure = self.inputs.struct
         elif "config" in self.inputs and "struct" in self.inputs.config.as_dictionary:
@@ -211,8 +211,8 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         # Transform the structure data in xyz file called input_filename
         input_filename = self.inputs.metadata.options.input_filename
         atoms = structure.get_ase()
-        # with folder.open(input_filename, mode="w", encoding='utf8') as file:
-        write(folder.abspath + "/" + input_filename, images=atoms)
+        with folder.open(input_filename, mode="w", encoding=None) as file:
+            write(file.name, images=atoms)
 
         log_filename = (self.inputs.log_filename).value
         cmd_line = {
@@ -231,7 +231,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         # Define architecture from model if model is given,
         # otherwise get architecture from inputs and download default model
         self._add_arch_to_cmdline(cmd_line)
-        self._add_model_to_cmdline(cmd_line)
+        self._add_model_to_cmdline(cmd_line, folder)
 
         if "config" in self.inputs:
             # Add config file to command line
@@ -290,8 +290,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             cmd_line["arch"] = architecture
 
     def _add_model_to_cmdline(
-        self,
-        cmd_line: dict,
+        self, cmd_line: dict, folder: aiida.common.folders.Folder
     ) -> dict:
         """
         Find model in inputs or config file and add to command line if needed.
@@ -300,6 +299,9 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         ----------
         cmd_line : dict
             Dictionary containing the cmd line keys.
+
+        folder : aiida.common.folders.Folder
+            An `aiida.common.folders.Folder` to temporarily write files on disk.
 
         Returns
         -------
@@ -311,6 +313,11 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             # Raise error if model is None (different than model not given as input)
             if self.inputs.model is None:
                 raise ValueError("Model cannot be None")
-            model_path = self.inputs.model.filepath
+
+            with self.inputs.model.open(mode="rb") as source:
+                with folder.open("modelcopy.model", mode="wb") as target:
+                    shutil.copyfileobj(source, target)
+
+            model_path = "modelcopy.model"
         if model_path:
             cmd_line.setdefault("calc-kwargs", {})["model"] = model_path

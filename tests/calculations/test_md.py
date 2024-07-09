@@ -56,7 +56,7 @@ def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "--summary",
         "md_summary.yml",
         "--calc-kwargs",
-        f"{{'default_dtype': 'float64', 'model': '{model_file}'}}",
+        "{'default_dtype': 'float64', 'model': 'modelcopy.model'}",
         "--ensemble",
         "nve",
         "--temp",
@@ -85,7 +85,7 @@ def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     ]
 
     # Check the attributes of the returned `CalcInfo`
-    assert fixture_sandbox.get_content_list() == ["aiida.xyz"]
+    assert fixture_sandbox.get_content_list() == ["aiida.xyz", "modelcopy.model"]
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
     assert len(calc_info.codes_info[0].cmdline_params) == len(cmdline_params)
@@ -123,7 +123,7 @@ def test_MD_with_config(
         "--arch",
         "mace",
         "--calc-kwargs",
-        f"{{'model': '{model_file}'}}",
+        "{'model': 'modelcopy.model'}",
         "--config",
         "config.yaml",
         "--ensemble",
@@ -146,7 +146,11 @@ def test_MD_with_config(
     ]
 
     # Check the attributes of the returned `CalcInfo`
-    assert sorted(fixture_sandbox.get_content_list()) == ["aiida.xyz", "config.yaml"]
+    assert sorted(fixture_sandbox.get_content_list()) == [
+        "aiida.xyz",
+        "config.yaml",
+        "modelcopy.model",
+    ]
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
     assert len(calc_info.codes_info[0].cmdline_params) == len(cmdline_params)
