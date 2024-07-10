@@ -23,13 +23,13 @@ Usage
 
 .. code-block:: python
 
-    model = ModelData.local_file('/path/to/file', filename='model', architecture='mace')
+    model = ModelData.from_local('/path/to/file', filename='model', architecture='mace')
 
 - To download a file and save it as a `ModelData` object:
 
 .. code-block:: python
 
-    model = ModelData.download('http://yoururl.test/model', architecture='mace', filename='model', cache_dir='/home/mlip/', force_download=False)
+    model = ModelData.from_url('http://yoururl.test/model', architecture='mace', filename='model', cache_dir='/home/mlip/', force_download=False)
 
 - The architecture of the model file can be accessed using the `architecture` property:
 

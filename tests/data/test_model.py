@@ -1,4 +1,4 @@
-"""Test for ModelData class"""
+"""Test for ModelData class."""
 
 from pathlib import Path
 
@@ -10,7 +10,7 @@ def test_local_file():
     # Construct a ModelData instance with the local file
     model_path = Path(__file__).parent / "input_files" / "model_local_file.txt"
     absolute_path = model_path.resolve()
-    model = ModelData.local_file(file=absolute_path, architecture="mace")
+    model = ModelData.from_local(file=absolute_path, architecture="mace")
     # Assert the ModelData contains the content we expect
     content = model.get_content()
     assert content == model_path.read_text(encoding="utf-8")
@@ -21,7 +21,7 @@ def test_relativepath():
     # Construct a ModelData instance with the local file
     model_path = Path(__file__).parent / "input_files" / "model_local_file.txt"
     relative_path = model_path.relative_to(Path.cwd())
-    model = ModelData.local_file(file=relative_path, architecture="mace")
+    model = ModelData.from_local(file=relative_path, architecture="mace")
     # Assert the ModelData contains the content we expect
     content = model.get_content()
     assert content == relative_path.read_text(encoding="utf-8")
@@ -30,7 +30,7 @@ def test_relativepath():
 def test_architecture():
     """Testing that the architecture is read and added to attributes"""
     file = Path(__file__).parent / "input_files/model_local_file.txt"
-    model = ModelData.local_file(
+    model = ModelData.from_local(
         file=file,
         filename="model",
         architecture="mace",
@@ -46,7 +46,7 @@ def test_download_fresh_file_keep(tmp_path):
 
     # Construct a ModelData instance downloading a non-cached file
     # pylint:disable=line-too-long
-    model = ModelData.download(
+    model = ModelData.from_url(
         url="https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
         filename="mace.model",
         cache_dir=tmp_path,
@@ -68,7 +68,7 @@ def test_download_fresh_file(tmp_path):
 
     # Construct a ModelData instance downloading a non-cached file
     # pylint:disable=line-too-long
-    model = ModelData.download(
+    model = ModelData.from_url(
         url="https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
         filename="mace.model",
         cache_dir=tmp_path,
@@ -85,7 +85,7 @@ def test_no_download_cached_file(tmp_path):
     """Test if the caching work for avoiding double download"""
 
     # pylint:disable=line-too-long
-    existing_model = ModelData.download(
+    existing_model = ModelData.from_url(
         url="https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
         filename="mace_existing.model",
         cache_dir=tmp_path,
@@ -93,7 +93,7 @@ def test_no_download_cached_file(tmp_path):
     )
     # Construct a ModelData instance that should use the cached file
     # pylint:disable=line-too-long
-    model = ModelData.download(
+    model = ModelData.from_url(
         url="https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
         cache_dir=tmp_path,
         filename="test_model.model",

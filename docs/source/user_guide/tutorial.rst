@@ -35,13 +35,13 @@ In this example we use MACE with a model that we download from this URL: "https:
 
     from aiida_mlip.data.model import ModelData
     url = "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model"
-    model = ModelData.download(url, architecture="mace", cache_dir="/.cache/")
+    model = ModelData.from_url(url, architecture="mace", cache_dir="/.cache/")
 
 If we already have the model saved in some folder we can save it as:
 
 .. code-block:: python
 
-    model = ModelData.local_file("/path/to/model", architecture="mace")
+    model = ModelData.from_local("/path/to/model", architecture="mace")
 
 Another parameter that we need to define as AiiDA type is the code. Assuming the code is saved as `janus` in the `localhost` computer, the code info that are needed can be loaded as follow:
 

@@ -25,7 +25,7 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "arch": Str("mace"),
         "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
-        "model": ModelData.local_file(model_file, architecture="mace"),
+        "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
 
@@ -74,7 +74,7 @@ def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, janus_cod
         "code": janus_code,
         "arch": Str("mace"),
         "precision": Str("float64"),
-        "model": ModelData.local_file(model_file, architecture="mace"),
+        "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
     with pytest.raises(InputValidationError):
@@ -119,7 +119,7 @@ def test_two_arch(fixture_sandbox, generate_calc_job, model_folder, janus_code):
     inputs = {
         "code": janus_code,
         "metadata": {"options": {"resources": {"num_machines": 1}}},
-        "model": ModelData.local_file(model_file, architecture="mace_mp"),
+        "model": ModelData.from_local(model_file, architecture="mace_mp"),
         "arch": Str("chgnet"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
     }
@@ -137,7 +137,7 @@ def test_run_sp(model_folder, janus_code):
         "arch": Str("mace"),
         "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
-        "model": ModelData.local_file(model_file, architecture="mace"),
+        "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
 

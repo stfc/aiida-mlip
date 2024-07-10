@@ -164,8 +164,8 @@ class TrainParser(Parser):
             Path to the compiled model output file.
         """
         architecture = "mace_mp"
-        model = ModelData.local_file(model_output, architecture=architecture)
-        compiled_model = ModelData.local_file(
+        model = ModelData.from_local(model_output, architecture=architecture)
+        compiled_model = ModelData.from_local(
             compiled_model_output, architecture=architecture
         )
 

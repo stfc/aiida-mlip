@@ -26,14 +26,14 @@ class ModelData(SinglefileData):
     ----------
     architecture : str
         Architecture of the mlip model.
-    filepath : str
-        Path of the mlip model.
+    model_hash : str
+        Hash of the model.
 
     Methods
     -------
     set_file(file, filename=None, architecture=None, **kwargs)
         Set the file for the node.
-    local_file(file, architecture, filename=None):
+    from_local(file, architecture, filename=None):
         Create a ModelData instance from a local file.
     download(url, architecture, filename=None, cache_dir=None, force_download=False)
         Download a file from a URL and save it as ModelData.
@@ -69,49 +69,6 @@ class ModelData(SinglefileData):
         file_hash = sha256.hexdigest()
         return file_hash
 
-    @classmethod
-    def _check_existing_file(
-        cls, file: Union[str, Path]
-    ) -> Path:  # just don't do this, do the hash and then the querybuilder
-        """
-        Check if a file already exists and return the path of the existing file.
-
-        Parameters
-        ----------
-        file : Union[str, Path]
-            Path to the downloaded model file.
-
-        Returns
-        -------
-        Path
-            The path of the model file of interest (same as input path if no duplicates
-            were found).
-        """
-        file_hash = cls._calculate_hash(file)
-
-        def is_diff_file(curr_path: Path) -> bool:
-            """
-            Filter to check if two files are different.
-
-            Parameters
-            ----------
-            curr_path : Path
-                Path to the file to compare with.
-
-            Returns
-            -------
-            bool
-                True if the files are different, False otherwise.
-            """
-            return curr_path.is_file() and not curr_path.samefile(file)
-
-        file_folder = Path(file).parent
-        for existing_file in filter(is_diff_file, file_folder.rglob("*")):
-            if cls._calculate_hash(existing_file) == file_hash:
-                file.unlink()
-                return existing_file
-        return Path(file)
-
     def __init__(
         self,
         file: Union[str, Path],
@@ -138,7 +95,6 @@ class ModelData(SinglefileData):
         """
         super().__init__(file, filename, **kwargs)
         self.base.attributes.set("architecture", architecture)
-        self.base.attributes.set("filepath", str(file))  # no need
 
     def set_file(
         self,
@@ -170,8 +126,8 @@ class ModelData(SinglefileData):
         model_hash = self._calculate_hash(file)
         self.base.attributes.set("model_hash", model_hash)
 
-    @classmethod  # if I change I won't need this
-    def local_file(
+    @classmethod
+    def from_local(
         cls,
         file: Union[str, Path],
         architecture: str,
@@ -199,7 +155,7 @@ class ModelData(SinglefileData):
 
     @classmethod
     # pylint: disable=too-many-arguments
-    def download(  # change names with from (from_local and from_url)
+    def from_url(
         cls,
         url: str,
         architecture: str,
@@ -243,7 +199,7 @@ class ModelData(SinglefileData):
         # Download file
         request.urlretrieve(url, file)
 
-        model = cls.local_file(file=file, architecture=architecture)
+        model = cls.from_local(file=file, architecture=architecture)
 
         if keep_file:
             return model

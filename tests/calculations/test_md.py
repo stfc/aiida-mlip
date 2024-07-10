@@ -27,7 +27,7 @@ def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "arch": Str("mace"),
         "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
-        "model": ModelData.local_file(model_file, architecture="mace"),
+        "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
         "ensemble": Str("nve"),
         "md_kwargs": Dict(
@@ -109,7 +109,7 @@ def test_MD_with_config(
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
         "code": janus_code,
-        "model": ModelData.local_file(file=model_file, architecture="mace"),
+        "model": ModelData.from_local(file=model_file, architecture="mace"),
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "config": JanusConfigfile(config_folder / "config_janus_md.yaml"),
     }
@@ -176,7 +176,7 @@ def test_run_md(model_folder, structure_folder, janus_code):
         "arch": Str("mace"),
         "precision": Str("float64"),
         "struct": StructureData(ase=read(structure_file)),
-        "model": ModelData.local_file(model_file, architecture="mace"),
+        "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
         "ensemble": Str("nve"),
         "md_kwargs": Dict(

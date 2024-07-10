@@ -24,7 +24,7 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "arch": Str("mace"),
         "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
-        "model": ModelData.local_file(model_file, architecture="mace"),
+        "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
 
@@ -79,7 +79,7 @@ def test_run_opt(model_folder, janus_code):
         "arch": Str("mace"),
         "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
-        "model": ModelData.local_file(model_file, architecture="mace"),
+        "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
         "fully_opt": Bool(True),
         "fmax": Float(0.1),

@@ -121,7 +121,7 @@ def test_prepare_tune(fixture_sandbox, generate_calc_job, janus_code, config_fol
         "code": janus_code,
         "mlip_config": config,
         "fine_tune": Bool(True),
-        "foundation_model": ModelData.local_file(
+        "foundation_model": ModelData.from_local(
             file=model_file, architecture="mace_mp"
         ),
     }
@@ -179,7 +179,7 @@ def test_run_train(janus_code, config_folder):
         "fine_tune": Bool(True),
         "code": janus_code,
         "mlip_config": config,
-        "foundation_model": ModelData.local_file(
+        "foundation_model": ModelData.from_local(
             file=model_file, architecture="mace_mp"
         ),
     }
