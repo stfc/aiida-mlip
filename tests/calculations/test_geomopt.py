@@ -57,7 +57,9 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     ]
 
     # Check the attributes of the returned `CalcInfo`
-    assert fixture_sandbox.get_content_list() == ["aiida.xyz", "modelcopy.model"]
+    assert sorted(fixture_sandbox.get_content_list()) == sorted(
+        ["aiida.xyz", "modelcopy.model"]
+    )
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
     assert len(calc_info.codes_info[0].cmdline_params) == len(cmdline_params)
