@@ -4,9 +4,9 @@ import hashlib
 from pathlib import Path
 from typing import Any, Optional, Union
 from urllib import request
-from urllib.parse import urlparse
 
-from aiida.orm import SinglefileData
+from aiida.orm import QueryBuilder, SinglefileData, load_node
+from aiida.tools import delete_nodes
 
 
 class ModelData(SinglefileData):
@@ -203,9 +203,9 @@ class ModelData(SinglefileData):
         cls,
         url: str,
         architecture: str,
-        filename: Optional[str] = None,
+        filename: Optional[str] = "tmp_file.model",
         cache_dir: Optional[Union[str, Path]] = None,
-        force_download: Optional[bool] = False,
+        keep_file: Optional[bool] = False,
     ):
         """
         Download a file from a URL and save it as ModelData.
@@ -217,13 +217,13 @@ class ModelData(SinglefileData):
         architecture : [str]
             Architecture of the mlip model.
         filename : Optional[str], optional
-            Name to be used for the file (defaults to the name of provided file).
+            Name to be used for the file defaults to tmp_file.model.
         cache_dir : Optional[Union[str, Path]], optional
             Path to the folder where the file has to be saved
             (defaults to "~/.cache/mlips/").
-        force_download : Optional[bool], optional
-            True to keep the downloaded model even if there are duplicates
-            (default: False).
+        keep_file : Optional[bool], optional
+            True to keep the downloaded model, even if there are duplicates)
+            (default: False, the file is cancelled and only saved in database).
 
         Returns
         -------
@@ -235,37 +235,37 @@ class ModelData(SinglefileData):
         )
         arch_dir = (cache_dir / architecture) if architecture else cache_dir
 
-        # do it with the temp file I download the file
-        # sha witrh querybuilder
-        # don't need to have the file
-        # all this check I do here would be different, it's not robust like this
-
-        # cache_path = cache_dir.resolve()
         arch_path = arch_dir.resolve()
         arch_path.mkdir(parents=True, exist_ok=True)
 
-        model_name = urlparse(url).path.split("/")[-1]
-
-        file = arch_path / filename if filename else arch_path / model_name
-
-        # If file already exists, use next indexed name
-        stem = file.stem
-        i = 1
-        while file.exists():
-            i += 1
-            file = file.with_stem(f"{stem}_{i}")
+        file = arch_path / filename
 
         # Download file
         request.urlretrieve(url, file)
 
-        if force_download:
-            print(f"filename changed to {file}")
-            return cls.local_file(file=file, architecture=architecture)
+        model = cls.local_file(file=file, architecture=architecture)
 
-        # Check if the hash of the just downloaded file matches any other file
-        filepath = cls._check_existing_file(file)
+        if keep_file:
+            return model
 
-        return cls.local_file(file=filepath, architecture=architecture)
+        file.unlink(missing_ok=True)
+
+        qb = QueryBuilder()
+        qb.append(ModelData, project=["attributes", "pk", "ctime"])
+
+        for i in qb.iterdict():
+            if i["ModelData_1"]["attributes"]["model_hash"] == model.model_hash:
+                if i["ModelData_1"]["ctime"] != model.ctime:
+                    delete_nodes(
+                        [model.uuid],
+                        dry_run=False,
+                        create_forward=True,
+                        call_calc_forward=True,
+                        call_work_forward=True,
+                    )
+                    model = load_node(i["ModelData_1"]["pk"])
+                    break
+        return model
 
     @property
     def architecture(self) -> str:
