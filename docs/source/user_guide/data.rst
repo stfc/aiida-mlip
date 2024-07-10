@@ -39,20 +39,6 @@ Usage
 
 
 
-- The filepath of the model file can be accessed using the `filepath` property:
-
-.. code-block:: python
-
-    file_path = model.filepath
-
-.. warning::
-
-    When using shared data, the ``filepath`` could point to a inaccessible location on another computer.
-    So if you are using data from someone else, for both the model data and the config file, consider using the ``get_content()`` method to create a new file with identical content.
-    Then, use the filepath of the newly created file for running calculation.
-    A more robust solution to this problem is going to be implemented.
-
-
 JanusConfigfile
 ---------------
 
