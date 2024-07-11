@@ -209,7 +209,10 @@ class ModelData(SinglefileData):
         qb = QueryBuilder()
         qb.append(ModelData, project=["attributes", "pk", "ctime"])
 
+        # Looking for ModelData in the whole database
         for i in qb.iterdict():
+            # If the hash is the same as the new model, but not the creation time
+            # it means that there is already a model that is the same, use that
             if i["ModelData_1"]["attributes"]["model_hash"] == model.model_hash:
                 if i["ModelData_1"]["ctime"] != model.ctime:
                     delete_nodes(
