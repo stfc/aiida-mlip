@@ -35,7 +35,7 @@ class ModelData(SinglefileData):
         Set the file for the node.
     from_local(file, architecture, filename=None):
         Create a ModelData instance from a local file.
-    download(url, architecture, filename=None, cache_dir=None, force_download=False)
+    from_url(url, architecture, filename=None, cache_dir=None, keep_file=False)
         Download a file from a URL and save it as ModelData.
 
     Other Parameters
@@ -178,8 +178,8 @@ class ModelData(SinglefileData):
             Path to the folder where the file has to be saved
             (defaults to "~/.cache/mlips/").
         keep_file : Optional[bool], optional
-            True to keep the downloaded model, even if there are duplicates)
-            (default: False, the file is cancelled and only saved in database).
+            True to keep the downloaded model, even if there are duplicates.
+            (default: False, the file is deleted and only saved in the database).
 
         Returns
         -------
@@ -238,11 +238,11 @@ class ModelData(SinglefileData):
     @property
     def model_hash(self) -> str:
         """
-        Return the architecture.
+        Return hash of the architecture.
 
         Returns
         -------
         str
-            Architecture of the mlip model.
+            Hash of the MLIP model.
         """
         return self.base.attributes.get("model_hash")

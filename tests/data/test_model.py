@@ -82,7 +82,7 @@ def test_download_fresh_file(tmp_path):
 
 
 def test_no_download_cached_file(tmp_path):
-    """Test if the caching work for avoiding double download"""
+    """Test if the caching prevents a duplicate download."""
 
     # pylint:disable=line-too-long
     existing_model = ModelData.from_url(
