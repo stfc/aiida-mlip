@@ -6,7 +6,7 @@ from aiida_mlip.data.model import ModelData
 
 
 def test_local_file():
-    """Testing that the local file function works"""
+    """Testing that the from_local function works"""
     # Construct a ModelData instance with the local file
     model_path = Path(__file__).parent / "input_files" / "model_local_file.txt"
     absolute_path = model_path.resolve()
@@ -17,7 +17,7 @@ def test_local_file():
 
 
 def test_relativepath():
-    """Testing that the local file function works"""
+    """Testing that the from_local function works with a relative path"""
     # Construct a ModelData instance with the local file
     model_path = Path(__file__).parent / "input_files" / "model_local_file.txt"
     relative_path = model_path.relative_to(Path.cwd())
@@ -39,7 +39,7 @@ def test_architecture():
 
 
 def test_download_fresh_file_keep(tmp_path):
-    """Test if download works"""
+    """Test if download works and the downloaded file is kept in them chosen folder"""
     # Ensure we do not have the file cached already
     path_test = tmp_path / "mace" / "mace.model"
     path_test.unlink(missing_ok=True)
@@ -61,7 +61,7 @@ def test_download_fresh_file_keep(tmp_path):
 
 
 def test_download_fresh_file(tmp_path):
-    """Test if download works"""
+    """Test if download works and the file is only saved in the database not locally"""
     # Ensure we do not have the file cached already
     path_test = tmp_path / "mace" / "mace.model"
     path_test.unlink(missing_ok=True)
@@ -82,7 +82,7 @@ def test_download_fresh_file(tmp_path):
 
 
 def test_no_download_cached_file(tmp_path):
-    """Test if the caching prevents a duplicate download."""
+    """Test if the caching prevents saving duplicate model in the database."""
 
     # pylint:disable=line-too-long
     existing_model = ModelData.from_url(

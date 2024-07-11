@@ -211,7 +211,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         # Transform the structure data in xyz file called input_filename
         input_filename = self.inputs.metadata.options.input_filename
         atoms = structure.get_ase()
-        with folder.open(input_filename, mode="w", encoding=None) as file:
+        with folder.open(input_filename, mode="w", encoding="utf8") as file:
             write(file.name, images=atoms)
 
         log_filename = (self.inputs.log_filename).value
@@ -319,5 +319,4 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
                     shutil.copyfileobj(source, target)
 
             model_path = "modelcopy.model"
-        if model_path:
             cmd_line.setdefault("calc-kwargs", {})["model"] = model_path

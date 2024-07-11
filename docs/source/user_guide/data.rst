@@ -37,6 +37,7 @@ Usage
 
     model_arch = model.architecture
 
+As for a `SinglefileData`, the content of the model file can be accessed using the function `get_content()`
 
 
 JanusConfigfile
