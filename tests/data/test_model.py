@@ -39,7 +39,7 @@ def test_architecture():
 
 
 def test_download_fresh_file_keep(tmp_path):
-    """Test if download works and the downloaded file is kept in them chosen folder"""
+    """Test if download works and the downloaded file is kept in the chosen folder."""
     # Ensure we do not have the file cached already
     path_test = tmp_path / "mace" / "mace.model"
     path_test.unlink(missing_ok=True)
