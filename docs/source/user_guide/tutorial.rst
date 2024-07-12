@@ -35,7 +35,7 @@ In this example we use MACE with a model that we download from this URL: "https:
 
     from aiida_mlip.data.model import ModelData
     url = "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model"
-    model = ModelData.from_url(url, architecture="mace", cache_dir="/.cache/")
+    model = ModelData.from_uri(url, architecture="mace", cache_dir="/.cache/")
 
 If we already have the model saved in some folder we can save it as:
 

@@ -35,7 +35,7 @@ class ModelData(SinglefileData):
         Set the file for the node.
     from_local(file, architecture, filename=None):
         Create a ModelData instance from a local file.
-    from_url(url, architecture, filename=None, cache_dir=None, keep_file=False)
+    from_uri(url, architecture, filename=None, cache_dir=None, keep_file=False)
         Download a file from a URL and save it as ModelData.
 
     Other Parameters
@@ -155,7 +155,7 @@ class ModelData(SinglefileData):
 
     @classmethod
     # pylint: disable=too-many-arguments
-    def from_url(
+    def from_uri(
         cls,
         url: str,
         architecture: str,

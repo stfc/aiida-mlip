@@ -46,7 +46,7 @@ def test_download_fresh_file_keep(tmp_path):
 
     # Construct a ModelData instance downloading a non-cached file
     # pylint:disable=line-too-long
-    model = ModelData.from_url(
+    model = ModelData.from_uri(
         url="https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
         filename="mace.model",
         cache_dir=tmp_path,
@@ -68,7 +68,7 @@ def test_download_fresh_file(tmp_path):
 
     # Construct a ModelData instance downloading a non-cached file
     # pylint:disable=line-too-long
-    model = ModelData.from_url(
+    model = ModelData.from_uri(
         url="https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
         filename="mace.model",
         cache_dir=tmp_path,
@@ -85,7 +85,7 @@ def test_no_download_cached_file(tmp_path):
     """Test if the caching prevents saving duplicate model in the database."""
 
     # pylint:disable=line-too-long
-    existing_model = ModelData.from_url(
+    existing_model = ModelData.from_uri(
         url="https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
         filename="mace_existing.model",
         cache_dir=tmp_path,
@@ -93,7 +93,7 @@ def test_no_download_cached_file(tmp_path):
     )
     # Construct a ModelData instance that should use the cached file
     # pylint:disable=line-too-long
-    model = ModelData.from_url(
+    model = ModelData.from_uri(
         url="https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
         cache_dir=tmp_path,
         filename="test_model.model",

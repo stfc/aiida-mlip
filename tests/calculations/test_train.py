@@ -142,7 +142,7 @@ def test_prepare_tune(fixture_sandbox, generate_calc_job, janus_code, config_fol
 
     # Check the attributes of the returned `CalcInfo`
     assert sorted(fixture_sandbox.get_content_list()) == sorted(
-        ["mlip_train.yml", "modelcopy.model"]
+        ["mlip_train.yml", "mlff.model"]
     )
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)

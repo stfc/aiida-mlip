@@ -43,7 +43,7 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "--out",
         "aiida-results.xyz",
         "--calc-kwargs",
-        "{'default_dtype': 'float64', 'model': 'modelcopy.model'}",
+        "{'default_dtype': 'float64', 'model': 'mlff.model'}",
         "--traj",
         "aiida-traj.xyz",
     ]
@@ -58,7 +58,7 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
 
     # Check the attributes of the returned `CalcInfo`
     assert sorted(fixture_sandbox.get_content_list()) == sorted(
-        ["aiida.xyz", "modelcopy.model"]
+        ["aiida.xyz", "mlff.model"]
     )
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)

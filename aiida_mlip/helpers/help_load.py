@@ -42,7 +42,7 @@ def load_model(
         The loaded model.
     """
     if model is None:
-        loaded_model = ModelData.from_url(
+        loaded_model = ModelData.from_uri(
             "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",  # pylint: disable=line-too-long
             architecture,
             cache_dir=cache_dir,
@@ -50,7 +50,7 @@ def load_model(
     elif (file_path := Path(model)).is_file():
         loaded_model = ModelData.from_local(file_path, architecture=architecture)
     else:
-        loaded_model = ModelData.from_url(
+        loaded_model = ModelData.from_uri(
             model, architecture=architecture, cache_dir=cache_dir
         )
     return loaded_model

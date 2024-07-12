@@ -29,7 +29,7 @@ Usage
 
 .. code-block:: python
 
-    model = ModelData.from_url('http://yoururl.test/model', architecture='mace', filename='model', cache_dir='/home/mlip/', force_download=False)
+    model = ModelData.from_uri('http://yoururl.test/model', architecture='mace', filename='model', cache_dir='/home/mlip/', force_download=False)
 
 - The architecture of the model file can be accessed using the `architecture` property:
 

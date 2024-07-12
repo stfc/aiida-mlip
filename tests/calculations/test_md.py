@@ -56,7 +56,7 @@ def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "--summary",
         "md_summary.yml",
         "--calc-kwargs",
-        "{'default_dtype': 'float64', 'model': 'modelcopy.model'}",
+        "{'default_dtype': 'float64', 'model': 'mlff.model'}",
         "--ensemble",
         "nve",
         "--temp",
@@ -86,7 +86,7 @@ def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
 
     # Check the attributes of the returned `CalcInfo`
     assert sorted(fixture_sandbox.get_content_list()) == sorted(
-        ["aiida.xyz", "modelcopy.model"]
+        ["aiida.xyz", "mlff.model"]
     )
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
@@ -125,7 +125,7 @@ def test_MD_with_config(
         "--arch",
         "mace",
         "--calc-kwargs",
-        "{'model': 'modelcopy.model'}",
+        "{'model': 'mlff.model'}",
         "--config",
         "config.yaml",
         "--ensemble",
@@ -152,7 +152,7 @@ def test_MD_with_config(
         [
             "aiida.xyz",
             "config.yaml",
-            "modelcopy.model",
+            "mlff.model",
         ]
     )
     assert isinstance(calc_info, datastructures.CalcInfo)
