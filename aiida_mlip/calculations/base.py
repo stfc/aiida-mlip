@@ -300,7 +300,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         cmd_line : dict
             Dictionary containing the cmd line keys.
 
-        folder : aiida.common.folders.Folder
+        folder : ~aiida.common.folders.Folder
             An `aiida.common.folders.Folder` to temporarily write files on disk.
 
         Returns
