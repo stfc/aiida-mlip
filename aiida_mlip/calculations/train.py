@@ -155,7 +155,7 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         Parameters
         ----------
         folder : aiida.common.folders.Folder
-            An `aiida.common.folders.Folder` to temporarily write files on disk.
+            Folder where the calculation is run.
 
         Returns
         -------
