@@ -317,8 +317,8 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             if self.inputs.model is None:
                 raise ValueError("Model cannot be None")
 
-            with self.inputs.model.open(mode="rb") as source:
-                with folder.open("mlff.model", mode="wb") as target:
+            with (self.inputs.model.open(mode="rb") as source,
+                  folder.open("mlff.model", mode="wb") as target):
                     shutil.copyfileobj(source, target)
 
             model_path = "mlff.model"
