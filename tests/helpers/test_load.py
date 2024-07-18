@@ -20,7 +20,7 @@ def test_load_local_model(model_folder):
 
 
 def test_download_model(tmp_path):
-    """Test for the load_model function for loading from uri."""
+    """Test for the load_model function for loading from URI."""
     uri_model = (
         "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model"
     )

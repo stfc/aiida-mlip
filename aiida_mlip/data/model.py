@@ -35,7 +35,7 @@ class ModelData(SinglefileData):
     from_local(file, architecture, filename=None):
         Create a ModelData instance from a local file.
     from_uri(uri, architecture, filename=None, cache_dir=None, keep_file=False)
-        Download a file from a uri and save it as ModelData.
+        Download a file from a URI and save it as ModelData.
 
     Other Parameters
     ----------------
@@ -163,12 +163,12 @@ class ModelData(SinglefileData):
         keep_file: Optional[bool] = False,
     ):
         """
-        Download a file from a uri and save it as ModelData.
+        Download a file from a URI and save it as ModelData.
 
         Parameters
         ----------
         uri : str
-            uri of the file to download.
+            URI of the file to download.
         architecture : [str]
             Architecture of the mlip model.
         filename : Optional[str], optional
@@ -206,27 +206,21 @@ class ModelData(SinglefileData):
         file.unlink(missing_ok=True)
 
         qb = QueryBuilder()
-        qb.append(ModelData, project=["attributes", "pk", "ctime"])
+        qb.append(
+            ModelData,
+            filters={
+                "attributes.model_hash": model.model_hash,
+                "attributes.architecture": model.architecture,
+                "ctime": {"!in": [model.ctime]},
+            },
+            project=["attributes", "pk", "ctime"],
+        )
 
-        # Looking for ModelData in the whole database
-        for i in qb.iterdict():
-            # If the hash is the same as the new model, but not the creation time
-            # it means that there is already a model that is the same, use that
-            if (
-                "model_hash" in i["ModelData_1"]["attributes"]
-                and i["ModelData_1"]["attributes"]["model_hash"] == model.model_hash
-                and i["ModelData_1"]["attributes"]["architecture"] == model.architecture
-            ):
-                if i["ModelData_1"]["ctime"] != model.ctime:
-                    # delete_nodes(
-                    #     [model.pk],
-                    #     dry_run=False,
-                    #     create_forward=True,
-                    #     call_calc_forward=True,
-                    #     call_work_forward=True,
-                    # )
-                    model = load_node(i["ModelData_1"]["pk"])
-                    break
+        if qb.count() != 0:
+            model = load_node(
+                qb.first()[1]
+            )  # This gets the pk of the first model in the query
+
         return model
 
     @property

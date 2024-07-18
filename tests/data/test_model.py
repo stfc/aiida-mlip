@@ -99,6 +99,9 @@ def test_no_download_cached_file(tmp_path):
         filename="test_model.model",
         architecture="mace_mp",
     )
+    file_path = tmp_path / "test_model.model"
 
     # Assert the new ModelData was not downloaded and the old one is still there
     assert model.pk == existing_model.pk
+    assert model.model_hash == existing_model.model_hash
+    assert file_path.exists() is False, f"File {file_path} exists and shouldn't."
