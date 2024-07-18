@@ -65,10 +65,13 @@ def validate_inputs(
     if (
         "arch" in inputs
         and "model" in inputs
-        and inputs["arch"].value is not inputs["model"].architecture
+        and inputs["arch"].value != inputs["model"].architecture
     ):
+        inputvalue = inputs["arch"].value
+        modelvalue = inputs["model"].architecture
         raise InputValidationError(
-            "'arch' in ModelData and in 'arch' input must be the same"
+            "'arch' in ModelData and in inputs must be the same, "
+            f"but they are {modelvalue} and {inputvalue}"
         )
 
 

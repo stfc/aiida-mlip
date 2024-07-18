@@ -6,7 +6,6 @@ from typing import Any, Optional, Union
 from urllib import request
 
 from aiida.orm import QueryBuilder, SinglefileData, load_node
-from aiida.tools import delete_nodes
 
 
 class ModelData(SinglefileData):
@@ -213,15 +212,19 @@ class ModelData(SinglefileData):
         for i in qb.iterdict():
             # If the hash is the same as the new model, but not the creation time
             # it means that there is already a model that is the same, use that
-            if i["ModelData_1"]["attributes"]["model_hash"] == model.model_hash:
+            if (
+                "model_hash" in i["ModelData_1"]["attributes"]
+                and i["ModelData_1"]["attributes"]["model_hash"] == model.model_hash
+                and i["ModelData_1"]["attributes"]["architecture"] == model.architecture
+            ):
                 if i["ModelData_1"]["ctime"] != model.ctime:
-                    delete_nodes(
-                        [model.uuid],
-                        dry_run=False,
-                        create_forward=True,
-                        call_calc_forward=True,
-                        call_work_forward=True,
-                    )
+                    # delete_nodes(
+                    #     [model.pk],
+                    #     dry_run=False,
+                    #     create_forward=True,
+                    #     call_calc_forward=True,
+                    #     call_work_forward=True,
+                    # )
                     model = load_node(i["ModelData_1"]["pk"])
                     break
         return model
