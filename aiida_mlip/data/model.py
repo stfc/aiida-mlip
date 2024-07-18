@@ -205,6 +205,7 @@ class ModelData(SinglefileData):
 
         file.unlink(missing_ok=True)
 
+        # Check if the same model was used previously
         qb = QueryBuilder()
         qb.append(
             ModelData,
