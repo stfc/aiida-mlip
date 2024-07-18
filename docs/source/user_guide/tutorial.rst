@@ -29,13 +29,13 @@ The input structure in aiida-mlip needs to be saved as a StructureData type:
     structure = StructureData(ase=read("/path/to/structure.cif"))
 
 Then we need to choose a model and architecture to be used for the calculation and save it as ModelData type, a specific data type of this plugin.
-In this example we use MACE with a model that we download from this URL: "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model", and we save the file in the cache folder (default="~/.cache/mlips/"):
+In this example we use MACE with a model that we download from this uri: "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model", and we save the file in the cache folder (default="~/.cache/mlips/"):
 
 .. code-block:: python
 
     from aiida_mlip.data.model import ModelData
-    url = "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model"
-    model = ModelData.from_uri(url, architecture="mace", cache_dir="/.cache/")
+    uri = "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model"
+    model = ModelData.from_uri(uri, architecture="mace", cache_dir="/.cache/")
 
 If we already have the model saved in some folder we can save it as:
 

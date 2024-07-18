@@ -4,7 +4,7 @@ Data types
 
 ModelData
 ---------
-Defines a custom data type called `ModelData` in AiiDA, which is a subclass of the `SinglefileData` type. `ModelData` is used to handle model files and provides functionalities for handling local files and downloading files from URLs.
+Defines a custom data type called `ModelData` in AiiDA, which is a subclass of the `SinglefileData` type. `ModelData` is used to handle model files and provides functionalities for handling local files and downloading files from uris.
 Additional features compared to `SinglefileData`:
 
 - It can take a relative path as an argument
@@ -12,7 +12,7 @@ Additional features compared to `SinglefileData`:
 - It takes the argument "architecture" which is specifically related to the mlip model and it is added to the node attributes.
 
 - Download functionality:
-    - When provided with a URL, `ModelData` automatically downloads the file.
+    - When provided with a uri, `ModelData` automatically downloads the file.
     - Saves the downloaded file in a specified folder (default: `./cache/mlips`), creating a subfolder if the architecture, and stores it as an AiiDA data type.
     - Handles duplicate files: if the file is downloaded twice, duplicates within the same folder are canceled, unless `force_download=True` is stated.
 

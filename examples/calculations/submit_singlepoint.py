@@ -62,7 +62,7 @@ def singlepoint(params: dict) -> None:
     "--model",
     default=None,
     type=str,
-    help="Specify path or url of the model to use",
+    help="Specify path or uri of the model to use",
 )
 @click.option(
     "--arch",

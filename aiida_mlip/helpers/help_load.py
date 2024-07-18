@@ -20,17 +20,17 @@ def load_model(
     cache_dir: Optional[Union[str, Path]] = None,
 ) -> ModelData:
     """
-    Load a model from a file path or URL.
+    Load a model from a file path or uri.
 
     If the string represents a file path, the model will be loaded from that path.
-    If it's a URL, the model will be downloaded from the specified location.
+    If it's a uri, the model will be downloaded from the specified location.
     If the input model is None it returns a default model corresponding to the
     default used in the Calcjobs.
 
     Parameters
     ----------
     model : Optional[Union[str, Path]]
-        Model file path or a URL for downloading the model or None to use the default.
+        Model file path or a uri for downloading the model or None to use the default.
     architecture : str
         The architecture of the model.
     cache_dir : Optional[Union[str, Path]]

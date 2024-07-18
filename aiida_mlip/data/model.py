@@ -34,8 +34,8 @@ class ModelData(SinglefileData):
         Set the file for the node.
     from_local(file, architecture, filename=None):
         Create a ModelData instance from a local file.
-    from_uri(url, architecture, filename=None, cache_dir=None, keep_file=False)
-        Download a file from a URL and save it as ModelData.
+    from_uri(uri, architecture, filename=None, cache_dir=None, keep_file=False)
+        Download a file from a uri and save it as ModelData.
 
     Other Parameters
     ----------------
@@ -156,19 +156,19 @@ class ModelData(SinglefileData):
     # pylint: disable=too-many-arguments
     def from_uri(
         cls,
-        url: str,
+        uri: str,
         architecture: str,
         filename: Optional[str] = "tmp_file.model",
         cache_dir: Optional[Union[str, Path]] = None,
         keep_file: Optional[bool] = False,
     ):
         """
-        Download a file from a URL and save it as ModelData.
+        Download a file from a uri and save it as ModelData.
 
         Parameters
         ----------
-        url : str
-            URL of the file to download.
+        uri : str
+            uri of the file to download.
         architecture : [str]
             Architecture of the mlip model.
         filename : Optional[str], optional
@@ -196,7 +196,7 @@ class ModelData(SinglefileData):
         file = arch_path / filename
 
         # Download file
-        request.urlretrieve(url, file)
+        request.urlretrieve(uri, file)
 
         model = cls.from_local(file=file, architecture=architecture)
 

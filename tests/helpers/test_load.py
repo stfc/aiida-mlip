@@ -20,12 +20,12 @@ def test_load_local_model(model_folder):
 
 
 def test_download_model(tmp_path):
-    """Test for the load_model function for loading from URL."""
-    url_model = (
+    """Test for the load_model function for loading from uri."""
+    uri_model = (
         "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model"
     )
     loaded_model = load_model(
-        url_model, architecture="example_architecture", cache_dir=tmp_path
+        uri_model, architecture="example_architecture", cache_dir=tmp_path
     )
     assert isinstance(loaded_model, ModelData)
 
