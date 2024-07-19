@@ -12,12 +12,12 @@ from aiida_mlip.helpers.help_load import load_structure
 def submit_DFT(child, dft_inputs, group):
         print(child.name)
         dft_inputs['metadata']['label']=f"{child.name}"
-    optcalculation = WorkflowFactory("quantumespresso.pw.relax")
-    struc = load_structure(child)
-    dft_inputs['struct']=struc
-    result = submit(optcalculation, **inputs)
-    group.add_nodes(load_node(result.pk))
-    return group
+        optcalculation = WorkflowFactory("quantumespresso.pw.relax")
+        struc = load_structure(child)
+        dft_inputs['struct']=struc
+        result = submit(optcalculation, **dft_inputs)
+        group.add_nodes(load_node(result.pk))
+        return group
 
 #syntax of this wrong
 @task.calcfunction()
