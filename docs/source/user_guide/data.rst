@@ -4,7 +4,7 @@ Data types
 
 ModelData
 ---------
-Defines a custom data type called `ModelData` in AiiDA, which is a subclass of the `SinglefileData` type. `ModelData` is used to handle model files and provides functionalities for handling local files and downloading files from URLs.
+Defines a custom data type called `ModelData` in AiiDA, which is a subclass of the `SinglefileData` type. `ModelData` is used to handle model files and provides functionalities for handling local files and downloading files from URIs.
 Additional features compared to `SinglefileData`:
 
 - It can take a relative path as an argument
@@ -12,7 +12,7 @@ Additional features compared to `SinglefileData`:
 - It takes the argument "architecture" which is specifically related to the mlip model and it is added to the node attributes.
 
 - Download functionality:
-    - When provided with a URL, `ModelData` automatically downloads the file.
+    - When provided with a URI, `ModelData` automatically downloads the file.
     - Saves the downloaded file in a specified folder (default: `./cache/mlips`), creating a subfolder if the architecture, and stores it as an AiiDA data type.
     - Handles duplicate files: if the file is downloaded twice, duplicates within the same folder are canceled, unless `force_download=True` is stated.
 
@@ -23,13 +23,13 @@ Usage
 
 .. code-block:: python
 
-    model = ModelData.local_file('/path/to/file', filename='model', architecture='mace')
+    model = ModelData.from_local('/path/to/file', filename='model', architecture='mace')
 
 - To download a file and save it as a `ModelData` object:
 
 .. code-block:: python
 
-    model = ModelData.download('http://yoururl.test/model', architecture='mace', filename='model', cache_dir='/home/mlip/', force_download=False)
+    model = ModelData.from_uri('http://yoururl.test/model', architecture='mace', filename='model', cache_dir='/home/mlip/', force_download=False)
 
 - The architecture of the model file can be accessed using the `architecture` property:
 
@@ -37,20 +37,7 @@ Usage
 
     model_arch = model.architecture
 
-
-
-- The filepath of the model file can be accessed using the `filepath` property:
-
-.. code-block:: python
-
-    file_path = model.filepath
-
-.. warning::
-
-    When using shared data, the ``filepath`` could point to a inaccessible location on another computer.
-    So if you are using data from someone else, for both the model data and the config file, consider using the ``get_content()`` method to create a new file with identical content.
-    Then, use the filepath of the newly created file for running calculation.
-    A more robust solution to this problem is going to be implemented.
+As for a `SinglefileData`, the content of the model file can be accessed using the function `get_content()`
 
 
 JanusConfigfile

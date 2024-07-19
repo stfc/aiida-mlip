@@ -24,7 +24,7 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "arch": Str("mace"),
         "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
-        "model": ModelData.local_file(model_file, architecture="mace"),
+        "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
 
@@ -43,7 +43,7 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "--out",
         "aiida-results.xyz",
         "--calc-kwargs",
-        f"{{'default_dtype': 'float64', 'model': '{model_file}'}}",
+        "{'default_dtype': 'float64', 'model': 'mlff.model'}",
         "--traj",
         "aiida-traj.xyz",
     ]
@@ -57,7 +57,9 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     ]
 
     # Check the attributes of the returned `CalcInfo`
-    assert fixture_sandbox.get_content_list() == ["aiida.xyz"]
+    assert sorted(fixture_sandbox.get_content_list()) == sorted(
+        ["aiida.xyz", "mlff.model"]
+    )
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
     assert len(calc_info.codes_info[0].cmdline_params) == len(cmdline_params)
@@ -77,7 +79,7 @@ def test_run_opt(model_folder, janus_code):
         "arch": Str("mace"),
         "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
-        "model": ModelData.local_file(model_file, architecture="mace"),
+        "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
         "fully_opt": Bool(True),
         "fmax": Float(0.1),

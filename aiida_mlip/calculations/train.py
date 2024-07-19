@@ -1,6 +1,7 @@
 """Class for training machine learning models."""
 
 from pathlib import Path
+import shutil
 
 from aiida.common import InputValidationError, datastructures
 import aiida.common.folders
@@ -154,7 +155,7 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         Parameters
         ----------
         folder : aiida.common.folders.Folder
-            An `aiida.common.folders.Folder` to temporarily write files on disk.
+            Folder where the calculation is run.
 
         Returns
         -------
@@ -175,9 +176,10 @@ class Train(CalcJob):  # numpydoc ignore=PR01
 
         # Add foundation_model to the config file if fine-tuning is enabled
         if self.inputs.fine_tune and "foundation_model" in self.inputs:
-            model_data = self.inputs.foundation_model
-            foundation_model_path = model_data.filepath
-            config_parse += f"\nfoundation_model: {foundation_model_path}"
+            with self.inputs.foundation_model.open(mode="rb") as source:
+                with folder.open("mlff.model", mode="wb") as target:
+                    shutil.copyfileobj(source, target)
+            config_parse += "foundation_model: mlff.model"
 
         # Copy config file content inside the folder where the calculation is run
         config_copy = "mlip_train.yml"

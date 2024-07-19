@@ -4,7 +4,7 @@ import click
 
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
-from aiida.orm import Bool, Dict, Float, Int, Str, load_code
+from aiida.orm import Bool, Float, Int, Str, load_code
 from aiida.plugins import CalculationFactory
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
@@ -44,7 +44,7 @@ def geomopt(params: dict) -> None:
         "fmax": Float(params["fmax"]),
         "vectors_only": Bool(params["vectors_only"]),
         "fully_opt": Bool(params["fully_opt"]),
-        "opt_kwargs": Dict({"restart": "rest.pkl"}),
+        # "opt_kwargs": Dict({"restart": "rest.pkl"}),
         "steps": Int(params["steps"]),
     }
 
@@ -67,7 +67,7 @@ def geomopt(params: dict) -> None:
     "--model",
     default=None,
     type=str,
-    help="Specify path or url of the model to use",
+    help="Specify path or URI of the model to use",
 )
 @click.option(
     "--arch",

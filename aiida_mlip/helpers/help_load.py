@@ -20,17 +20,17 @@ def load_model(
     cache_dir: Optional[Union[str, Path]] = None,
 ) -> ModelData:
     """
-    Load a model from a file path or URL.
+    Load a model from a file path or URI.
 
     If the string represents a file path, the model will be loaded from that path.
-    If it's a URL, the model will be downloaded from the specified location.
+    If it's a URI, the model will be downloaded from the specified location.
     If the input model is None it returns a default model corresponding to the
     default used in the Calcjobs.
 
     Parameters
     ----------
     model : Optional[Union[str, Path]]
-        Model file path or a URL for downloading the model or None to use the default.
+        Model file path or a URI for downloading the model or None to use the default.
     architecture : str
         The architecture of the model.
     cache_dir : Optional[Union[str, Path]]
@@ -42,15 +42,15 @@ def load_model(
         The loaded model.
     """
     if model is None:
-        loaded_model = ModelData.download(
+        loaded_model = ModelData.from_uri(
             "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",  # pylint: disable=line-too-long
             architecture,
             cache_dir=cache_dir,
         )
     elif (file_path := Path(model)).is_file():
-        loaded_model = ModelData.local_file(file_path, architecture=architecture)
+        loaded_model = ModelData.from_local(file_path, architecture=architecture)
     else:
-        loaded_model = ModelData.download(
+        loaded_model = ModelData.from_uri(
             model, architecture=architecture, cache_dir=cache_dir
         )
     return loaded_model

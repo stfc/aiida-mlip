@@ -121,7 +121,7 @@ def test_prepare_tune(fixture_sandbox, generate_calc_job, janus_code, config_fol
         "code": janus_code,
         "mlip_config": config,
         "fine_tune": Bool(True),
-        "foundation_model": ModelData.local_file(
+        "foundation_model": ModelData.from_local(
             file=model_file, architecture="mace_mp"
         ),
     }
@@ -141,7 +141,9 @@ def test_prepare_tune(fixture_sandbox, generate_calc_job, janus_code, config_fol
     ]
 
     # Check the attributes of the returned `CalcInfo`
-    assert fixture_sandbox.get_content_list() == ["mlip_train.yml"]
+    assert sorted(fixture_sandbox.get_content_list()) == sorted(
+        ["mlip_train.yml", "mlff.model"]
+    )
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
     assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
@@ -177,7 +179,7 @@ def test_run_train(janus_code, config_folder):
         "fine_tune": Bool(True),
         "code": janus_code,
         "mlip_config": config,
-        "foundation_model": ModelData.local_file(
+        "foundation_model": ModelData.from_local(
             file=model_file, architecture="mace_mp"
         ),
     }
