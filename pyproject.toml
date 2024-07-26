@@ -31,9 +31,10 @@ aiida-core = "^2.6"
 ase = "^3.23.0"
 voluptuous = "^0.14"
 #janus-core = "^v0.6.2"
-aiida-workgraph = "^0.3.7"
+aiida-workgraph = {extras = ["widget"], version = "^0.3.14"}
 janus-core = { git = "https://github.com/stfc/janus-core.git", branch = "main" }
 aiida-quantumespresso = "^v4.6.0"
+scikit-learn = "^1.5.1"
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "^7.4.1"}
