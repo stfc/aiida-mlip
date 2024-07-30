@@ -81,6 +81,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.plugins."aiida.workflows"]
 "mlip.hts" = "aiida_mlip.workflows.hts:HTSWorkChain"
+"mlip.hts_wg" = "aiida_mlip.workflows.hts_workgraph:HTSWorkGraph"
 
 [tool.black]
 line-length = 88
