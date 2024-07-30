@@ -37,9 +37,9 @@ def run_pw_calc(folder: Path, dft_inputs: dict) -> WorkGraph:
         dft_inputs["base"]["structure"] = structure
         dft_inputs["base"]["pw"]["metadata"]["label"] = child.stem
         pw_task = wg.add_task(
-            PwRelaxWorkChain, name=f"pw_relax{child.stem}", **dft_inputs
+            PwRelaxWorkChain, name=f"pw_relax_{child.stem}", **dft_inputs
         )
-        pw_task.set_context({"result": f"pw_relax_{child}"})
+        pw_task.set_context({"result": f"pw_relax_{child.stem}"})
     return wg
 
 
@@ -149,8 +149,8 @@ def update_janusconfigfile(janusconfigfile: JanusConfigfile) -> JanusConfigfile:
 
 
 wg = WorkGraph("trainingworkflow")
-folder_path = Path("/home/federica/prova_training_wg")
-code = load_code("qe-7.1@scarf1")
+folder_path = Path("/work4/scd/scarf1228/prova_train_workgraph/")
+code = load_code("qe-7.1@scarf")
 inputs = {
     "base": {
         "settings": Dict({"GAMMA_ONLY": True}),
@@ -253,7 +253,7 @@ split_files_task = wg.add_task(
     split_xyz_file, name="split_xyz", xyz_file=create_file_task.outputs.result
 )
 print("CHECKPOINT3")
-janusconfigfile_path = "/home/federica/prova_training_wg/mlip_train.yml"
+janusconfigfile_path = "/work4/scd/scarf1228/prova_train_workgraph/mlip_train.yml"
 janusconfigfile = JanusConfigfile(file=janusconfigfile_path)
 update_config_task = wg.add_task(
     update_janusconfigfile,
