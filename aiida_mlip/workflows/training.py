@@ -6,13 +6,13 @@ from aiida_workgraph import WorkGraph, task
 from sklearn.model_selection import train_test_split
 
 from aiida.orm import Dict, SinglefileData, load_code
-from aiida.plugins import CalculationFactory, WorkflowFactory
+from aiida.plugins import CalculationFactory, WorkflowFactory, entry_point
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.helpers.help_load import load_structure
+from aiida_quantumespresso.workflows.pw.relax import PwRelaxWorkChain
 
-PwRelaxWorkChain = WorkflowFactory("quantumespresso.pw.relax")
-
+#PwRelaxWorkChain = WorkflowFactory("quantumespresso.pw.relax")
 
 @task.graph_builder(outputs=[{"name": "result", "from": "context.pw"}])
 def run_pw_calc(folder: Path, dft_inputs: dict) -> WorkGraph:
@@ -31,16 +31,19 @@ def run_pw_calc(folder: Path, dft_inputs: dict) -> WorkGraph:
     WorkGraph
         The work graph containing the PW relaxation tasks.
     """
+   
+    print("CHECKPOINT 6")   
     wg = WorkGraph()
     for child in folder.glob("**/*xyz"):
         structure = load_structure(child)
         dft_inputs["base"]["structure"] = structure
         dft_inputs["base"]["pw"]["metadata"]["label"] = child.stem
-        pw_task = wg.add_task(
-            PwRelaxWorkChain, name=f"pw_relax_{child.stem}", **dft_inputs
-        )
-        pw_task.set_context({"result": f"pw_relax_{child.stem}"})
+        pw_task = wg.add_task(PwRelaxWorkChain, name=f"pw_relax_{child.stem}")
+        pw_task.set(dft_inputs)
+        pw_task.set_context({"final_structure": f"pw.{child.stem}"})  
+    print("CHECKPOINT 7")
     return wg
+
 
 
 @task.calcfunction()
@@ -58,6 +61,7 @@ def create_input(**inputs: dict) -> SinglefileData:
     SinglefileData
         A SinglefileData node containing the generated input data.
     """
+    print("CHECKPOINT 8")
     input_data = []
     for name, structure in inputs.items():
         ase_structure = structure.to_ase()
@@ -88,6 +92,7 @@ def split_xyz_file(xyz_file: SinglefileData) -> dict:
         A dictionary with keys 'train', 'test', and 'validation', each containing
         SinglefileData nodes for the respective datasets.
     """
+    print("CHECKPOINT 9")
     with xyz_file.open() as file:
         lines = file.readlines()
 
@@ -133,6 +138,7 @@ def update_janusconfigfile(janusconfigfile: JanusConfigfile) -> JanusConfigfile:
     JanusConfigfile
         A new JanusConfigfile with updated paths.
     """
+    print("CHECKPOINT 10")
     janus_dict = janusconfigfile.as_dictionary
     config_parse = janusconfigfile.get_content()
 
@@ -241,12 +247,12 @@ inputs = {
 }
 
 pw_task = wg.add_task(
-    run_pw_calc, name="pw_relax_results", folder=folder_path, dft_inputs=inputs
+    run_pw_calc, name="pw_relax", folder=folder_path, dft_inputs=inputs
 )
 
 print("CHECKPOINT1")
 create_file_task = wg.add_task(create_input, name="create_input")
-wg.add_link(pw_task.outputs[0], create_file_task.inputs[0])
+wg.add_link(pw_task.outputs["result"], create_file_task.inputs["inputs"])
 
 print("CHECKPOINT2")
 split_files_task = wg.add_task(
