@@ -26,8 +26,8 @@ def run_opt_calc(folder: Path, janus_opt_inputs: dict) -> WorkGraph:
 
     Returns
     -------
-    WorkGraph
-        The work graph containing the optimisation tasks.
+    aiida_workgraph.WorkGraph
+        The workgraph containing the optimisation tasks.
     """
     wg = WorkGraph()
     for child in folder.glob("**/*"):
@@ -55,8 +55,8 @@ def HTSWorkGraph(folder_path: Path, inputs: dict) -> WorkGraph:
 
     Returns
     -------
-    WorkGraph
-        The work graph containing the high-throughput workflow.
+    aiida_workgraph.WorkGraph
+        The workgraph containing the high-throughput workflow.
     """
     wg = WorkGraph("hts_workflow")
 
