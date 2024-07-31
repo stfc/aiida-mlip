@@ -95,7 +95,7 @@ def janus_code(aiida_local_code_factory):
         The janus code instance.
     """
     janus_path = shutil.which("janus") or os.environ.get("JANUS_PATH")
-    return aiida_local_code_factory(executable=janus_path, entry_point="mlip.sp")
+    return aiida_local_code_factory(executable=janus_path, entry_point="mlip.opt")
 
 
 @pytest.fixture
@@ -238,6 +238,17 @@ def structure_folder(test_folder):
         Path: The path to the example file.
     """
     return test_folder / "calculations" / "structures"
+
+
+@pytest.fixture
+def structure_folder2(test_folder):
+    """
+    Fixture to provide the path to the example file.
+
+    Returns:
+        Path: The path to the example file.
+    """
+    return test_folder / "workflows" / "structures"
 
 
 @pytest.fixture

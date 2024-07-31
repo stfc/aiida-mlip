@@ -107,18 +107,24 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
     * [`md_parser.py`](aiida_mlip/parsers/md_parser.py): `Parser` for `MD` calculation.
     * [`train_parser.py`](aiida_mlip/parsers/train_parser.py): `Parser` for `Train` calculation.
   * [`helpers/`](aiida_mlip/helpers/): `Helpers` to run calculations.
+  * [`workflows/`](aiida_mlip/workflows/): `WorkGraphs` or `WorkChains` for common workflows with mlips.
+    * [`hts_workgraph.py`](aiida_mlip/workflows/hts_workgraph.py): A `WorkGraph` to run high-throughput screening optimisations.
 * [`docs/`](docs/source/): Code documentation
   * [`apidoc/`](docs/source/apidoc/): API documentation
   * [`developer_guide/`](docs/source/developer_guide/): Documentation for developers
   * [`user_guide/`](docs/source/user_guide/): Documentation for users
   * [`images/`](docs/source/images/): Logos etc used in the documentation
 * [`examples/`](examples/): Examples for submitting calculations using this plugin
-  * [`tutorials/`](examples/tutorials/): Scripts for submitting calculations
-  * [`calculations/`](examples/calculations/): Jupyter notebooks with tutorials for running calculations and other files that are used in the tutorial
+  * [`tutorials/`](examples/tutorials/): Jupyter notebooks with tutorials for running calculations and other files that are used in the tutorial
+  * [`calculations/`](examples/calculations/): Scripts for submitting calculations
     * [`submit_singlepoint.py`](examples/calculations/submit_singlepoint.py): Script for submitting a singlepoint calculation
     * [`submit_geomopt.py`](examples/calculations/submit_geomopt.py): Script for submitting a geometry optimisation calculation
     * [`submit_md.py`](examples/calculations/submit_md.py): Script for submitting a molecular dynamics calculation
     * [`submit_train.py`](examples/calculations/submit_train.py): Script for submitting a train calculation.
+  * [`workflows/`](examples/workflows/): Scripts for submitting workflows
+    * [`run_hts_nowc.py`](examples/workflows/run_hts_nowc.py): Script for submitting multiple janus calculations without using any pre-coded high-throughout screening tools (like the WorkGraph).
+    * [`submit_hts_workgraph.py`](examples/workflows/submit_hts_workgraph.py): Script for submitting a high-throughput screening WorkGraph for geometry optimisation.
+  * [`workflows/utils`](examples/workflows/utils): A folder with some scripts for dealing with the high-throughout calculations.
 * [`tests/`](tests/): Basic regression tests using the [pytest](https://docs.pytest.org/en/latest/) framework (submitting a calculation, ...). Install `pip install -e .[testing]` and run `pytest`.
   * [`conftest.py`](tests/conftest.py): Configuration of fixtures for [pytest](https://docs.pytest.org/en/latest/)
   * [`calculations/`](tests/calculations): Calculations
@@ -126,9 +132,11 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
     * [`test_geomopt.py`](tests/calculations/test_geomopt.py): Test `Geomopt` calculation
     * [`test_md.py`](tests/calculations/test_md.py): Test `MD` calculation
     * [`test_train.py`](tests/calculations/test_train.py): Test `Train` calculation
-  * [`data/`](tests/data): `ModelData`
+  * [`data/`](tests/data): Data
     * [`test_model.py`](tests/data/test_model.py): Test `ModelData` type
     * [`test_config.py`](tests/data/test_config.py): Test `JanusConfigfile` type
+  * [`workflows/`](tests/workflows): Workflows
+    * [`test_hts.py`](tests/workflows/test_hts.py): Test high throughput screening workgraph.
 * [`.gitignore`](.gitignore): Telling git which files to ignore
 * [`.pre-commit-config.yaml`](.pre-commit-config.yaml): Configuration of [pre-commit hooks](https://pre-commit.com/) that sanitize coding style and check for syntax errors. Enable via `pip install -e .[pre-commit] && pre-commit install`
 * [`LICENSE`](LICENSE): License for the plugin

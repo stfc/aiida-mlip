@@ -30,8 +30,8 @@ def run_hts(folder, config, calc, output_filename, code, group, launch):
     # Define calculation to run
     Calculation = CalculationFactory(f"mlip.{calc}")
     # pylint: disable=line-too-long
-    model = ModelData.download(
-        url="https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
+    model = ModelData.from_uri(
+        uri="https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
         cache_dir="models",
         architecture="mace_mp",
         filename="small.model",
@@ -77,6 +77,7 @@ def run_hts(folder, config, calc, output_filename, code, group, launch):
 
     print(f"printing dictionary with all {list_of_nodes}")
     # write list of nodes in csv file
+    # Unnecessary but might be useful. better use group to query
     with open(output_filename, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["name", "PK"])
