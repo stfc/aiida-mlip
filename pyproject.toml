@@ -30,9 +30,8 @@ python = "^3.9"
 aiida-core = "^2.6"
 ase = "^3.23.0"
 voluptuous = "^0.14"
-#janus-core = "^v0.6.2"
+janus-core = "^v0.6.3b0"
 aiida-workgraph = {extras = ["widget"], version = "^0.3.14"}
-janus-core = { git = "https://github.com/stfc/janus-core.git", branch = "main" }
 aiida-quantumespresso = "^v4.6.0"
 scikit-learn = "^1.5.1"
 
@@ -82,6 +81,9 @@ build-backend = "poetry.core.masonry.api"
 "mlip.opt_parser" = "aiida_mlip.parsers.opt_parser:GeomOptParser"
 "mlip.md_parser" = "aiida_mlip.parsers.md_parser:MDParser"
 "mlip.train_parser" = "aiida_mlip.parsers.train_parser:TrainParser"
+
+[tool.poetry.plugins."aiida.workflows"]
+"mlip.training_wg" = "aiida_mlip.workflows.traning_workgraph:TrainWorkGraph"
 
 [tool.black]
 line-length = 88
