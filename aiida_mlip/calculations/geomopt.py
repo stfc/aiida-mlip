@@ -53,13 +53,13 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             help="Path to save optimisation frames to",
         )
         spec.input(
-            "fully_opt",
+            "opt_cell_fully",
             valid_type=Bool,
             required=False,
             help="Fully optimise the cell vectors, angles, and atomic positions",
         )
         spec.input(
-            "vectors_only",
+            "opt_cell_lengths",
             valid_type=Bool,
             required=False,
             help="Optimise cell vectors, as well as atomic positions",
@@ -116,10 +116,10 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
         if "opt_kwargs" in self.inputs:
             opt_kwargs = self.inputs.opt_kwargs.get_dict()
             geom_opt_cmdline["opt-kwargs"] = opt_kwargs
-        if "fully_opt" in self.inputs:
-            geom_opt_cmdline["fully-opt"] = self.inputs.fully_opt.value
-        if "vectors_only" in self.inputs:
-            geom_opt_cmdline["vectors-only"] = self.inputs.vectors_only.value
+        if "opt_cell_fully" in self.inputs:
+            geom_opt_cmdline["opt-cell-fully"] = self.inputs.opt_cell_fully.value
+        if "opt_cell_lengths" in self.inputs:
+            geom_opt_cmdline["opt-cell-lengths"] = self.inputs.opt_cell_lengths.value
         if "fmax" in self.inputs:
             geom_opt_cmdline["fmax"] = self.inputs.fmax.value
         if "steps" in self.inputs:

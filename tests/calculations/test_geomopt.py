@@ -81,7 +81,7 @@ def test_run_opt(model_folder, janus_code):
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
-        "fully_opt": Bool(True),
+        "opt_cell_fully": Bool(True),
         "fmax": Float(0.1),
         "steps": Int(1000),
     }

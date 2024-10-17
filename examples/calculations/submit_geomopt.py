@@ -42,8 +42,8 @@ def geomopt(params: dict) -> None:
         "precision": Str(params["precision"]),
         "device": Str(params["device"]),
         "fmax": Float(params["fmax"]),
-        "vectors_only": Bool(params["vectors_only"]),
-        "fully_opt": Bool(params["fully_opt"]),
+        "opt_cell_lengths": Bool(params["opt_cell_lengths"]),
+        "opt_cell_fully": Bool(params["opt_cell_fully"]),
         # "opt_kwargs": Dict({"restart": "rest.pkl"}),
         "steps": Int(params["steps"]),
     }
@@ -83,13 +83,13 @@ def geomopt(params: dict) -> None:
 )
 @click.option("--fmax", default=0.1, type=float, help="Maximum force for convergence.")
 @click.option(
-    "--vectors_only",
+    "--opt_cell_lengths",
     default=False,
     type=bool,
     help="Optimise cell vectors, as well as atomic positions.",
 )
 @click.option(
-    "--fully_opt",
+    "--opt_cell_fully",
     default=False,
     type=bool,
     help="Fully optimise the cell vectors, angles, and atomic positions.",
@@ -105,8 +105,8 @@ def cli(
     device,
     precision,
     fmax,
-    vectors_only,
-    fully_opt,
+    opt_cell_lengths,
+    opt_cell_fully,
     steps,
 ) -> None:
     # pylint: disable=too-many-arguments
@@ -125,8 +125,8 @@ def cli(
         "device": device,
         "precision": precision,
         "fmax": fmax,
-        "vectors_only": vectors_only,
-        "fully_opt": fully_opt,
+        "opt_cell_lengths": opt_cell_lengths,
+        "opt_cell_fully": opt_cell_fully,
         "steps": steps,
     }
 
