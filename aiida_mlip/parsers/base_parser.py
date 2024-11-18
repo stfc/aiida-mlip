@@ -1,6 +1,4 @@
-"""
-Parsers provided by aiida_mlip.
-"""
+"""Parsers provided by aiida_mlip."""
 
 from aiida.engine import ExitCode
 from aiida.orm import SinglefileData

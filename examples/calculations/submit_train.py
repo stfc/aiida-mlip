@@ -1,4 +1,4 @@
-"""Example code for submitting training calculation"""
+"""Example code for submitting training calculation."""
 
 from pathlib import Path
 

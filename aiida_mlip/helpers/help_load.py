@@ -1,6 +1,4 @@
-"""
-Helper functions for automatically loading models and strucutres as data nodes.
-"""
+"""Helper functions for automatically loading models and strucutres as data nodes."""
 
 from pathlib import Path
 from typing import Optional, Union

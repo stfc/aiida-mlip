@@ -1,13 +1,12 @@
-"""Example code for submitting single point calculation"""
+"""Example code for submitting single point calculation."""
 
 import ast
-
-import click
 
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
 from aiida.orm import Dict, Str, load_code
 from aiida.plugins import CalculationFactory
+import click
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
@@ -25,7 +24,6 @@ def MD(params: dict) -> None:
     -------
     None
     """
-
     structure = load_structure(params["struct"])
 
     # Select model to use

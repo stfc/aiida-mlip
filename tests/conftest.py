@@ -185,9 +185,7 @@ def generate_calc_job():
         process_class = CalculationFactory(entry_point_name)
         process = instantiate_process(runner, process_class, **inputs)
 
-        calc_info = process.prepare_for_submission(folder)
-
-        return calc_info
+        return process.prepare_for_submission(folder)
 
     return _generate_calc_job
 

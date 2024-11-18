@@ -1,6 +1,4 @@
-"""
-Geom optimisation parser.
-"""
+"""Geom optimisation parser."""
 
 from pathlib import Path
 

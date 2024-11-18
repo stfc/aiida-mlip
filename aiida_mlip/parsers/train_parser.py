@@ -1,6 +1,4 @@
-"""
-Parser for mlip train.
-"""
+"""Parser for mlip train."""
 
 import json
 from pathlib import Path

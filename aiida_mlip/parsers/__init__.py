@@ -1,3 +1,1 @@
-"""
-Parsers for calculations.
-"""
+"""Parsers for calculations."""

@@ -1,6 +1,4 @@
-"""
-Some helpers to convert between different formats.
-"""
+"""Some helpers to convert between different formats."""
 
 from pathlib import Path
 from typing import Union

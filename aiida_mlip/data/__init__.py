@@ -1,3 +1,1 @@
-"""
-Data types for MLIPs calculations.
-"""
+"""Data types for MLIPs calculations."""

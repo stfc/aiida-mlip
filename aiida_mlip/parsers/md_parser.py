@@ -1,6 +1,4 @@
-"""
-MD parser.
-"""
+"""MD parser."""
 
 from pathlib import Path
 

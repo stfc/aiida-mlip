@@ -1,4 +1,4 @@
-"""Example code for submitting single point calculation"""
+"""Example code for submitting single point calculation."""
 
 from aiida.engine import run_get_node
 from aiida.orm import load_code

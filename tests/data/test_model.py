@@ -8,7 +8,7 @@ model_path = Path(__file__).parent / "input_files" / "model_local_file.txt"
 
 
 def test_local_file():
-    """Testing that the from_local function works"""
+    """Testing that the from_local function works."""
     # Construct a ModelData instance with the local file
     absolute_path = model_path.resolve()
     model = ModelData.from_local(file=absolute_path, architecture="mace")
@@ -18,7 +18,7 @@ def test_local_file():
 
 
 def test_relativepath():
-    """Testing that the from_local function works with a relative path"""
+    """Testing that the from_local function works with a relative path."""
     # Construct a ModelData instance with the local file
     relative_path = model_path.relative_to(Path.cwd())
     model = ModelData.from_local(file=relative_path, architecture="mace")
@@ -28,7 +28,7 @@ def test_relativepath():
 
 
 def test_architecture():
-    """Testing that the architecture is read and added to attributes"""
+    """Testing that the architecture is read and added to attributes."""
     model = ModelData.from_local(
         file=model_path,
         filename="model",
@@ -59,7 +59,7 @@ def test_download_fresh_file_keep(tmp_path):
 
 
 def test_download_fresh_file(tmp_path):
-    """Test if download works and the file is only saved in the database not locally"""
+    """Test if download works and the file is only saved in the database not locally."""
     # Ensure we do not have the file cached already
     path_test = tmp_path / "mace" / "mace.model"
     path_test.unlink(missing_ok=True)

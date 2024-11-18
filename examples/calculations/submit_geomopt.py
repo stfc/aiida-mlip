@@ -1,11 +1,10 @@
-"""Example code for submitting geometry optimisation calculation"""
-
-import click
+"""Example code for submitting geometry optimisation calculation."""
 
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
 from aiida.orm import Bool, Float, Int, Str, load_code
 from aiida.plugins import CalculationFactory
+import click
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
@@ -23,7 +22,6 @@ def geomopt(params: dict) -> None:
     -------
     None
     """
-
     structure = load_structure(params["struct"])
 
     # Select model to use

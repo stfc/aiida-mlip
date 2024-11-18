@@ -1,6 +1,4 @@
-"""
-Parsers provided by aiida_mlip.
-"""
+"""Parsers provided by aiida_mlip."""
 
 from pathlib import Path
 

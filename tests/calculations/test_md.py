@@ -164,7 +164,7 @@ def test_MD_with_config(
 
 
 def test_run_md(model_folder, structure_folder, janus_code):
-    """Test running molecular dynamics calculation"""
+    """Test running molecular dynamics calculation."""
     model_file = model_folder / "mace_mp_small.model"
     structure_file = structure_folder / "NaCl.cif"
     inputs = {
@@ -202,9 +202,7 @@ def test_run_md(model_folder, structure_folder, janus_code):
 
 
 def test_example_md(example_path):
-    """
-    Test function to run md calculation through the use of the example file provided.
-    """
+    """Test function to run md calculation through the use of the example file provided."""
     example_file_path = example_path / "submit_md.py"
     command = ["verdi", "run", example_file_path, "janus@localhost"]
 

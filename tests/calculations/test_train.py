@@ -163,7 +163,7 @@ def test_finetune_error(fixture_sandbox, generate_calc_job, janus_code, config_f
 
 @pytest.mark.skipif(MACE_IMPORT_ERROR, reason="Requires updated version of MACE")
 def test_run_train(janus_code, config_folder):
-    """Test running train with fine-tuning calculation"""
+    """Test running train with fine-tuning calculation."""
     model_file = config_folder / "test.model"
     config_path = config_folder / "mlip_train.yml"
     config = JanusConfigfile(file=config_path)
