@@ -75,7 +75,7 @@ The `store_content()` method accepts the following parameters:
     - `store_all` (bool):
         Determines whether to store all parameters or only specific ones.
         By default, it's set to `False`.
-        When set to `False`, only the key parameters relevant for the provenance graph are stored: `code`, `structure`, `model`, `architecture`, `fully_opt` (for GeomOpt), and `ensemble` (for MD).
+        When set to `False`, only the key parameters relevant for the provenance graph are stored: `code`, `structure`, `model`, `architecture`, `opt_cell_fully` (for GeomOpt), and `ensemble` (for MD).
         However, all inputs can be accessed in the config file at any time (just the config file will appear in the provenance graph as JanusConfigfile).
         If `store_all` is set to `True`, all inputs are stored, either as specific data types (e.g. the input 'struct' is recognised as a StructureData type) or as Str.
 
