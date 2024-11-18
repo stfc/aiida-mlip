@@ -110,7 +110,7 @@ exclude = [
 ]
 
 [tool.ruff]
-exclude = ["conf.py"]
+extend-exclude = ["conf.py", "*.ipynb"]
 target-version = "py39"
 
 [tool.ruff.lint]
