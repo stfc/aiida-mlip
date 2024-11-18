@@ -84,7 +84,7 @@ def convert_to_nodes(dictionary: dict, convert_all: bool = False) -> dict:
         "model": lambda v: load_model(v, arch),
         "arch": Str,
         "ensemble": Str,
-        "fully_opt": Bool,
+        "opt_cell_fully": Bool,
     }
     for key, value in new_dict.items():
         if key in conv:

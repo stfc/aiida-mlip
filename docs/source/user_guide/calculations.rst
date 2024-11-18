@@ -141,7 +141,7 @@ Below is a usage example with some additional geometry optimisation parameters. 
 
 
     GeomOptCalculation = CalculationFactory("mlip.opt")
-    submit(GeomOptCalculation, code=InstalledCode, structure=StructureData, max_force=Float(0.1), vectors_only=Bool(True))
+    submit(GeomOptCalculation, code=InstalledCode, structure=StructureData, max_force=Float(0.1), opt_cell_lengths=Bool(True))
 
 
 .. note::
