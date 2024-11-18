@@ -3,9 +3,8 @@
 from pathlib import Path
 from typing import Any, Optional, Union
 
-import yaml
-
 from aiida.orm import Data, SinglefileData
+import yaml
 
 from aiida_mlip.helpers.converters import convert_to_nodes
 

@@ -4,13 +4,12 @@ Parsers provided by aiida_mlip.
 
 from pathlib import Path
 
-from ase.io import read
-
 from aiida.common import exceptions
 from aiida.engine import ExitCode
 from aiida.orm import Dict, SinglefileData
 from aiida.orm.nodes.process.process import ProcessNode
 from aiida.plugins import CalculationFactory
+from ase.io import read
 
 from aiida_mlip.helpers.converters import convert_numpy
 from aiida_mlip.parsers.base_parser import BaseParser
@@ -74,7 +73,6 @@ class SPParser(BaseParser):
         int
             An exit code.
         """
-
         exit_code = super().parse(**kwargs)
 
         if exit_code != ExitCode(0):

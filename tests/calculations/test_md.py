@@ -3,14 +3,13 @@
 from pathlib import Path
 import subprocess
 
-from ase.build import bulk
-from ase.io import read, write
-import pytest
-
 from aiida.common import datastructures
 from aiida.engine import run_get_node
 from aiida.orm import Dict, Str, StructureData
 from aiida.plugins import CalculationFactory
+from ase.build import bulk
+from ase.io import read, write
+import pytest
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
@@ -18,7 +17,6 @@ from aiida_mlip.data.model import ModelData
 
 def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     """Test generating MD calculation job."""
-
     entry_point_name = "mlip.md"
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
@@ -167,7 +165,6 @@ def test_MD_with_config(
 
 def test_run_md(model_folder, structure_folder, janus_code):
     """Test running molecular dynamics calculation"""
-
     model_file = model_folder / "mace_mp_small.model"
     structure_file = structure_folder / "NaCl.cif"
     inputs = {

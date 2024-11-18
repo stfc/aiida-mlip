@@ -2,20 +2,18 @@
 
 import subprocess
 
-from ase.build import bulk
-import pytest
-
 from aiida.common import datastructures
 from aiida.engine import run
 from aiida.orm import Bool, Float, Int, Str, StructureData
 from aiida.plugins import CalculationFactory
+from ase.build import bulk
+import pytest
 
 from aiida_mlip.data.model import ModelData
 
 
 def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     """Test generating geomopt calculation job."""
-
     entry_point_name = "mlip.opt"
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
@@ -71,7 +69,6 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
 
 def test_run_opt(model_folder, janus_code):
     """Test running geomopt calculation."""
-
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},

@@ -80,7 +80,6 @@ def test_download_fresh_file(tmp_path):
 
 def test_no_download_cached_file(tmp_path):
     """Test if the caching prevents saving duplicate model in the database."""
-
     # pylint:disable=line-too-long
     existing_model = ModelData.from_uri(
         uri="https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",

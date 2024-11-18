@@ -5,11 +5,10 @@ Helper functions for automatically loading models and strucutres as data nodes.
 from pathlib import Path
 from typing import Optional, Union
 
+from aiida.orm import StructureData, load_node
 from ase.build import bulk
 import ase.io
 import click
-
-from aiida.orm import StructureData, load_node
 
 from aiida_mlip.data.model import ModelData
 

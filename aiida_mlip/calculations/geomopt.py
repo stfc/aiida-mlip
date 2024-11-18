@@ -107,7 +107,6 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
         aiida.common.datastructures.CalcInfo
             An instance of `aiida.common.datastructures.CalcInfo`.
         """
-
         # Call the parent class method to prepare common inputs
         calcinfo = super().prepare_for_submission(folder)
         codeinfo = calcinfo.codes_info[0]

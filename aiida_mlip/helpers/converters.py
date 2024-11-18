@@ -5,10 +5,9 @@ Some helpers to convert between different formats.
 from pathlib import Path
 from typing import Union
 
+from aiida.orm import Bool, Dict, Str, StructureData, TrajectoryData, load_code
 from ase.io import read
 import numpy as np
-
-from aiida.orm import Bool, Dict, Str, StructureData, TrajectoryData, load_code
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 

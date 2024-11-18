@@ -5,14 +5,13 @@ import os
 from pathlib import Path
 import shutil
 
-import pytest
-
 from aiida.common import exceptions
 from aiida.common.folders import SandboxFolder
 from aiida.engine.utils import instantiate_process
 from aiida.manage.manager import get_manager
 from aiida.orm import InstalledCode, load_code
 from aiida.plugins import CalculationFactory
+import pytest
 
 pytest_plugins = ["aiida.manage.tests.pytest_fixtures"]  # pylint: disable=invalid-name
 
@@ -54,7 +53,6 @@ def fixture_sandbox():
     SandboxFolder
         A `SandboxFolder` instance for temporary file operations.
     """
-
     with SandboxFolder() as folder:
         yield folder
 
@@ -181,7 +179,6 @@ def generate_calc_job():
         using the provided inputs, and calls `prepare_for_submission`.
         The resulting `CalcInfo` object is returned.
         """
-
         manager = get_manager()
         runner = manager.get_runner()
 
@@ -200,7 +197,8 @@ def test_folder():
     """
     Fixture to provide the path of the tests folder.
 
-    Returns:
+    Returns
+    -------
         Path: the path of the tests folder.
     """
     return Path(__file__).resolve().parent
@@ -212,7 +210,8 @@ def example_path(test_folder):
     """
     Fixture to provide the path to the example file.
 
-    Returns:
+    Returns
+    -------
         Path: The path to the example file.
     """
     return test_folder.parent / "examples" / "calculations"
@@ -223,7 +222,8 @@ def model_folder(test_folder):
     """
     Fixture to provide the path to the example file.
 
-    Returns:
+    Returns
+    -------
         Path: The path to the example file.
     """
     return test_folder / "data" / "input_files" / "mace"
@@ -234,7 +234,8 @@ def structure_folder(test_folder):
     """
     Fixture to provide the path to the example file.
 
-    Returns:
+    Returns
+    -------
         Path: The path to the example file.
     """
     return test_folder / "calculations" / "structures"
@@ -245,7 +246,8 @@ def config_folder(test_folder):
     """
     Fixture to provide the path to the example file.
 
-    Returns:
+    Returns
+    -------
         Path: The path to the example file.
     """
     return test_folder / "calculations" / "configs"

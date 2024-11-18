@@ -2,13 +2,12 @@
 
 import subprocess
 
-from ase.build import bulk
-import pytest
-
 from aiida.common import InputValidationError, datastructures
 from aiida.engine import run
 from aiida.orm import Str, StructureData
 from aiida.plugins import CalculationFactory
+from ase.build import bulk
+import pytest
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
@@ -16,7 +15,6 @@ from aiida_mlip.data.model import ModelData
 
 def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     """Test generating singlepoint calculation job"""
-
     entry_point_name = "mlip.sp"
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
@@ -154,7 +152,6 @@ def test_example(example_path):
     """
     Test function to run md calculation through the use of the example file provided.
     """
-
     example_file_path = example_path / "submit_singlepoint.py"
     command = ["verdi", "run", example_file_path, "janus@localhost"]
 

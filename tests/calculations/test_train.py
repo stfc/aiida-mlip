@@ -1,11 +1,10 @@
 """Tests for model train."""
 
-import pytest
-
 from aiida.common import InputValidationError, datastructures
 from aiida.engine import run
 from aiida.orm import Bool
 from aiida.plugins import CalculationFactory
+import pytest
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
@@ -21,7 +20,6 @@ except ImportError:
 
 def test_prepare_train(fixture_sandbox, generate_calc_job, janus_code, config_folder):
     """Test generating singlepoint calculation job."""
-
     entry_point_name = "mlip.train"
     config_path = config_folder / "mlip_train.yml"
     config = JanusConfigfile(file=config_path)
@@ -54,7 +52,6 @@ def test_file_error(
     fixture_sandbox, generate_calc_job, janus_code, config_folder, tmp_path
 ):
     """Test error if path for xyz is non existent."""
-
     entry_point_name = "mlip.train"
     config_path = config_folder / "mlip_train.yml"
 
@@ -81,7 +78,6 @@ def test_noname(
     fixture_sandbox, generate_calc_job, janus_code, config_folder, tmp_path
 ):
     """Test error if no 'name' keyword is given in config."""
-
     entry_point_name = "mlip.train"
     config_path = config_folder / "mlip_train.yml"
 
@@ -111,7 +107,6 @@ def test_noname(
 
 def test_prepare_tune(fixture_sandbox, generate_calc_job, janus_code, config_folder):
     """Test generating fine tuning calculation job."""
-
     model_file = config_folder / "test.model"
     entry_point_name = "mlip.train"
     config_path = config_folder / "mlip_train.yml"
@@ -152,7 +147,6 @@ def test_prepare_tune(fixture_sandbox, generate_calc_job, janus_code, config_fol
 
 def test_finetune_error(fixture_sandbox, generate_calc_job, janus_code, config_folder):
     """Test error if no model is given."""
-
     entry_point_name = "mlip.train"
     config_path = config_folder / "mlip_train.yml"
     config = JanusConfigfile(file=config_path)
@@ -170,7 +164,6 @@ def test_finetune_error(fixture_sandbox, generate_calc_job, janus_code, config_f
 @pytest.mark.skipif(MACE_IMPORT_ERROR, reason="Requires updated version of MACE")
 def test_run_train(janus_code, config_folder):
     """Test running train with fine-tuning calculation"""
-
     model_file = config_folder / "test.model"
     config_path = config_folder / "mlip_train.yml"
     config = JanusConfigfile(file=config_path)
