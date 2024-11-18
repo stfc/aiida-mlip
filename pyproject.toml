@@ -30,7 +30,7 @@ python = "^3.9"
 aiida-core = "^2.6"
 ase = "^3.23.0"
 voluptuous = "^0.14"
-janus-core = "^v0.6.0b0"
+janus-core = "^0.6.5"
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "^7.4.1"}
@@ -44,7 +44,7 @@ wheel = "^0.42"
 optional = true
 [tool.poetry.group.pre-commit.dependencies]
 pre-commit = "^3.6.0"
-ruff = "^0.7.4"
+ruff = "^0.5.7"
 
 [tool.poetry.group.docs]
 optional = true
