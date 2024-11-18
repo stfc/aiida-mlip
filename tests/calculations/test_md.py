@@ -15,7 +15,7 @@ from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
 
 
-def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
+def test_md(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     """Test generating MD calculation job."""
     entry_point_name = "mlip.md"
     model_file = model_folder / "mace_mp_small.model"
@@ -95,7 +95,7 @@ def test_MD(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
 
 
-def test_MD_with_config(
+def test_md_with_config(
     fixture_sandbox, generate_calc_job, janus_code, model_folder, config_folder
 ):
     """Test generating MD calculation job."""
@@ -187,8 +187,8 @@ def test_run_md(model_folder, structure_folder, janus_code):
         ),
     }
 
-    MDCalculation = CalculationFactory("mlip.md")
-    result, node = run_get_node(MDCalculation, **inputs)
+    MDCalc = CalculationFactory("mlip.md")
+    result, node = run_get_node(MDCalc, **inputs)
 
     assert "final_structure" in result
     assert "traj_output" in result
@@ -202,7 +202,7 @@ def test_run_md(model_folder, structure_folder, janus_code):
 
 
 def test_example_md(example_path):
-    """Test function to run md calculation through the use of the example file provided."""
+    """Test function to run MD calculation using the example file provided."""
     example_file_path = example_path / "submit_md.py"
     command = ["verdi", "run", example_file_path, "janus@localhost"]
 

@@ -83,8 +83,8 @@ def test_run_opt(model_folder, janus_code):
         "steps": Int(1000),
     }
 
-    geomoptCalculation = CalculationFactory("mlip.opt")
-    result = run(geomoptCalculation, **inputs)
+    GeomoptCalc = CalculationFactory("mlip.opt")
+    result = run(GeomoptCalc, **inputs)
     assert "results_dict" in result
     assert "final_structure" in result
     assert "traj_output" in result
@@ -95,7 +95,7 @@ def test_run_opt(model_folder, janus_code):
 
 
 def test_example_opt(example_path):
-    """Test function to run geomopt calculation using the example file provided."""
+    """Test function to run geometry optimization using the example file provided."""
     example_file_path = example_path / "submit_geomopt.py"
     command = ["verdi", "run", example_file_path, "janus@localhost"]
 

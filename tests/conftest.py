@@ -25,8 +25,11 @@ def clear_database_auto(aiida_profile_clean):  # pylint: disable=unused-argument
 def filepath_tests():
     """
     Return the absolute filepath of the `tests` folder.
-    .. warning: If this file moves with respect to the `tests` folder,
-        the implementation should change.
+
+    Warning
+    -------
+    If this file moves with respect to the `tests` folder, the implementation should
+    change.
 
     Parameters
     ----------
@@ -99,8 +102,7 @@ def janus_code(aiida_local_code_factory):
 @pytest.fixture
 def fixture_code(fixture_localhost):
     """
-    Return an `InstalledCode` instance configured to run calculations of a given
-    entry point on localhost.
+    Return a configured `InstalledCode` instance to run calculations on localhost.
 
     Parameters
     ----------

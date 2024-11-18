@@ -28,7 +28,7 @@ def geomopt(params: dict) -> None:
     model = load_model(params["model"], params["arch"])
 
     # Select calculation to use
-    geomoptCalculation = CalculationFactory("mlip.opt")
+    GeomoptCalc = CalculationFactory("mlip.opt")
 
     # Define inputs
     inputs = {
@@ -47,7 +47,7 @@ def geomopt(params: dict) -> None:
     }
 
     # Run calculation
-    result, node = run_get_node(geomoptCalculation, **inputs)
+    result, node = run_get_node(GeomoptCalc, **inputs)
     print(f"Printing results from calculation: {result}")
     print(f"Printing node of calculation: {node}")
 

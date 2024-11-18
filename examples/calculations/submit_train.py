@@ -21,11 +21,11 @@ mlip_config = JanusConfigfile(
 )
 
 # Define calculation to run
-trainCalculation = CalculationFactory("mlip.train")
+TrainCalc = CalculationFactory("mlip.train")
 
 # Run calculation
 result, node = run_get_node(
-    trainCalculation,
+    TrainCalc,
     code=code,
     metadata=metadata,
     mlip_config=mlip_config,

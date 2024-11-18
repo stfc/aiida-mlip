@@ -28,7 +28,7 @@ def singlepoint(params: dict) -> None:
     model = load_model(params["model"], params["arch"])
 
     # Select calculation to use
-    singlePointCalculation = CalculationFactory("mlip.sp")
+    SinglepointCalc = CalculationFactory("mlip.sp")
 
     # Define inputs
     inputs = {
@@ -42,7 +42,7 @@ def singlepoint(params: dict) -> None:
     }
 
     # Run calculation
-    result, node = run_get_node(singlePointCalculation, **inputs)
+    result, node = run_get_node(SinglepointCalc, **inputs)
     print(f"Printing results from calculation: {result}")
     print(f"Printing node of calculation: {node}")
 

@@ -12,7 +12,7 @@ from aiida_mlip.helpers.help_load import load_model, load_structure
 
 def convert_numpy(dictionary: dict) -> dict:
     """
-    A function to convert numpy ndarrays in dictionary into lists.
+    Convert numpy ndarrays in dictionary into lists.
 
     Parameters
     ----------
@@ -35,7 +35,7 @@ def xyz_to_aiida_traj(
     traj_file: Union[str, Path],
 ) -> tuple[StructureData, TrajectoryData]:
     """
-    A function to convert xyz trajectory file to `TrajectoryData` data type.
+    Convert xyz trajectory file to `TrajectoryData` data type.
 
     Parameters
     ----------
