@@ -35,7 +35,7 @@ def convert_numpy(dictionary: dict) -> dict:
 
 
 def xyz_to_aiida_traj(
-    traj_file: Union[str, Path]
+    traj_file: Union[str, Path],
 ) -> tuple[StructureData, TrajectoryData]:
     """
     A function to convert xyz trajectory file to `TrajectoryData` data type.
