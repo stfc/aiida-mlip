@@ -2,32 +2,55 @@
 Developer guide
 ===============
 
+Getting started
++++++++++++++++
+
+We recommend `installing poetry <https://python-poetry.org/docs/#installation>`_
+for dependency management when developing for ``aiida-mlip``.
+
+This provides a number of useful features, including:
+
+- Dependency management (``poetry [add,update,remove]`` etc.) and organization (groups)
+- Storing the versions of all installations in a ``poetry.lock`` file, for reproducible builds
+- Improved dependency resolution
+- Virtual environment management (optional)
+- Building and publishing tools
+
+Dependencies useful for development can then be installed by running::
+
+    poetry install --with pre-commit,dev,docs
+
+
 Running the tests
 +++++++++++++++++
 
-The following will discover and run all unit test::
+Packages in the ``dev`` dependency group allow tests to be run locally using ``pytest``, by running::                                                                                                                                               pytest -v                                                                                                                                                                                                                                   Alternatively, tests can be run in separate virtual environments using ``tox``::                                                                                                                                                                    tox run -e ALL                                                                                                                                                                                                                              This will run all unit tests for multiple versions of Python, in addition to testing that the pre-commit passes, and that documentation builds, mirroring the automated tests on GitHub.                                                                                                                                                                                Individual components of the ``tox`` test suite can also be run separately, such as running only running the unit tests with Python 3.9::
 
-    pip install --upgrade pip
-    pip install -e .[testing]
-    pytest -v
+    tox run -e py39
 
-You can also run the tests in a virtual environment with `tox <https://tox.wiki/en/latest/>`_::
+See the `tox documentation <https://tox.wiki/>`_ for further options.
 
-    pip install tox tox-conda
-    tox -e py38 -- -v
 
 Automatic coding style checks
 +++++++++++++++++++++++++++++
 
-Enable enable automatic checks of code sanity and coding style::
+Packages in the ``pre-commit`` dependency group allow automatic code formatting and linting on every commit.
 
-    pip install -e .[pre-commit]
+To set this up, run::
+
     pre-commit install
 
-After this, the `black <https://black.readthedocs.io>`_ formatter,
-the `pylint <https://www.pylint.org/>`_ linter
-and the `pylint <https://www.pylint.org/>`_ code analyzer will
-run at every commit.
+After this, the `ruff linter <https://docs.astral.sh/ruff/linter/>`_, `ruff formatter <https://docs.astral.sh/ruff/formatter/>`_, and `numpydoc <https://numpydoc.readthedocs.io/en/latest/format.html>`_ (docstring style validator), will run before every commit.
+
+Rules enforced by ruff are currently set up to be comparable to:
+
+- `black <https://black.readthedocs.io>`_ (code formatter)
+- `pylint <https://www.pylint.org/>`_ (linter)
+- `pyupgrade <https://github.com/asottile/pyupgrade>`_ (syntax upgrader)
+- `isort <https://pycqa.github.io/isort/>`_ (import sorter)
+- `flake8-bugbear <https://pypi.org/project/flake8-bugbear/>`_ (bug finder)
+
+The full set of `ruff rules <https://docs.astral.sh/ruff/rules/>`_ are specified by the ``[tool.ruff]`` sections of `pyproject.toml <https://github.com/stfc/aiida-mlip/blob/main/pyproject.toml>`_.
 
 If you ever need to skip these pre-commit hooks, just use::
 
@@ -39,6 +62,7 @@ You should also keep the pre-commit hooks up to date periodically, with::
 
 Or consider using `pre-commit.ci <https://pre-commit.ci/>`_.
 
+
 Continuous integration
 ++++++++++++++++++++++
 
@@ -47,6 +71,7 @@ Continuous integration
 #. run all tests
 #. build the documentation
 #. check coding style and version number (not required to pass by default)
+
 
 Building the documentation
 ++++++++++++++++++++++++++
