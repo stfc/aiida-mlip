@@ -114,8 +114,8 @@ extend-exclude = ["conf.py", "*.ipynb"]
 target-version = "py39"
 
 [tool.ruff.lint]
-# Ignore complexity
-ignore = ["C901"]
+# Ignore complexity, non-lowercase
+ignore = ["C901", "N806"]
 select = [
     # flake8-bugbear
     "B",
