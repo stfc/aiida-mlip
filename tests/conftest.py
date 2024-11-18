@@ -1,4 +1,3 @@
-# pylint: disable=redefined-outer-name,too-many-statements
 """Initialise a text database and profile for pytest."""
 
 import os
@@ -13,11 +12,11 @@ from aiida.orm import InstalledCode, load_code
 from aiida.plugins import CalculationFactory
 import pytest
 
-pytest_plugins = ["aiida.manage.tests.pytest_fixtures"]  # pylint: disable=invalid-name
+pytest_plugins = ["aiida.manage.tests.pytest_fixtures"]
 
 
 @pytest.fixture(scope="function", autouse=True)
-def clear_database_auto(aiida_profile_clean):  # pylint: disable=unused-argument
+def clear_database_auto(aiida_profile_clean):
     """Automatically clear database in between tests."""
 
 

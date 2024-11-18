@@ -107,7 +107,6 @@ def cli(
     opt_cell_fully,
     steps,
 ) -> None:
-    # pylint: disable=too-many-arguments
     """Click interface."""
     try:
         code = load_code(codelabel)
@@ -133,4 +132,4 @@ def cli(
 
 
 if __name__ == "__main__":
-    cli()  # pylint: disable=no-value-for-parameter
+    cli()

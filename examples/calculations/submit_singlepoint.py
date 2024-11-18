@@ -75,7 +75,6 @@ def singlepoint(params: dict) -> None:
     "--precision", default="float64", type=str, help="Chosen level of precision."
 )
 def cli(codelabel, struct, model, arch, device, precision) -> None:
-    # pylint: disable=too-many-arguments
     """Click interface."""
     try:
         code = load_code(codelabel)
@@ -97,4 +96,4 @@ def cli(codelabel, struct, model, arch, device, precision) -> None:
 
 
 if __name__ == "__main__":
-    cli()  # pylint: disable=no-value-for-parameter
+    cli()

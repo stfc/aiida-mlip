@@ -145,7 +145,6 @@ class Train(CalcJob):  # numpydoc ignore=PR01
             message="Some output files missing or cannot be read",
         )
 
-    # pylint: disable=too-many-locals
     def prepare_for_submission(
         self, folder: aiida.common.folders.Folder
     ) -> datastructures.CalcInfo:

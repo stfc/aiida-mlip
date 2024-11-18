@@ -91,7 +91,6 @@ def cli(
     codelabel, struct, model, arch, device, precision, ensemble, md_dict_str
 ) -> None:
     """Click interface."""
-    # pylint: disable=too-many-arguments
     md_dict = ast.literal_eval(md_dict_str)
     try:
         code = load_code(codelabel)
@@ -115,4 +114,4 @@ def cli(
 
 
 if __name__ == "__main__":
-    cli()  # pylint: disable=no-value-for-parameter
+    cli()

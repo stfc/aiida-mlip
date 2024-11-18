@@ -72,7 +72,6 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
         print("defining outputnode")
         spec.default_output_node = "results_dict"
 
-    # pylint: disable=too-many-locals
     def prepare_for_submission(
         self, folder: aiida.common.folders.Folder
     ) -> datastructures.CalcInfo:

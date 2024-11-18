@@ -152,7 +152,6 @@ class ModelData(SinglefileData):
         return cls(file=file_path, architecture=architecture, filename=filename)
 
     @classmethod
-    # pylint: disable=too-many-arguments
     def from_uri(
         cls,
         uri: str,

@@ -66,7 +66,6 @@ def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, janus_cod
     """Test singlepoint calculation with error input."""
     entry_point_name = "mlip.sp"
     model_file = model_folder / "mace_mp_small.model"
-    # pylint:disable=line-too-long
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
