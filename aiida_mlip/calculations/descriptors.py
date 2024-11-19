@@ -28,7 +28,7 @@ class Descriptors(Singlepoint):  # numpydoc ignore=PR01
 
         Parameters
         ----------
-        spec : `aiida.engine.CalcJobProcessSpec`
+        spec : aiida.engine.CalcJobProcessSpec
             The calculation job process spec to define.
         """
         super().define(spec)
@@ -88,13 +88,11 @@ class Descriptors(Singlepoint):  # numpydoc ignore=PR01
         # descriptors is overwriting the placeholder "calculation" from the base.py file
         codeinfo.cmdline_params[0] = "descriptors"
 
-        cmdline_options = {}
-        if "invariants_only" in self.inputs:
-            cmdline_options["invariants-only"] = self.inputs.invariants_only.value
-        if "calc_per_element" in self.inputs:
-            cmdline_options["calc-per-element"] = self.inputs.calc_per_element.value
-        if "calc_per_atom" in self.inputs:
-            cmdline_options["calc-per-atom"] = self.inputs.calc_per_atom.value
+        cmdline_options = {
+            key.replace("_", "-"): getattr(self.inputs, key).value
+            for key in ("invariants_only", "calc_per_element", "calc_per_atom")
+            if key in self.inputs
+        }
 
         for flag, value in cmdline_options.items():
             if isinstance(value, bool):
