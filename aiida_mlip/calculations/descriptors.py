@@ -4,31 +4,22 @@ from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJobProcessSpec
 import aiida.engine.processes
-from aiida.orm import Bool, Dict, SinglefileData, Str
+from aiida.orm import Bool
 
-from aiida_mlip.calculations.base import BaseJanus
+from aiida_mlip.calculations.singlepoint import Singlepoint
 
 
-class Descriptors(BaseJanus):  # numpydoc ignore=PR01
+class Descriptors(Singlepoint):  # numpydoc ignore=PR01
     """
     Calcjob implementation to calculate MLIP descriptors.
-
-    Attributes
-    ----------
-    XYZ_OUTPUT : str
-        Default xyz output file name.
 
     Methods
     -------
     define(spec: CalcJobProcessSpec) -> None:
         Define the process specification, its inputs, outputs and exit codes.
-    validate_inputs(value: dict, port_namespace: PortNamespace) -> Optional[str]:
-        Check if the inputs are valid.
     prepare_for_submission(folder: Folder) -> CalcInfo:
         Create the input files for the `CalcJob`.
     """
-
-    XYZ_OUTPUT = "aiida-results.xyz"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
@@ -44,13 +35,8 @@ class Descriptors(BaseJanus):  # numpydoc ignore=PR01
 
         # Define inputs
 
-        spec.input(
-            "out",
-            valid_type=Str,
-            required=False,
-            default=lambda: Str(cls.XYZ_OUTPUT),
-            help="Name of the xyz output file",
-        )
+        # Remove unused singlepoint input
+        del spec.inputs["properties"]
 
         spec.input(
             "invariants_only",
@@ -77,17 +63,6 @@ class Descriptors(BaseJanus):  # numpydoc ignore=PR01
             "parser_name"
         ].default = "mlip.descriptors_parser"
 
-        # Define outputs. The default is an array with the descriptors from the xyz file
-        spec.output(
-            "results_dict",
-            valid_type=Dict,
-            help="The `descriptors` output node of the successful calculation.",
-        )
-        spec.output("xyz_output", valid_type=SinglefileData)
-
-        print("defining outputnode")
-        spec.default_output_node = "results_dict"
-
     # pylint: disable=too-many-locals
     def prepare_for_submission(
         self, folder: aiida.common.folders.Folder
@@ -113,10 +88,6 @@ class Descriptors(BaseJanus):  # numpydoc ignore=PR01
         # descriptors is overwriting the placeholder "calculation" from the base.py file
         codeinfo.cmdline_params[0] = "descriptors"
 
-        # The inputs are saved in the node, but we want their value as a string
-        xyz_filename = (self.inputs.out).value
-        codeinfo.cmdline_params += ["--out", xyz_filename]
-
         cmdline_options = {}
         if "invariants_only" in self.inputs:
             cmdline_options["invariants-only"] = self.inputs.invariants_only.value
@@ -132,7 +103,5 @@ class Descriptors(BaseJanus):  # numpydoc ignore=PR01
                     codeinfo.cmdline_params.append(f"--{flag}")
             else:
                 codeinfo.cmdline_params += [f"--{flag}", value]
-
-        calcinfo.retrieve_list.append(xyz_filename)
 
         return calcinfo
