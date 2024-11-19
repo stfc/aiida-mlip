@@ -98,12 +98,20 @@ def test_run_descriptors(model_folder, janus_code):
     assert obtained_res["mace_descriptors"] == pytest.approx([-0.00207855, -0.00919008])
 
 
-def test_example_descriptors(example_path):
+def test_example_descriptors(example_path, janus_code):
     """Test running descriptors calculation using the example file provided."""
     example_file_path = example_path / "submit_descriptors.py"
-    command = ["verdi", "run", example_file_path, "janus@localhost"]
+    command = [
+        "verdi",
+        "run",
+        example_file_path,
+        f"{janus_code.label}@{janus_code.computer.label}",
+    ]
 
     # Execute the command
     result = subprocess.run(command, capture_output=True, text=True, check=False)
     assert result.stderr == ""
     assert result.returncode == 0
+    assert "results from calculation:" in result.stdout
+    assert "'results_dict': <Dict: uuid:" in result.stdout
+    assert "'xyz_output': <SinglefileData: uuid:" in result.stdout
