@@ -14,6 +14,16 @@ aiida\_mlip.parsers.base\_parser module
    :undoc-members:
    :show-inheritance:
 
+aiida\_mlip.parsers.descriptors\_parser module
+----------------------------------------------
+
+.. automodule:: aiida_mlip.parsers.descriptors_parser
+   :members:
+   :special-members:
+   :private-members:
+   :undoc-members:
+   :show-inheritance:
+
 aiida\_mlip.parsers.md\_parser module
 -------------------------------------
 
