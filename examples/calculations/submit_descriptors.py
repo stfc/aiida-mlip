@@ -4,7 +4,7 @@ import click
 
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
-from aiida.orm import Str, load_code
+from aiida.orm import Bool, Str, load_code
 from aiida.plugins import CalculationFactory
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
@@ -40,6 +40,9 @@ def descriptors(params: dict) -> None:
         "model": model,
         "precision": Str(params["precision"]),
         "device": Str(params["device"]),
+        "invariants_only": Bool(params["invariants_only"]),
+        "calc_per_element": Bool(params["calc_per_element"]),
+        "calc_per_atom": Bool(params["calc_per_atom"]),
     }
 
     # Run calculation
@@ -75,7 +78,35 @@ def descriptors(params: dict) -> None:
 @click.option(
     "--precision", default="float64", type=str, help="Chosen level of precision."
 )
-def cli(codelabel, struct, model, arch, device, precision) -> None:
+@click.option(
+    "--invariants-only",
+    default=False,
+    type=bool,
+    help="Only calculate invariant descriptors.",
+)
+@click.option(
+    "--calc-per-element",
+    default=False,
+    type=bool,
+    help="Calculate mean descriptors for each element.",
+)
+@click.option(
+    "--calc-per-atom",
+    default=False,
+    type=bool,
+    help="Calculate descriptors for each atom.",
+)
+def cli(
+    codelabel,
+    struct,
+    model,
+    arch,
+    device,
+    precision,
+    invariants_only,
+    calc_per_element,
+    calc_per_atom,
+) -> None:
     # pylint: disable=too-many-arguments
     """Click interface."""
     try:
@@ -91,6 +122,9 @@ def cli(codelabel, struct, model, arch, device, precision) -> None:
         "arch": arch,
         "device": device,
         "precision": precision,
+        "invariants_only": invariants_only,
+        "calc_per_element": calc_per_element,
+        "calc_per_atom": calc_per_atom,
     }
 
     # Submit descriptors
