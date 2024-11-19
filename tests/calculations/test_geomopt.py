@@ -14,7 +14,7 @@ from aiida_mlip.data.model import ModelData
 
 
 def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
-    """Test generating singlepoint calculation job"""
+    """Test generating geomopt calculation job."""
 
     entry_point_name = "mlip.opt"
     model_file = model_folder / "mace_mp_small.model"
@@ -70,7 +70,7 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
 
 
 def test_run_opt(model_folder, janus_code):
-    """Test running singlepoint calculation"""
+    """Test running geomopt calculation."""
 
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
@@ -98,9 +98,7 @@ def test_run_opt(model_folder, janus_code):
 
 
 def test_example_opt(example_path):
-    """
-    Test function to run md calculation through the use of the example file provided.
-    """
+    """Test function to run geomopt calculation using the example file provided."""
     example_file_path = example_path / "submit_geomopt.py"
     command = ["verdi", "run", example_file_path, "janus@localhost"]
 
