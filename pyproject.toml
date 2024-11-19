@@ -72,12 +72,14 @@ build-backend = "poetry.core.masonry.api"
 "mlip.opt" = "aiida_mlip.calculations.geomopt:GeomOpt"
 "mlip.md" = "aiida_mlip.calculations.md:MD"
 "mlip.train" = "aiida_mlip.calculations.train:Train"
+"mlip.descriptors" = "aiida_mlip.calculations.descriptors:Descriptors"
 
 [tool.poetry.plugins."aiida.parsers"]
 "mlip.sp_parser" = "aiida_mlip.parsers.sp_parser:SPParser"
 "mlip.opt_parser" = "aiida_mlip.parsers.opt_parser:GeomOptParser"
 "mlip.md_parser" = "aiida_mlip.parsers.md_parser:MDParser"
 "mlip.train_parser" = "aiida_mlip.parsers.train_parser:TrainParser"
+"mlip.descriptors_parser" = "aiida_mlip.parsers.descriptors_parser:DescriptorsParser"
 
 [tool.black]
 line-length = 88
