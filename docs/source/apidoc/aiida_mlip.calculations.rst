@@ -14,6 +14,16 @@ aiida\_mlip.calculations.base module
    :undoc-members:
    :show-inheritance:
 
+aiida\_mlip.calculations.descriptors module
+-------------------------------------------
+
+.. automodule:: aiida_mlip.calculations.descriptors
+   :members:
+   :special-members:
+   :private-members:
+   :undoc-members:
+   :show-inheritance:
+
 aiida\_mlip.calculations.geomopt module
 ---------------------------------------
 

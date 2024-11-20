@@ -22,11 +22,14 @@ machine learning interatomic potentials aiida plugin
   - NVE
   - NVT (Langevin(Eijnden/Ciccotti flavour) and Nosé-Hoover (Melchionna flavour))
   - NPT (Nosé-Hoover (Melchiona flavour))
-- [x] Training ML potentials (MACE only planned)
-- [x] Fine tunning MLIPs (MACE only planned)
+- [x] Training MLIPs
+  - MACE
+- [x] Fine tuning MLIPs
+  - MACE
+- [x] MLIP descriptors
+  - MACE
 
 The code relies heavily on [janus-core](https://github.com/stfc/janus-core), which handles mlip calculations using ASE.
-
 
 
 ## Installation
@@ -46,8 +49,8 @@ Registered entry points for aiida.calculations:
 * mlip.sp
 * mlip.md
 * mlip.train
+* mlip.descriptors
 ```
-
 
 ## Usage
 
@@ -100,12 +103,14 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
     * [`singlepoint.py`](aiida_mlip/calculations/singlepoint.py): `Calcjob` class to run single point calculations using mlips
     * [`geomopt.py`](aiida_mlip/calculations/geomopt.py): `Calcjob` class to perform geometry optimization using mlips
     * [`md.py`](aiida_mlip/calculations/md.py): `Calcjob` class to perform molecular dynamics using mlips
+    * [`descriptors.py`](aiida_mlip/calculations/descriptors.py): `Calcjob` class to calculate MLIP descriptors
   * [`parsers/`](aiida_mlip/parsers/): `Parsers` for the calculations
     * [`base_parser.py`](aiida_mlip/parsers/base_parser.py): Base `Parser` for all calculations.
     * [`sp_parser.py`](aiida_mlip/parsers/sp_parser.py): `Parser` for `Singlepoint` calculation.
     * [`opt_parser.py`](aiida_mlip/parsers/opt_parser.py): `Parser` for `Geomopt` calculation.
     * [`md_parser.py`](aiida_mlip/parsers/md_parser.py): `Parser` for `MD` calculation.
     * [`train_parser.py`](aiida_mlip/parsers/train_parser.py): `Parser` for `Train` calculation.
+    * [`descriptors_parser.py`](aiida_mlip/parsers/descriptors_parser.py): `Parser` for `Descriptors` calculation.
   * [`helpers/`](aiida_mlip/helpers/): `Helpers` to run calculations.
 * [`docs/`](docs/source/): Code documentation
   * [`apidoc/`](docs/source/apidoc/): API documentation
@@ -119,6 +124,7 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
     * [`submit_geomopt.py`](examples/calculations/submit_geomopt.py): Script for submitting a geometry optimisation calculation
     * [`submit_md.py`](examples/calculations/submit_md.py): Script for submitting a molecular dynamics calculation
     * [`submit_train.py`](examples/calculations/submit_train.py): Script for submitting a train calculation.
+    * [`submit_descriptors.py`](examples/calculations/submit_descriptors.py): Script for submitting a descriptors calculation.
 * [`tests/`](tests/): Basic regression tests using the [pytest](https://docs.pytest.org/en/latest/) framework (submitting a calculation, ...). Install `pip install -e .[testing]` and run `pytest`.
   * [`conftest.py`](tests/conftest.py): Configuration of fixtures for [pytest](https://docs.pytest.org/en/latest/)
   * [`calculations/`](tests/calculations): Calculations
@@ -126,6 +132,7 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
     * [`test_geomopt.py`](tests/calculations/test_geomopt.py): Test `Geomopt` calculation
     * [`test_md.py`](tests/calculations/test_md.py): Test `MD` calculation
     * [`test_train.py`](tests/calculations/test_train.py): Test `Train` calculation
+    * [`test_descriptors.py`](tests/calculations/test_descriptors.py): Test `Descriptors` calculation
   * [`data/`](tests/data): `ModelData`
     * [`test_model.py`](tests/data/test_model.py): Test `ModelData` type
     * [`test_config.py`](tests/data/test_config.py): Test `JanusConfigfile` type
