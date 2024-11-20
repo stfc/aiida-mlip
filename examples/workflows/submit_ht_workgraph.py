@@ -1,11 +1,11 @@
-"""Example submission for hts workgraph."""
+"""Example submission for high throughput workgraph."""
 
 from pathlib import Path
 
 from aiida.orm import load_code
 
 from aiida_mlip.data.model import ModelData
-from aiida_mlip.workflows.hts_workgraph import HTSWorkGraph
+from aiida_mlip.workflows.ht_workgraph import ht_workgraph
 
 folder_path = Path("/home/federica/aiida-mlip/tests/workflows/structures/")
 inputs = {
@@ -17,4 +17,4 @@ inputs = {
     "code": load_code("janus@localhost"),
 }
 
-HTSWorkGraph(folder_path, inputs)
+ht_workgraph(folder_path, inputs)

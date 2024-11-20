@@ -1,4 +1,4 @@
-"""Example code for submitting high-throughpout calculation without a Workchain"""
+"""Example code for submitting high-throughpout calculation without a Workchain."""
 
 import csv
 from pathlib import Path
@@ -18,8 +18,8 @@ from aiida_mlip.helpers.help_load import load_structure
 
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-locals
-def run_hts(folder, config, calc, output_filename, code, group, launch):
-    """Run high throughput screening using the parameters from the cli."""
+def run_ht(folder, config, calc, output_filename, code, group, launch):
+    """Run high throughput calculation using the parameters from the cli."""
     # Add the required inputs for aiida
     metadata = {"options": {"resources": {"num_machines": 1}}}
 
@@ -107,7 +107,7 @@ def cli(folder, config, calc, output_filename, codelabel, group, launch):
     except NotExistent:
         print(f"The group '{group}' does not exist.")
 
-    run_hts(folder, config, calc, output_filename, code, group, launch)
+    run_ht(folder, config, calc, output_filename, code, group, launch)
 
 
 if __name__ == "__main__":

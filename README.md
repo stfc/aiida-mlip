@@ -113,7 +113,7 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
     * [`descriptors_parser.py`](aiida_mlip/parsers/descriptors_parser.py): `Parser` for `Descriptors` calculation.
   * [`helpers/`](aiida_mlip/helpers/): `Helpers` to run calculations.
   * [`workflows/`](aiida_mlip/workflows/): `WorkGraphs` or `WorkChains` for common workflows with mlips.
-    * [`hts_workgraph.py`](aiida_mlip/workflows/hts_workgraph.py): A `WorkGraph` to run high-throughput screening optimisations.
+    * [`ht_workgraph.py`](aiida_mlip/workflows/ht_workgraph.py): A `WorkGraph` to run high-throughput optimisations.
 * [`docs/`](docs/source/): Code documentation
   * [`apidoc/`](docs/source/apidoc/): API documentation
   * [`developer_guide/`](docs/source/developer_guide/): Documentation for developers
@@ -128,8 +128,8 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
     * [`submit_train.py`](examples/calculations/submit_train.py): Script for submitting a train calculation.
     * [`submit_descriptors.py`](examples/calculations/submit_descriptors.py): Script for submitting a descriptors calculation.
   * [`workflows/`](examples/workflows/): Scripts for submitting workflows
-    * [`run_hts_nowc.py`](examples/workflows/run_hts_nowc.py): Script for submitting multiple janus calculations without using any pre-coded high-throughout screening tools (like the WorkGraph).
-    * [`submit_hts_workgraph.py`](examples/workflows/submit_hts_workgraph.py): Script for submitting a high-throughput screening WorkGraph for geometry optimisation.
+    * [`run_ht_nowc.py`](examples/workflows/run_ht_nowc.py): Script for submitting multiple janus calculations without using any pre-coded high-throughout tools (like the WorkGraph).
+    * [`submit_ht_workgraph.py`](examples/workflows/submit_ht_workgraph.py): Script for submitting a high-throughput WorkGraph for geometry optimisation.
   * [`workflows/utils`](examples/workflows/utils): A folder with some scripts for dealing with the high-throughout calculations.
 * [`tests/`](tests/): Basic regression tests using the [pytest](https://docs.pytest.org/en/latest/) framework (submitting a calculation, ...). Install `pip install -e .[testing]` and run `pytest`.
   * [`conftest.py`](tests/conftest.py): Configuration of fixtures for [pytest](https://docs.pytest.org/en/latest/)
@@ -143,7 +143,7 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
     * [`test_model.py`](tests/data/test_model.py): Test `ModelData` type
     * [`test_config.py`](tests/data/test_config.py): Test `JanusConfigfile` type
   * [`workflows/`](tests/workflows): Workflows
-    * [`test_hts.py`](tests/workflows/test_hts.py): Test high throughput screening workgraph.
+    * [`test_ht.py`](tests/workflows/test_ht.py): Test high throughput workgraph.
 * [`.gitignore`](.gitignore): Telling git which files to ignore
 * [`.pre-commit-config.yaml`](.pre-commit-config.yaml): Configuration of [pre-commit hooks](https://pre-commit.com/) that sanitize coding style and check for syntax errors. Enable via `pip install -e .[pre-commit] && pre-commit install`
 * [`LICENSE`](LICENSE): License for the plugin

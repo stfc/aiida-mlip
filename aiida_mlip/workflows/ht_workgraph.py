@@ -1,4 +1,4 @@
-"""Workgraph to run high-throughput screening optimisations."""
+"""Workgraph to run high-throughput geometry optimisations."""
 
 from pathlib import Path
 
@@ -8,7 +8,7 @@ from ase.io import read
 
 from aiida_mlip.helpers.help_load import load_structure
 
-Geomopt = CalculationFactory("mlip.opt")
+GeomoptCalc = CalculationFactory("mlip.opt")
 
 
 @task.graph_builder(outputs=[{"name": "final_structures", "from": "context.relax"}])
@@ -36,12 +36,16 @@ def run_opt_calc(folder: Path, janus_opt_inputs: dict) -> WorkGraph:
             continue
         structure = load_structure(child)
         janus_opt_inputs["struct"] = structure
-        relax = wg.add_task(Geomopt, name=f"relax_{child.stem}", **janus_opt_inputs)
+        relax = wg.add_task(
+            GeomoptCalc,
+            name=f"relax_{child.stem}",
+            **janus_opt_inputs,
+        )
         relax.set_context({"final_structure": f"relax.{child.stem}"})
     return wg
 
 
-def HTSWorkGraph(folder_path: Path, inputs: dict) -> WorkGraph:
+def ht_workgraph(folder_path: Path, inputs: dict) -> WorkGraph:
     """
     Create and execute a high-throughput workflow for geometry optimisation using MLIPs.
 
@@ -57,7 +61,7 @@ def HTSWorkGraph(folder_path: Path, inputs: dict) -> WorkGraph:
     WorkGraph
         The workgraph containing the high-throughput workflow.
     """
-    wg = WorkGraph("hts_workflow")
+    wg = WorkGraph("ht_workflow")
 
     wg.add_task(
         run_opt_calc, name="opt_task", folder=folder_path, janus_opt_inputs=inputs

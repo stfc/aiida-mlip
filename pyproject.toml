@@ -82,7 +82,7 @@ build-backend = "poetry.core.masonry.api"
 "mlip.descriptors_parser" = "aiida_mlip.parsers.descriptors_parser:DescriptorsParser"
 
 [tool.poetry.plugins."aiida.workflows"]
-"mlip.hts_wg" = "aiida_mlip.workflows.hts_workgraph:HTSWorkGraph"
+"mlip.ht_wg" = "aiida_mlip.workflows.ht_workgraph:ht_workgraph"
 
 [tool.pytest.ini_options]
 # Configuration for [pytest](https://docs.pytest.org)

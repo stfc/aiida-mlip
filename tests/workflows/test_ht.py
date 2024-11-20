@@ -1,12 +1,12 @@
-"""Test for high-throughput-screening WorkGraph."""
+"""Test for high-throughput WorkGraph."""
 
 # from aiida.orm import StructureData, load_node
 
 from aiida_mlip.data.model import ModelData
-from aiida_mlip.workflows.hts_workgraph import HTSWorkGraph
+from aiida_mlip.workflows.ht_workgraph import ht_workgraph
 
 
-def test_hts_wg(janus_code, structure_folder2, model_folder) -> None:
+def test_ht_wg(janus_code, structure_folder2, model_folder) -> None:
     """Submit simple calcjob."""
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
@@ -14,7 +14,7 @@ def test_hts_wg(janus_code, structure_folder2, model_folder) -> None:
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
     }
-    wg = HTSWorkGraph(folder_path=structure_folder2, inputs=inputs)
+    wg = ht_workgraph(folder_path=structure_folder2, inputs=inputs)
     wg.wait(15)
 
     # AT THE MOMENT WE ONLY CHECK THE PROCESS IS CREATED AT LEAST,
