@@ -1,6 +1,4 @@
-"""
-Geom optimisation parser.
-"""
+"""Geom optimisation parser."""
 
 from pathlib import Path
 
@@ -13,7 +11,7 @@ from aiida.plugins import CalculationFactory
 from aiida_mlip.helpers.converters import xyz_to_aiida_traj
 from aiida_mlip.parsers.sp_parser import SPParser
 
-geomoptCalculation = CalculationFactory("mlip.opt")
+GeomoptCalc = CalculationFactory("mlip.opt")
 
 
 class GeomOptParser(SPParser):
@@ -54,7 +52,7 @@ class GeomOptParser(SPParser):
         """
         super().__init__(node)
 
-        if not issubclass(node.process_class, geomoptCalculation):
+        if not issubclass(node.process_class, GeomoptCalc):
             raise exceptions.ParsingError("Can only parse `GeomOpt` calculations")
 
     def parse(self, **kwargs) -> ExitCode:

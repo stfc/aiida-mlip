@@ -2,21 +2,19 @@
 
 import subprocess
 
-from ase.build import bulk
-import pytest
-
 from aiida.common import InputValidationError, datastructures
 from aiida.engine import run
 from aiida.orm import Str, StructureData
 from aiida.plugins import CalculationFactory
+from ase.build import bulk
+import pytest
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
 
 
 def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folder):
-    """Test generating singlepoint calculation job"""
-
+    """Test generating singlepoint calculation job."""
     entry_point_name = "mlip.sp"
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
@@ -65,10 +63,9 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
 
 
 def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, janus_code):
-    """Test singlepoint calculation with error input"""
+    """Test singlepoint calculation with error input."""
     entry_point_name = "mlip.sp"
     model_file = model_folder / "mace_mp_small.model"
-    # pylint:disable=line-too-long
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
@@ -82,7 +79,7 @@ def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, janus_cod
 
 
 def test_sp_nomodel(fixture_sandbox, generate_calc_job, config_folder, janus_code):
-    """Test singlepoint calculation with missing model"""
+    """Test singlepoint calculation with missing model."""
     entry_point_name = "mlip.sp"
 
     inputs = {
@@ -97,7 +94,7 @@ def test_sp_nomodel(fixture_sandbox, generate_calc_job, config_folder, janus_cod
 
 
 def test_sp_noarch(fixture_sandbox, generate_calc_job, config_folder, janus_code):
-    """Test singlepoint calculation with missing architecture"""
+    """Test singlepoint calculation with missing architecture."""
     entry_point_name = "mlip.sp"
 
     inputs = {
@@ -112,7 +109,7 @@ def test_sp_noarch(fixture_sandbox, generate_calc_job, config_folder, janus_code
 
 
 def test_two_arch(fixture_sandbox, generate_calc_job, model_folder, janus_code):
-    """Test singlepoint calculation with two defined architectures"""
+    """Test singlepoint calculation with two defined architectures."""
     entry_point_name = "mlip.sp"
     model_file = model_folder / "mace_mp_small.model"
 
@@ -129,7 +126,7 @@ def test_two_arch(fixture_sandbox, generate_calc_job, model_folder, janus_code):
 
 
 def test_run_sp(model_folder, janus_code):
-    """Test running singlepoint calculation"""
+    """Test running singlepoint calculation."""
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
@@ -141,8 +138,8 @@ def test_run_sp(model_folder, janus_code):
         "device": Str("cpu"),
     }
 
-    singlePointCalculation = CalculationFactory("mlip.sp")
-    result = run(singlePointCalculation, **inputs)
+    SinglepointCalc = CalculationFactory("mlip.sp")
+    result = run(SinglepointCalc, **inputs)
     assert "results_dict" in result
     obtained_res = result["results_dict"].get_dict()
     assert "xyz_output" in result
@@ -151,10 +148,7 @@ def test_run_sp(model_folder, janus_code):
 
 
 def test_example(example_path):
-    """
-    Test function to run md calculation through the use of the example file provided.
-    """
-
+    """Test function to run singlepoint calculation using the example file provided."""
     example_file_path = example_path / "submit_singlepoint.py"
     command = ["verdi", "run", example_file_path, "janus@localhost"]
 

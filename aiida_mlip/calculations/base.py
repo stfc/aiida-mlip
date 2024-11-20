@@ -2,13 +2,12 @@
 
 import shutil
 
-from ase.io import read, write
-
 from aiida.common import InputValidationError, datastructures
 import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
 import aiida.engine.processes
 from aiida.orm import SinglefileData, Str, StructureData
+from ase.io import read, write
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
@@ -186,7 +185,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             message="Some output files missing or cannot be read",
         )
 
-    # pylint: disable=too-many-locals
     def prepare_for_submission(
         self, folder: aiida.common.folders.Folder
     ) -> datastructures.CalcInfo:
@@ -203,7 +201,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         aiida.common.datastructures.CalcInfo
             An instance of `aiida.common.datastructures.CalcInfo`.
         """
-
         if "struct" in self.inputs:
             structure = self.inputs.struct
         elif "config" in self.inputs and "struct" in self.inputs.config.as_dictionary:

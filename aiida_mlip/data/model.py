@@ -65,8 +65,7 @@ class ModelData(SinglefileData):
             # calculating sha in chunks rather than 1 large pass
             while data := f.read(buf_size):
                 sha256.update(data)
-        file_hash = sha256.hexdigest()
-        return file_hash
+        return sha256.hexdigest()
 
     def __init__(
         self,
@@ -153,7 +152,6 @@ class ModelData(SinglefileData):
         return cls(file=file_path, architecture=architecture, filename=filename)
 
     @classmethod
-    # pylint: disable=too-many-arguments
     def from_uri(
         cls,
         uri: str,

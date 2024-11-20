@@ -1,11 +1,10 @@
-"""Example code for submitting single point calculation"""
-
-import click
+"""Example code for submitting single point calculation."""
 
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
 from aiida.orm import Str, load_code
 from aiida.plugins import CalculationFactory
+import click
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
@@ -23,14 +22,13 @@ def singlepoint(params: dict) -> None:
     -------
         None
     """
-
     structure = load_structure(params["struct"])
 
     # Select model to use
     model = load_model(params["model"], params["arch"])
 
     # Select calculation to use
-    singlePointCalculation = CalculationFactory("mlip.sp")
+    SinglepointCalc = CalculationFactory("mlip.sp")
 
     # Define inputs
     inputs = {
@@ -44,7 +42,7 @@ def singlepoint(params: dict) -> None:
     }
 
     # Run calculation
-    result, node = run_get_node(singlePointCalculation, **inputs)
+    result, node = run_get_node(SinglepointCalc, **inputs)
     print(f"Printing results from calculation: {result}")
     print(f"Printing node of calculation: {node}")
 
@@ -77,7 +75,6 @@ def singlepoint(params: dict) -> None:
     "--precision", default="float64", type=str, help="Chosen level of precision."
 )
 def cli(codelabel, struct, model, arch, device, precision) -> None:
-    # pylint: disable=too-many-arguments
     """Click interface."""
     try:
         code = load_code(codelabel)
@@ -99,4 +96,4 @@ def cli(codelabel, struct, model, arch, device, precision) -> None:
 
 
 if __name__ == "__main__":
-    cli()  # pylint: disable=no-value-for-parameter
+    cli()

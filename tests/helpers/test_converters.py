@@ -2,9 +2,8 @@
 
 from pathlib import Path
 
-import numpy as np
-
 from aiida.orm import StructureData, TrajectoryData
+import numpy as np
 
 from aiida_mlip.helpers.converters import convert_numpy, xyz_to_aiida_traj
 

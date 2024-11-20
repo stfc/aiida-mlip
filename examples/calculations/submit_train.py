@@ -1,4 +1,4 @@
-"""Example code for submitting training calculation"""
+"""Example code for submitting training calculation."""
 
 from pathlib import Path
 
@@ -21,11 +21,11 @@ mlip_config = JanusConfigfile(
 )
 
 # Define calculation to run
-trainCalculation = CalculationFactory("mlip.train")
+TrainCalc = CalculationFactory("mlip.train")
 
 # Run calculation
 result, node = run_get_node(
-    trainCalculation,
+    TrainCalc,
     code=code,
     metadata=metadata,
     mlip_config=mlip_config,

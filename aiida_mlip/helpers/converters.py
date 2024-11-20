@@ -1,21 +1,18 @@
-"""
-Some helpers to convert between different formats.
-"""
+"""Some helpers to convert between different formats."""
 
 from pathlib import Path
 from typing import Union
 
+from aiida.orm import Bool, Dict, Str, StructureData, TrajectoryData, load_code
 from ase.io import read
 import numpy as np
-
-from aiida.orm import Bool, Dict, Str, StructureData, TrajectoryData, load_code
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
 
 def convert_numpy(dictionary: dict) -> dict:
     """
-    A function to convert numpy ndarrays in dictionary into lists.
+    Convert numpy ndarrays in dictionary into lists.
 
     Parameters
     ----------
@@ -35,10 +32,10 @@ def convert_numpy(dictionary: dict) -> dict:
 
 
 def xyz_to_aiida_traj(
-    traj_file: Union[str, Path]
+    traj_file: Union[str, Path],
 ) -> tuple[StructureData, TrajectoryData]:
     """
-    A function to convert xyz trajectory file to `TrajectoryData` data type.
+    Convert xyz trajectory file to `TrajectoryData` data type.
 
     Parameters
     ----------

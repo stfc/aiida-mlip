@@ -1,21 +1,18 @@
-"""
-Parsers provided by aiida_mlip.
-"""
+"""Parsers provided by aiida_mlip."""
 
 from pathlib import Path
-
-from ase.io import read
 
 from aiida.common import exceptions
 from aiida.engine import ExitCode
 from aiida.orm import Dict, SinglefileData
 from aiida.orm.nodes.process.process import ProcessNode
 from aiida.plugins import CalculationFactory
+from ase.io import read
 
 from aiida_mlip.helpers.converters import convert_numpy
 from aiida_mlip.parsers.base_parser import BaseParser
 
-singlePointCalculation = CalculationFactory("mlip.sp")
+SinglepointCalc = CalculationFactory("mlip.sp")
 
 
 class SPParser(BaseParser):
@@ -43,7 +40,7 @@ class SPParser(BaseParser):
     Raises
     ------
     exceptions.ParsingError
-        If the ProcessNode being passed was not produced by a singlePointCalculation.
+        If the ProcessNode being passed was not produced by a SinglepointCalc.
     """
 
     def __init__(self, node: ProcessNode):
@@ -57,7 +54,7 @@ class SPParser(BaseParser):
         """
         super().__init__(node)
 
-        if not issubclass(node.process_class, singlePointCalculation):
+        if not issubclass(node.process_class, SinglepointCalc):
             raise exceptions.ParsingError("Can only parse `Singlepoint` calculations")
 
     def parse(self, **kwargs) -> int:
@@ -74,7 +71,6 @@ class SPParser(BaseParser):
         int
             An exit code.
         """
-
         exit_code = super().parse(**kwargs)
 
         if exit_code != ExitCode(0):

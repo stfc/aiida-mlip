@@ -1,16 +1,13 @@
-"""
-MD parser.
-"""
+"""MD parser."""
 
 from pathlib import Path
-
-import yaml
 
 from aiida.common import exceptions
 from aiida.engine import ExitCode
 from aiida.orm import Dict, SinglefileData
 from aiida.orm.nodes.process.process import ProcessNode
 from aiida.plugins import CalculationFactory
+import yaml
 
 from aiida_mlip.calculations.md import MD
 from aiida_mlip.helpers.converters import xyz_to_aiida_traj

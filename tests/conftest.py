@@ -1,11 +1,8 @@
-# pylint: disable=redefined-outer-name,too-many-statements
 """Initialise a text database and profile for pytest."""
 
 import os
 from pathlib import Path
 import shutil
-
-import pytest
 
 from aiida.common import exceptions
 from aiida.common.folders import SandboxFolder
@@ -13,12 +10,13 @@ from aiida.engine.utils import instantiate_process
 from aiida.manage.manager import get_manager
 from aiida.orm import InstalledCode, load_code
 from aiida.plugins import CalculationFactory
+import pytest
 
-pytest_plugins = ["aiida.manage.tests.pytest_fixtures"]  # pylint: disable=invalid-name
+pytest_plugins = ["aiida.manage.tests.pytest_fixtures"]
 
 
 @pytest.fixture(scope="function", autouse=True)
-def clear_database_auto(aiida_profile_clean):  # pylint: disable=unused-argument
+def clear_database_auto(aiida_profile_clean):
     """Automatically clear database in between tests."""
 
 
@@ -26,8 +24,11 @@ def clear_database_auto(aiida_profile_clean):  # pylint: disable=unused-argument
 def filepath_tests():
     """
     Return the absolute filepath of the `tests` folder.
-    .. warning: If this file moves with respect to the `tests` folder,
-        the implementation should change.
+
+    Warning
+    -------
+    If this file moves with respect to the `tests` folder, the implementation should
+    change.
 
     Parameters
     ----------
@@ -54,7 +55,6 @@ def fixture_sandbox():
     SandboxFolder
         A `SandboxFolder` instance for temporary file operations.
     """
-
     with SandboxFolder() as folder:
         yield folder
 
@@ -101,8 +101,7 @@ def janus_code(aiida_local_code_factory):
 @pytest.fixture
 def fixture_code(fixture_localhost):
     """
-    Return an `InstalledCode` instance configured to run calculations of a given
-    entry point on localhost.
+    Return a configured `InstalledCode` instance to run calculations on localhost.
 
     Parameters
     ----------
@@ -181,16 +180,13 @@ def generate_calc_job():
         using the provided inputs, and calls `prepare_for_submission`.
         The resulting `CalcInfo` object is returned.
         """
-
         manager = get_manager()
         runner = manager.get_runner()
 
         process_class = CalculationFactory(entry_point_name)
         process = instantiate_process(runner, process_class, **inputs)
 
-        calc_info = process.prepare_for_submission(folder)
-
-        return calc_info
+        return process.prepare_for_submission(folder)
 
     return _generate_calc_job
 
@@ -200,7 +196,8 @@ def test_folder():
     """
     Fixture to provide the path of the tests folder.
 
-    Returns:
+    Returns
+    -------
         Path: the path of the tests folder.
     """
     return Path(__file__).resolve().parent
@@ -212,7 +209,8 @@ def example_path(test_folder):
     """
     Fixture to provide the path to the example file.
 
-    Returns:
+    Returns
+    -------
         Path: The path to the example file.
     """
     return test_folder.parent / "examples" / "calculations"
@@ -223,7 +221,8 @@ def model_folder(test_folder):
     """
     Fixture to provide the path to the example file.
 
-    Returns:
+    Returns
+    -------
         Path: The path to the example file.
     """
     return test_folder / "data" / "input_files" / "mace"
@@ -234,7 +233,8 @@ def structure_folder(test_folder):
     """
     Fixture to provide the path to the example file.
 
-    Returns:
+    Returns
+    -------
         Path: The path to the example file.
     """
     return test_folder / "calculations" / "structures"
@@ -245,7 +245,8 @@ def config_folder(test_folder):
     """
     Fixture to provide the path to the example file.
 
-    Returns:
+    Returns
+    -------
         Path: The path to the example file.
     """
     return test_folder / "calculations" / "configs"

@@ -2,20 +2,18 @@
 
 import subprocess
 
-from ase.build import bulk
-import pytest
-
 from aiida.common import datastructures
 from aiida.engine import run
 from aiida.orm import Bool, Float, Int, Str, StructureData
 from aiida.plugins import CalculationFactory
+from ase.build import bulk
+import pytest
 
 from aiida_mlip.data.model import ModelData
 
 
 def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     """Test generating geomopt calculation job."""
-
     entry_point_name = "mlip.opt"
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
@@ -71,7 +69,6 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
 
 def test_run_opt(model_folder, janus_code):
     """Test running geomopt calculation."""
-
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
@@ -86,8 +83,8 @@ def test_run_opt(model_folder, janus_code):
         "steps": Int(1000),
     }
 
-    geomoptCalculation = CalculationFactory("mlip.opt")
-    result = run(geomoptCalculation, **inputs)
+    GeomoptCalc = CalculationFactory("mlip.opt")
+    result = run(GeomoptCalc, **inputs)
     assert "results_dict" in result
     assert "final_structure" in result
     assert "traj_output" in result
@@ -98,7 +95,7 @@ def test_run_opt(model_folder, janus_code):
 
 
 def test_example_opt(example_path):
-    """Test function to run geomopt calculation using the example file provided."""
+    """Test function to run geometry optimization using the example file provided."""
     example_file_path = example_path / "submit_geomopt.py"
     command = ["verdi", "run", example_file_path, "janus@localhost"]
 

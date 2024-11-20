@@ -1,15 +1,12 @@
-"""
-Helper functions for automatically loading models and strucutres as data nodes.
-"""
+"""Helper functions for automatically loading models and strucutres as data nodes."""
 
 from pathlib import Path
 from typing import Optional, Union
 
+from aiida.orm import StructureData, load_node
 from ase.build import bulk
 import ase.io
 import click
-
-from aiida.orm import StructureData, load_node
 
 from aiida_mlip.data.model import ModelData
 
@@ -43,7 +40,7 @@ def load_model(
     """
     if model is None:
         loaded_model = ModelData.from_uri(
-            "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",  # pylint: disable=line-too-long
+            "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model",
             architecture,
             cache_dir=cache_dir,
         )

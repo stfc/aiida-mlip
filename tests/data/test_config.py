@@ -1,10 +1,10 @@
-"""Test for JanusConfigfile class"""
+"""Test for JanusConfigfile class."""
 
 from aiida_mlip.data.config import JanusConfigfile
 
 
 def test_local_file(config_folder):
-    """Testing that the local file function works"""
+    """Testing that the local file function works."""
     # Construct a ModelData instance with the local file
     config_path = config_folder / "config_janus_md.yaml"
     config = JanusConfigfile(file=config_path)

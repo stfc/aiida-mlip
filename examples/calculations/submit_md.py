@@ -1,20 +1,19 @@
-"""Example code for submitting single point calculation"""
+"""Example code for submitting a molecular dynamics simulation."""
 
 import ast
-
-import click
 
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
 from aiida.orm import Dict, Str, load_code
 from aiida.plugins import CalculationFactory
+import click
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
 
-def MD(params: dict) -> None:
+def md(params: dict) -> None:
     """
-    Prepare inputs and run a single point calculation.
+    Prepare inputs and run a molecular dynamics simulation.
 
     Parameters
     ----------
@@ -25,14 +24,13 @@ def MD(params: dict) -> None:
     -------
     None
     """
-
     structure = load_structure(params["struct"])
 
     # Select model to use
     model = load_model(params["model"], params["arch"])
 
     # Select calculation to use
-    MDCalculation = CalculationFactory("mlip.md")
+    MDCalc = CalculationFactory("mlip.md")
 
     # Define inputs
     inputs = {
@@ -48,7 +46,7 @@ def MD(params: dict) -> None:
     }
 
     # Run calculation
-    result, node = run_get_node(MDCalculation, **inputs)
+    result, node = run_get_node(MDCalc, **inputs)
     print(f"Printing results from calculation: {result}")
     print(f"Printing node of calculation: {node}")
 
@@ -93,7 +91,6 @@ def cli(
     codelabel, struct, model, arch, device, precision, ensemble, md_dict_str
 ) -> None:
     """Click interface."""
-    # pylint: disable=too-many-arguments
     md_dict = ast.literal_eval(md_dict_str)
     try:
         code = load_code(codelabel)
@@ -112,9 +109,9 @@ def cli(
         "md_dict": md_dict,
     }
 
-    # Submit single point
-    MD(params)
+    # Submit MD
+    md(params)
 
 
 if __name__ == "__main__":
-    cli()  # pylint: disable=no-value-for-parameter
+    cli()

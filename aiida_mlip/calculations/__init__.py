@@ -1,3 +1,1 @@
-"""
-Calculations using MLIPs.
-"""
+"""Calculations using MLIPs."""

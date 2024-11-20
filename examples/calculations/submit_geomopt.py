@@ -1,11 +1,10 @@
-"""Example code for submitting geometry optimisation calculation"""
-
-import click
+"""Example code for submitting geometry optimisation calculation."""
 
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
 from aiida.orm import Bool, Float, Int, Str, load_code
 from aiida.plugins import CalculationFactory
+import click
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
@@ -23,14 +22,13 @@ def geomopt(params: dict) -> None:
     -------
     None
     """
-
     structure = load_structure(params["struct"])
 
     # Select model to use
     model = load_model(params["model"], params["arch"])
 
     # Select calculation to use
-    geomoptCalculation = CalculationFactory("mlip.opt")
+    GeomoptCalc = CalculationFactory("mlip.opt")
 
     # Define inputs
     inputs = {
@@ -49,7 +47,7 @@ def geomopt(params: dict) -> None:
     }
 
     # Run calculation
-    result, node = run_get_node(geomoptCalculation, **inputs)
+    result, node = run_get_node(GeomoptCalc, **inputs)
     print(f"Printing results from calculation: {result}")
     print(f"Printing node of calculation: {node}")
 
@@ -109,7 +107,6 @@ def cli(
     opt_cell_fully,
     steps,
 ) -> None:
-    # pylint: disable=too-many-arguments
     """Click interface."""
     try:
         code = load_code(codelabel)
@@ -135,4 +132,4 @@ def cli(
 
 
 if __name__ == "__main__":
-    cli()  # pylint: disable=no-value-for-parameter
+    cli()

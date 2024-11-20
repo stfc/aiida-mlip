@@ -2,11 +2,10 @@
 
 from pathlib import Path
 
+from aiida.orm import StructureData
 import ase.io
 import click
 import pytest
-
-from aiida.orm import StructureData
 
 from aiida_mlip.data.model import ModelData
 from aiida_mlip.helpers.help_load import load_model, load_structure
