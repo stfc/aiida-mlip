@@ -1,11 +1,10 @@
 """Example code for submitting descriptors calculation."""
 
-import click
-
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
 from aiida.orm import Bool, Str, load_code
 from aiida.plugins import CalculationFactory
+import click
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
