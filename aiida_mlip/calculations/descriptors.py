@@ -63,7 +63,6 @@ class Descriptors(Singlepoint):  # numpydoc ignore=PR01
             "parser_name"
         ].default = "mlip.descriptors_parser"
 
-    # pylint: disable=too-many-locals
     def prepare_for_submission(
         self, folder: aiida.common.folders.Folder
     ) -> datastructures.CalcInfo:

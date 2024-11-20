@@ -1,11 +1,10 @@
 """Example code for submitting descriptors calculation."""
 
-import click
-
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
 from aiida.orm import Bool, Str, load_code
 from aiida.plugins import CalculationFactory
+import click
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
@@ -107,7 +106,6 @@ def cli(
     calc_per_element,
     calc_per_atom,
 ) -> None:
-    # pylint: disable=too-many-arguments
     """Click interface."""
     try:
         code = load_code(codelabel)
@@ -132,4 +130,4 @@ def cli(
 
 
 if __name__ == "__main__":
-    cli()  # pylint: disable=no-value-for-parameter
+    cli()
