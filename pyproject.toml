@@ -31,7 +31,7 @@ aiida-core = "^2.6"
 ase = "^3.23.0"
 voluptuous = "^0.14"
 janus-core = "^0.6.5"
-aiida-workgraph = {extras = ["widget"], version = "^0.3.14"}
+aiida-workgraph = {extras = ["widget"], version = "^0.4.5"}
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "^7.4.1"}
