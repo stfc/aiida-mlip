@@ -5,12 +5,11 @@ from pathlib import Path
 import sys
 import time
 
-import click
-
 from aiida.common import NotExistent
 from aiida.engine import run_get_pk, submit
 from aiida.orm import load_code, load_group, load_node
 from aiida.plugins import CalculationFactory
+import click
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData

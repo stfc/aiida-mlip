@@ -245,7 +245,8 @@ def structure_folder2(test_folder):
     """
     Fixture to provide the path to the example file.
 
-    Returns:
+    Returns
+    -------
         Path: The path to the example file.
     """
     return test_folder / "workflows" / "structures"

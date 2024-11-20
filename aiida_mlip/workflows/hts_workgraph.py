@@ -2,10 +2,9 @@
 
 from pathlib import Path
 
+from aiida.plugins import CalculationFactory
 from aiida_workgraph import WorkGraph, task
 from ase.io import read
-
-from aiida.plugins import CalculationFactory
 
 from aiida_mlip.helpers.help_load import load_structure
 
