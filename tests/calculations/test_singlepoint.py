@@ -147,12 +147,20 @@ def test_run_sp(model_folder, janus_code):
     assert obtained_res["info"]["mace_stress"][0] == pytest.approx(-0.005816546985101)
 
 
-def test_example(example_path):
+def test_example(example_path, janus_code):
     """Test function to run singlepoint calculation using the example file provided."""
     example_file_path = example_path / "submit_singlepoint.py"
-    command = ["verdi", "run", example_file_path, "janus@localhost"]
+    command = [
+        "verdi",
+        "run",
+        example_file_path,
+        f"{janus_code.label}@{janus_code.computer.label}",
+    ]
 
     # Execute the command
     result = subprocess.run(command, capture_output=True, text=True, check=False)
     assert result.stderr == ""
     assert result.returncode == 0
+    assert "results from calculation:" in result.stdout
+    assert "'results_dict': <Dict: uuid:" in result.stdout
+    assert "'xyz_output': <SinglefileData: uuid:" in result.stdout
