@@ -80,7 +80,10 @@ def create_input(**inputs: dict) -> SinglefileData:
     return file_data
 
 
-@task.calcfunction()
+@task.calcfunction(outputs = [{"name": train"},
+                              {"name": test"},
+                              {"name": "validation"}
+                             ])
 def split_xyz_file(xyz_file: SinglefileData) -> dict:
     """
     Split an XYZ file into training, testing, and validation datasets.
@@ -198,7 +201,7 @@ def TrainWorkGraph(
         janusconfigfile=janusconfigfile,
     )
 
-    wg.add_link(split_files_task.outputs["result"], update_config_task.inputs["_wait"])
+    wg.add_link(split_files_task.outputs["_wait"], update_config_task.inputs["_wait"])
 
     training_calc = CalculationFactory("mlip.train")
     train_inputs = {}
