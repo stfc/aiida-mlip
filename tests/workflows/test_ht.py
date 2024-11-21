@@ -35,7 +35,7 @@ def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> 
 
 
 def test_ht_invalid_path(janus_code, workflow_invalid_folder, model_folder) -> None:
-    """Test high throughput singlepoint calculation."""
+    """Test invalid path for high throughput calculation."""
     SinglepointCalc = CalculationFactory("mlip.sp")
 
     model_file = model_folder / "mace_mp_small.model"
