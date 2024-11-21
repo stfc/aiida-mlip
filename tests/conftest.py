@@ -253,6 +253,18 @@ def workflow_structure_folder(test_folder):
 
 
 @pytest.fixture
+def workflow_invalid_folder(test_folder):
+    """
+    Fixture to provide the path to the example file.
+
+    Returns
+    -------
+        Path: The path to the example file.
+    """
+    return test_folder / "workflows" / "invalid"
+
+
+@pytest.fixture
 def config_folder(test_folder):
     """
     Fixture to provide the path to the example file.
