@@ -241,7 +241,7 @@ def structure_folder(test_folder):
 
 
 @pytest.fixture
-def structure_folder2(test_folder):
+def workflow_structure_folder(test_folder):
     """
     Fixture to provide the path to the example file.
 

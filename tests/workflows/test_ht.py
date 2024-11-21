@@ -1,25 +1,71 @@
-"""Test for high-throughput WorkGraph."""
+"""Test for high-throughput WorkGraphs."""
 
-# from aiida.orm import StructureData, load_node
+from aiida.orm import SinglefileData, StructureData
+from aiida.plugins import CalculationFactory
 
 from aiida_mlip.data.model import ModelData
-from aiida_mlip.workflows.ht_workgraph import ht_workgraph
+from aiida_mlip.workflows.ht_workgraph import get_ht_workgraph
 
 
-def test_ht_wg(janus_code, structure_folder2, model_folder) -> None:
-    """Submit simple calcjob."""
+def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> None:
+    """Test high throughput singlepoint calculation."""
+    SinglepointCalc = CalculationFactory("mlip.sp")
+
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
         "model": ModelData.from_local(model_file, architecture="mace"),
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
     }
-    wg = ht_workgraph(folder_path=structure_folder2, inputs=inputs)
-    wg.wait(15)
 
-    # AT THE MOMENT WE ONLY CHECK THE PROCESS IS CREATED AT LEAST,
-    #  WHEN WE FIX THE SUBMISSION THIS NEEDS TO BE CHANGED
+    wg = get_ht_workgraph(
+        calc=SinglepointCalc,
+        folder=workflow_structure_folder,
+        calc_inputs=inputs,
+        final_struct_key="xyz_output",
+    )
 
-    assert wg.state == "CREATED"
-    # wg_node = load_node(wg.pk)
-    # assert isinstance(wg_node.outputs.opt_structures.h2o, StructureData)
+    wg.submit(wait=True)
+
+    assert wg.state in ("CREATED", "WAITING", "FINISHED")
+
+    for _ in range(30):
+        if wg.state == "FINISHED":
+            break
+        wg.wait(10)
+    assert wg.state == "FINISHED"
+    assert wg.state == "FINISHED"
+
+    assert isinstance(wg.process.outputs.final_structures.H2O, SinglefileData)
+    assert isinstance(wg.process.outputs.final_structures.methane, SinglefileData)
+
+
+def test_ht_geomopt(janus_code, workflow_structure_folder, model_folder) -> None:
+    """Test high throughput geometry optimisation."""
+    GeomoptCalc = CalculationFactory("mlip.opt")
+
+    model_file = model_folder / "mace_mp_small.model"
+    inputs = {
+        "model": ModelData.from_local(model_file, architecture="mace"),
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "code": janus_code,
+    }
+
+    wg = get_ht_workgraph(
+        calc=GeomoptCalc,
+        folder=workflow_structure_folder,
+        calc_inputs=inputs,
+    )
+
+    wg.submit(wait=True)
+
+    assert wg.state in ("CREATED", "WAITING", "FINISHED")
+
+    for _ in range(30):
+        if wg.state == "FINISHED":
+            break
+        wg.wait(10)
+    assert wg.state == "FINISHED"
+
+    assert isinstance(wg.process.outputs.final_structures.H2O, StructureData)
+    assert isinstance(wg.process.outputs.final_structures.methane, StructureData)
