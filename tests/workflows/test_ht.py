@@ -25,15 +25,8 @@ def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> 
         final_struct_key="xyz_output",
     )
 
-    wg.submit(wait=True)
+    wg.run()
 
-    assert wg.state in ("CREATED", "WAITING", "FINISHED")
-
-    for _ in range(30):
-        if wg.state == "FINISHED":
-            break
-        wg.wait(10)
-    assert wg.state == "FINISHED"
     assert wg.state == "FINISHED"
 
     assert isinstance(wg.process.outputs.final_structures.H2O, SinglefileData)
@@ -57,14 +50,8 @@ def test_ht_geomopt(janus_code, workflow_structure_folder, model_folder) -> None
         calc_inputs=inputs,
     )
 
-    wg.submit(wait=True)
+    wg.run()
 
-    assert wg.state in ("CREATED", "WAITING", "FINISHED")
-
-    for _ in range(30):
-        if wg.state == "FINISHED":
-            break
-        wg.wait(10)
     assert wg.state == "FINISHED"
 
     assert isinstance(wg.process.outputs.final_structures.H2O, StructureData)
