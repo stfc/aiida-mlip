@@ -95,7 +95,7 @@ def janus_code(aiida_local_code_factory):
         The janus code instance.
     """
     janus_path = shutil.which("janus") or os.environ.get("JANUS_PATH")
-    return aiida_local_code_factory(executable=janus_path, entry_point="mlip.opt")
+    return aiida_local_code_factory(executable=janus_path, entry_point="mlip.sp")
 
 
 @pytest.fixture

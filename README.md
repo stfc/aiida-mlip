@@ -128,9 +128,7 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
     * [`submit_train.py`](examples/calculations/submit_train.py): Script for submitting a train calculation.
     * [`submit_descriptors.py`](examples/calculations/submit_descriptors.py): Script for submitting a descriptors calculation.
   * [`workflows/`](examples/workflows/): Scripts for submitting workflows
-    * [`run_ht_nowc.py`](examples/workflows/run_ht_nowc.py): Script for submitting multiple janus calculations without using any pre-coded high-throughout tools (like the WorkGraph).
-    * [`submit_ht_workgraph.py`](examples/workflows/submit_ht_workgraph.py): Script for submitting a high-throughput WorkGraph for geometry optimisation.
-  * [`workflows/utils`](examples/workflows/utils): A folder with some scripts for dealing with the high-throughout calculations.
+    * [`submit_ht_workgraph.py`](examples/workflows/submit_ht_workgraph.py): Script for submitting a high-throughput WorkGraph for singlepoint calculation.
 * [`tests/`](tests/): Basic regression tests using the [pytest](https://docs.pytest.org/en/latest/) framework (submitting a calculation, ...). Install `pip install -e .[testing]` and run `pytest`.
   * [`conftest.py`](tests/conftest.py): Configuration of fixtures for [pytest](https://docs.pytest.org/en/latest/)
   * [`calculations/`](tests/calculations): Calculations
