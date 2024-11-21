@@ -22,7 +22,8 @@ def ht_calc_builder(
     Build high throughput calculation WorkGraph.
 
     The `calc` must take a structure, by default `struct`, as one of its inputs.
-    Tasks will then be created for each structure file in `folder`.
+    Tasks will then be created to carry out the calculation for each structure file in
+    `folder`.
 
     Parameters
     ----------
@@ -82,7 +83,7 @@ def get_ht_workgraph(
     max_number_jobs: int = 10,
 ) -> WorkGraph:
     """
-    Get high throughput workflow for calculation.
+    Get WorkGraph to carry out calculation on all structures in a directory.
 
     Parameters
     ----------
