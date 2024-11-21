@@ -42,8 +42,15 @@ def ht_calc_builder(
     -------
     WorkGraph
         The workgraph with calculation tasks for each structure.
+
+    Raises
+    ------
+    FileNotFoundError
+        If `folder` has no valid structure files.
     """
     wg = WorkGraph()
+    structure = None
+
     for child in folder.glob("**/*"):
         try:
             read(child.as_posix())
@@ -57,6 +64,12 @@ def ht_calc_builder(
             **calc_inputs,
         )
         calc_task.set_context({f"{final_struct_key}": f"structs.{child.stem}"})
+
+    if structure is None:
+        raise FileNotFoundError(
+            "The specified folder is empty or has no readable structure files."
+        )
+
     return wg
 
 
