@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Callable, Union
 
 from aiida.engine import CalcJob, WorkChain
+from aiida.orm import Str
 from aiida_workgraph import WorkGraph, task
 from ase.io import read
 
@@ -13,7 +14,7 @@ from aiida_mlip.helpers.help_load import load_structure
 @task.graph_builder(outputs=[{"name": "final_structures", "from": "context.structs"}])
 def ht_calc_builder(
     calc: Union[CalcJob, Callable, WorkChain, WorkGraph],
-    folder: Path,
+    folder: Union[Path, str, Str],
     calc_inputs: dict,
     input_struct_key: str = "struct",
     final_struct_key: str = "final_structure",
@@ -29,7 +30,7 @@ def ht_calc_builder(
     ----------
     calc : Union[CalcJob, Callable, WorkChain, WorkGraph]
         Calculation to be performed on all structures.
-    folder : Path
+    folder : Union[Path, str, Str]
         Path to the folder containing input structure files.
     calc_inputs : dict
         Dictionary of inputs, shared by all the calculations. Must not contain
@@ -51,6 +52,11 @@ def ht_calc_builder(
     """
     wg = WorkGraph()
     structure = None
+
+    if isinstance(folder, Str):
+        folder = Path(folder.value)
+    if isinstance(folder, str):
+        folder = Path(folder)
 
     for child in folder.glob("**/*"):
         try:
@@ -76,7 +82,7 @@ def ht_calc_builder(
 
 def get_ht_workgraph(
     calc: Union[CalcJob, Callable, WorkChain, WorkGraph],
-    folder: Path,
+    folder: Union[Path, str, Str],
     calc_inputs: dict,
     input_struct_key: str = "struct",
     final_struct_key: str = "final_structure",
@@ -89,7 +95,7 @@ def get_ht_workgraph(
     ----------
     calc : Union[CalcJob, Callable, WorkChain, WorkGraph]
         Calculation to be performed on all structures.
-    folder : Path
+    folder : Union[Path, str, Str]
         Path to the folder containing input structure files.
     calc_inputs : dict
         Dictionary of inputs, shared by all the calculations. Must not contain
