@@ -18,6 +18,7 @@ def build_ht_calc(
     calc_inputs: dict,
     input_struct_key: str = "struct",
     final_struct_key: str = "final_structure",
+    recursive: bool = True,
 ) -> WorkGraph:
     """
     Build high throughput calculation WorkGraph.
@@ -39,6 +40,8 @@ def build_ht_calc(
         Keyword for input structure for `calc`. Default is "struct".
     final_struct_key : str
         Key for final structure output from `calc`. Default is "final_structure".
+    recursive : bool
+        Whether to search `folder` recursively. Default is True.
 
     Returns
     -------
@@ -58,19 +61,20 @@ def build_ht_calc(
     if isinstance(folder, str):
         folder = Path(folder)
 
-    for child in folder.glob("**/*"):
+    pattern = "**/*" if recursive else "*"
+    for file in filter(Path.is_file, folder.glob(pattern)):
         try:
-            read(child)
+            read(file)
         except Exception:
             continue
-        structure = load_structure(child)
+        structure = load_structure(file)
         calc_inputs[input_struct_key] = structure
         calc_task = wg.add_task(
             calc,
-            name=f"calc_{child.stem}",
+            name=f"calc_{file.stem}",
             **calc_inputs,
         )
-        calc_task.set_context({final_struct_key: f"structs.{child.stem}"})
+        calc_task.set_context({final_struct_key: f"structs.{file.stem}"})
 
     if structure is None:
         raise FileNotFoundError(
@@ -86,6 +90,7 @@ def get_ht_workgraph(
     calc_inputs: dict,
     input_struct_key: str = "struct",
     final_struct_key: str = "final_structure",
+    recursive: bool = True,
     max_number_jobs: int = 10,
 ) -> WorkGraph:
     """
@@ -104,6 +109,8 @@ def get_ht_workgraph(
         Keyword for input structure for `calc`. Default is "struct".
     final_struct_key : str
         Key for final structure output from `calc`. Default is "final_structure".
+    recursive : bool
+        Whether to search `folder` recursively. Default is True.
     max_number_jobs : int
         Max number of subprocesses running within the WorkGraph. Default is 10.
 
@@ -122,6 +129,7 @@ def get_ht_workgraph(
         calc_inputs=calc_inputs,
         input_struct_key=input_struct_key,
         final_struct_key=final_struct_key,
+        recursive=recursive,
     )
 
     wg.group_outputs = [
