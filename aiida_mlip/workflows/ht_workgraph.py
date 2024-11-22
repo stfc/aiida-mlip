@@ -12,7 +12,7 @@ from aiida_mlip.helpers.help_load import load_structure
 
 
 @task.graph_builder(outputs=[{"name": "final_structures", "from": "context.structs"}])
-def ht_calc_builder(
+def build_ht_calc(
     calc: Union[CalcJob, Callable, WorkChain, WorkGraph],
     folder: Union[Path, str, Str],
     calc_inputs: dict,
@@ -115,7 +115,7 @@ def get_ht_workgraph(
     wg = WorkGraph("ht_calculation")
 
     wg.add_task(
-        ht_calc_builder,
+        build_ht_calc,
         name="ht_calc",
         calc=calc,
         folder=folder,
