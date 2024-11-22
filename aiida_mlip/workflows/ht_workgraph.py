@@ -74,7 +74,7 @@ def ht_calc_builder(
 
     if structure is None:
         raise FileNotFoundError(
-            "The specified folder is empty or has no readable structure files."
+            f"{folder} is empty or has no readable structure files."
         )
 
     return wg
