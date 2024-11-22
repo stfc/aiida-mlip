@@ -191,7 +191,7 @@ def generate_calc_job():
     return _generate_calc_job
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def test_folder():
     """
     Fixture to provide the path of the tests folder.
@@ -204,7 +204,7 @@ def test_folder():
 
 
 # Fixture to provide the path to the example file
-@pytest.fixture
+@pytest.fixture(scope="session")
 def example_path(test_folder):
     """
     Fixture to provide the path to the example file.
@@ -216,7 +216,7 @@ def example_path(test_folder):
     return test_folder.parent / "examples" / "calculations"
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def model_folder(test_folder):
     """
     Fixture to provide the path to the example file.
@@ -228,7 +228,7 @@ def model_folder(test_folder):
     return test_folder / "data" / "input_files" / "mace"
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def structure_folder(test_folder):
     """
     Fixture to provide the path to the example file.
@@ -240,7 +240,7 @@ def structure_folder(test_folder):
     return test_folder / "calculations" / "structures"
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def workflow_structure_folder(test_folder):
     """
     Fixture to provide the path to the example file.
@@ -252,7 +252,7 @@ def workflow_structure_folder(test_folder):
     return test_folder / "workflows" / "structures"
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def workflow_invalid_folder(test_folder):
     """
     Fixture to provide the path to the example file.
@@ -264,7 +264,7 @@ def workflow_invalid_folder(test_folder):
     return test_folder / "workflows" / "invalid"
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def config_folder(test_folder):
     """
     Fixture to provide the path to the example file.

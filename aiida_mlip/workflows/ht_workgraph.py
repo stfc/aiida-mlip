@@ -54,17 +54,17 @@ def ht_calc_builder(
 
     for child in folder.glob("**/*"):
         try:
-            read(child.as_posix())
+            read(child)
         except Exception:
             continue
         structure = load_structure(child)
-        calc_inputs[f"{input_struct_key}"] = structure
+        calc_inputs[input_struct_key] = structure
         calc_task = wg.add_task(
             calc,
             name=f"calc_{child.stem}",
             **calc_inputs,
         )
-        calc_task.set_context({f"{final_struct_key}": f"structs.{child.stem}"})
+        calc_task.set_context({final_struct_key: f"structs.{child.stem}"})
 
     if structure is None:
         raise FileNotFoundError(
