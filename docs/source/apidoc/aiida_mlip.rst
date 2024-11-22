@@ -11,6 +11,7 @@ Subpackages
    aiida_mlip.data
    aiida_mlip.helpers
    aiida_mlip.parsers
+   aiida_mlip.workflows
 
 Module contents
 ---------------
