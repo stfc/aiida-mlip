@@ -1,7 +1,8 @@
 """Helper functions for automatically loading models and strucutres as data nodes."""
 
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Optional, Union
 
 from aiida.orm import StructureData, load_node
 from ase.build import bulk
@@ -12,9 +13,9 @@ from aiida_mlip.data.model import ModelData
 
 
 def load_model(
-    model: Optional[Union[str, Path]],
+    model: str | Path | None,
     architecture: str,
-    cache_dir: Optional[Union[str, Path]] = None,
+    cache_dir: str | Path | None = None,
 ) -> ModelData:
     """
     Load a model from a file path or URI.
@@ -53,7 +54,7 @@ def load_model(
     return loaded_model
 
 
-def load_structure(struct: Optional[Union[str, Path, int]] = None) -> StructureData:
+def load_structure(struct: str | Path | int | None = None) -> StructureData:
     """
     Load a StructureData instance from the given input.
 

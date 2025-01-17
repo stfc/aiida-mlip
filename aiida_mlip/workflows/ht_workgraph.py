@@ -1,7 +1,9 @@
 """Workgraph to run high-throughput calculations."""
 
+from __future__ import annotations
+
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, Union
 
 from aiida.engine import CalcJob, WorkChain
 from aiida.orm import Str
@@ -13,8 +15,8 @@ from aiida_mlip.helpers.help_load import load_structure
 
 @task.graph_builder(outputs=[{"name": "final_structures", "from": "context.structs"}])
 def build_ht_calc(
-    calc: Union[CalcJob, Callable, WorkChain, WorkGraph],
-    folder: Union[Path, str, Str],
+    calc: CalcJob | Callable | WorkChain | WorkGraph,
+    folder: Path | str | Str,
     calc_inputs: dict,
     input_struct_key: str = "struct",
     final_struct_key: str = "final_structure",
@@ -85,8 +87,8 @@ def build_ht_calc(
 
 
 def get_ht_workgraph(
-    calc: Union[CalcJob, Callable, WorkChain, WorkGraph],
-    folder: Union[Path, str, Str],
+    calc: CalcJob | Callable | WorkChain | WorkGraph,
+    folder: Path | str | Str,
     calc_inputs: dict,
     input_struct_key: str = "struct",
     final_struct_key: str = "final_structure",

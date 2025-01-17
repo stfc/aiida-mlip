@@ -1,5 +1,7 @@
 """Example code for submitting a molecular dynamics simulation."""
 
+from __future__ import annotations
+
 import ast
 
 from aiida.common import NotExistent

@@ -1,5 +1,7 @@
 """Base class for features common to most calculations."""
 
+from __future__ import annotations
+
 import shutil
 
 from aiida.common import InputValidationError, datastructures
