@@ -1,5 +1,7 @@
 """Tests for model train."""
 
+from __future__ import annotations
+
 from aiida.common import InputValidationError, datastructures
 from aiida.engine import run
 from aiida.orm import Bool

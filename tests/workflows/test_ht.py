@@ -1,5 +1,7 @@
 """Test for high-throughput WorkGraphs."""
 
+from __future__ import annotations
+
 from aiida.orm import SinglefileData, StructureData
 from aiida.plugins import CalculationFactory
 import pytest

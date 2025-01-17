@@ -1,5 +1,7 @@
 """Test for JanusConfigfile class."""
 
+from __future__ import annotations
+
 from aiida_mlip.data.config import JanusConfigfile
 
 
