@@ -1,5 +1,7 @@
 """Example code for submitting training calculation."""
 
+from __future__ import annotations
+
 from pathlib import Path
 
 from aiida.engine import run_get_node

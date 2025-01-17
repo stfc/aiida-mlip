@@ -1,7 +1,8 @@
 """Some helpers to convert between different formats."""
 
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Union
 
 from aiida.orm import Bool, Dict, Str, StructureData, TrajectoryData, load_code
 from ase.io import read
@@ -32,7 +33,7 @@ def convert_numpy(dictionary: dict) -> dict:
 
 
 def xyz_to_aiida_traj(
-    traj_file: Union[str, Path],
+    traj_file: str | Path,
 ) -> tuple[StructureData, TrajectoryData]:
     """
     Convert xyz trajectory file to `TrajectoryData` data type.

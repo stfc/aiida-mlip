@@ -1,5 +1,7 @@
 """Parsers provided by aiida_mlip."""
 
+from __future__ import annotations
+
 from pathlib import Path
 
 from aiida.common import exceptions

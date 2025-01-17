@@ -1,5 +1,7 @@
 """Parsers provided by aiida_mlip."""
 
+from __future__ import annotations
+
 from aiida.engine import ExitCode
 from aiida.orm import SinglefileData
 from aiida.orm.nodes.process.process import ProcessNode

@@ -1,5 +1,7 @@
 """Tests for descriptors calculation."""
 
+from __future__ import annotations
+
 import subprocess
 
 from aiida.common import datastructures

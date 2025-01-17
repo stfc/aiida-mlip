@@ -1,5 +1,7 @@
 """Example code for submitting geometry optimisation calculation."""
 
+from __future__ import annotations
+
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
 from aiida.orm import Bool, Float, Int, Str, load_code
