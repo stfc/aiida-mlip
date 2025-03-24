@@ -74,7 +74,7 @@ def build_ht_calc(
             name=f"calc_{file.stem}",
             **calc_inputs,
         )
-        calc_task.set_context({final_struct_key: f"structs.{file.stem}"})
+        calc_task.set_context({f"structs.{file.stem}": final_struct_key})
 
     if structure is None:
         raise FileNotFoundError(
