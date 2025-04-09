@@ -111,7 +111,14 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
         calcinfo = super().prepare_for_submission(folder)
         codeinfo = calcinfo.codes_info[0]
 
-        geom_opt_cmdline = {"traj": self.inputs.traj.value}
+        minimize_kwargs = (
+            f"{{'traj_kwargs': {{'filename': '{self.inputs.traj.value}'}}}}"
+        )
+
+        geom_opt_cmdline = {
+            "minimize-kwargs": minimize_kwargs,
+            "write-traj": True,
+        }
         if "opt_kwargs" in self.inputs:
             opt_kwargs = self.inputs.opt_kwargs.get_dict()
             geom_opt_cmdline["opt-kwargs"] = opt_kwargs

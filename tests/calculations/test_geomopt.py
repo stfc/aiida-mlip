@@ -42,8 +42,9 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "aiida-results.xyz",
         "--calc-kwargs",
         "{'default_dtype': 'float64', 'model': 'mlff.model'}",
-        "--traj",
-        "aiida-traj.xyz",
+        "--minimize-kwargs",
+        "{'traj_kwargs': {'filename': 'aiida-traj.xyz'}}",
+        "--write-traj",
     ]
 
     retrieve_list = [
