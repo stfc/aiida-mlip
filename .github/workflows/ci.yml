@@ -9,8 +9,8 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        python-version: ['3.9','3.10','3.11','3.12']
-        aiida-version: ['stable']
+        python-version: ["3.10", "3.11", "3.12"]
+        aiida-version: ["stable"]
 
     services:
       postgres:
@@ -46,6 +46,7 @@ jobs:
       run: |
         poetry env use ${{ matrix.python-version }}
         poetry install --with dev
+        poetry run pip install mace-torch
 
     - name: Run test suite
 
