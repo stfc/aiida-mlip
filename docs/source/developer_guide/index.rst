@@ -5,28 +5,81 @@ Developer guide
 Getting started
 +++++++++++++++
 
-We recommend `installing poetry <https://python-poetry.org/docs/#installation>`_
+We recommend `installing uv <https://docs.astral.sh/uv/getting-started/installation/>`_
 for dependency management when developing for ``aiida-mlip``.
 
 This provides a number of useful features, including:
 
-- Dependency management (``poetry [add,update,remove]`` etc.) and organization (groups)
-- Storing the versions of all installations in a ``poetry.lock`` file, for reproducible builds
-- Improved dependency resolution
-- Virtual environment management (optional)
-- Building and publishing tools
+- `Dependency management <https://docs.astral.sh/uv/concepts/projects/dependencies/>`_ (``uv [add,remove]`` etc.) and organization (`groups <https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups>`_)
+
+- Storing the versions of all installations in a `uv.lock <https://docs.astral.sh/uv/concepts/projects/sync/>`_ file, for reproducible builds
+
+- Improved `dependency resolution <https://docs.astral.sh/uv/concepts/resolution/>`_
+
+- Virtual environment management
+
+- `Building and publishing <https://docs.astral.sh/uv/guides/publish/>`_ tools
+
+  * Currently, an external build backend, such as `pdm <https://pypi.org/project/pdm-backend>`_, is required
+
 
 Dependencies useful for development can then be installed by running::
 
-    poetry install --with pre-commit,dev,docs
+    uv sync -p 3.12
+    source .venv/bin/activate
+
+
+Using uv
+++++++++
+
+``uv`` manages a `persistent environment <https://docs.astral.sh/uv/concepts/projects/layout/#the-project-environment>`_
+with the project and its dependencies in a ``.venv`` directory, adjacent to ``pyproject.toml``. This will be created automatically as needed.
+
+``uv`` provides two separate APIs for managing your Python project and environment.
+
+``uv pip`` is designed to resemble the ``pip`` CLI, with similar commands (``uv pip install``,  ``uv pip list``, ``uv pip tree``, etc.),
+and is slightly lower level. `Compared with pip <https://docs.astral.sh/uv/pip/compatibility/>`_,
+``uv`` tends to be stricter, but in most cases ``uv pip`` could be used in place of ``pip``.
+
+``uv add``, ``uv run``, ``uv sync``, and ``uv lock`` are known as "project APIs", and are slightly higher level.
+These commands interact with (and require) ``pyproject.toml``, and ``uv`` will ensure your environment is in-sync when they are called,
+including creating or updating a `lockfile <https://docs.astral.sh/uv/concepts/projects/sync/>`_,
+a universal resolution that is `portable across platforms <https://docs.astral.sh/uv/concepts/resolution/#universal-resolution>`_.
+
+When developing for ``aiida-mlip``, it is usually recommended to use project commands, as described in `Getting started`_
+rather than using ``uv pip install`` to modify the project environment manually.
+
+.. tip::
+
+    ``uv`` will detect and use Python versions available on your system,
+    but can also be used to `install Python automtically <https://docs.astral.sh/uv/guides/install-python/>`_.
+    The desired Python version can be specified when running project commands with the ``--python``/``-p`` option.
+
+
+For further information, please refer to the `documentation <https://docs.astral.sh/uv/>`_.
 
 
 Running the tests
 +++++++++++++++++
 
-Packages in the ``dev`` dependency group allow tests to be run locally using ``pytest``, by running::                                                                                                                                               pytest -v                                                                                                                                                                                                                                   Alternatively, tests can be run in separate virtual environments using ``tox``::                                                                                                                                                                    tox run -e ALL                                                                                                                                                                                                                              This will run all unit tests for multiple versions of Python, in addition to testing that the pre-commit passes, and that documentation builds, mirroring the automated tests on GitHub.                                                                                                                                                                                Individual components of the ``tox`` test suite can also be run separately, such as running only running the unit tests with Python 3.9::
+Packages in the ``dev`` dependency group allow tests to be run locally using ``pytest``, by running::
 
-    tox run -e py39
+    pytest -v
+
+.. note::
+
+    MACE must be installed for tests to run successfully.
+
+
+Alternatively, tests can be run in separate virtual environments using ``tox``::
+
+    tox run -e ALL
+
+This will run all unit tests for multiple versions of Python, in addition to testing that the pre-commit passes, and that documentation builds, mirroring the automated tests on GitHub.
+
+Individual components of the ``tox`` test suite can also be run separately, such as running only running the unit tests with Python 3.12::
+
+    tox run -e py312
 
 See the `tox documentation <https://tox.wiki/>`_ for further options.
 
@@ -63,24 +116,13 @@ You should also keep the pre-commit hooks up to date periodically, with::
 Or consider using `pre-commit.ci <https://pre-commit.ci/>`_.
 
 
-Continuous integration
-++++++++++++++++++++++
-
-``aiida-mlip`` comes with a ``.github`` folder that contains continuous integration tests on every commit using `GitHub Actions <https://github.com/features/actions>`_. It will:
-
-#. run all tests
-#. build the documentation
-#. check coding style and version number (not required to pass by default)
-
-
 Building the documentation
 ++++++++++++++++++++++++++
 
- #. Install the ``docs`` extra::
+Packages in the ``docs`` dependency group install `Sphinx <https://www.sphinx-doc.org>`_
+and other Python packages required to build ``janus-core``'s documentation.
 
-        pip install -e .[docs]
-
- #. Edit the individual documentation pages::
+Individual individual documentation pages can be edited directly::
 
         docs/source/index.rst
         docs/source/developer_guide/index.rst
@@ -88,40 +130,22 @@ Building the documentation
         docs/source/user_guide/get_started.rst
         docs/source/user_guide/tutorial.rst
 
- #. Use `Sphinx`_ to generate the html documentation::
+
+``Sphinx`` can then be used to generate the html documentation::
 
         cd docs
-        make
+        make clean; make html
+
 
 Check the result by opening ``build/html/index.html`` in your browser.
 
-Publishing the documentation
-++++++++++++++++++++++++++++
 
-Once you're happy with your documentation, it's easy to host it online on ReadTheDocs_:
+Continuous integration
+++++++++++++++++++++++
 
- #. Create an account on ReadTheDocs_
+``aiida-mlip`` comes with a ``.github`` folder that contains continuous integration tests
+on every commit using `GitHub Actions <https://github.com/features/actions>`_. It will:
 
- #. Import your ``aiida-mlip`` repository (preferably using ``aiida-mlip`` as the project name)
-
-The documentation is now available at `aiida-mlip.readthedocs.io <http://aiida-mlip.readthedocs.io/>`_.
-
-PyPI release
-++++++++++++
-
-Your plugin is ready to be uploaded to the `Python Package Index <https://pypi.org/>`_.
-Just register for an account and use `flit <https://flit.readthedocs.io/en/latest/upload.html>`_::
-
-    pip install flit
-    flit publish
-
-After this, you (and everyone else) should be able to::
-
-    pip install aiida-mlip
-
-You can also enable *automatic* deployment of git tags to the python package index:
-simply generate a `PyPI API token <https://pypi.org/help/#apitoken>`_ for your PyPI account and add it as a secret to your GitHub repository under the name ``pypi_token`` (Go to Settings -> Secrets).
-
-
-.. _ReadTheDocs: https://readthedocs.org/
-.. _Sphinx: https://www.sphinx-doc.org/en/master/
+#. Run all tests
+#. Build the documentation
+#. Check coding style
