@@ -120,7 +120,7 @@ Building the documentation
 ++++++++++++++++++++++++++
 
 Packages in the ``docs`` dependency group install `Sphinx <https://www.sphinx-doc.org>`_
-and other Python packages required to build ``janus-core``'s documentation.
+and other Python packages required to build ``aiida-mlip``'s documentation.
 
 Individual individual documentation pages can be edited directly::
 

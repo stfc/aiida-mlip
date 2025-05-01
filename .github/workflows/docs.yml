@@ -37,7 +37,8 @@ jobs:
         run: uv sync
 
       - name: Build docs
-        run: cd docs && uv run make html
+        run: uv run make html
+        working-directory: ./docs/
 
       - name: upload
         uses: actions/upload-pages-artifact@v3

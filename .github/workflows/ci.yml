@@ -83,7 +83,8 @@ jobs:
         run: uv sync
 
       - name: Build docs
-        run: cd docs && uv run make html
+        run: uv run make html
+        working-directory: ./docs/
 
   pre-commit:
     runs-on: ubuntu-latest
