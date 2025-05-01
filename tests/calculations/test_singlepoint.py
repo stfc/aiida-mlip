@@ -1,5 +1,7 @@
 """Tests for singlepoint calculation."""
 
+from __future__ import annotations
+
 import subprocess
 
 from aiida.common import InputValidationError, datastructures

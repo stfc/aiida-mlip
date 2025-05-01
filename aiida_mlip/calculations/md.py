@@ -1,5 +1,7 @@
 """Class to run md calculations."""
 
+from __future__ import annotations
+
 from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJobProcessSpec

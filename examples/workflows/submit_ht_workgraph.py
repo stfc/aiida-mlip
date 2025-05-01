@@ -1,5 +1,7 @@
 """Example submission for high throughput workgraph."""
 
+from __future__ import annotations
+
 from pathlib import Path
 
 from aiida.orm import load_code

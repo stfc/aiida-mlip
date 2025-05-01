@@ -1,7 +1,9 @@
 """Define Model Data type in AiiDA."""
 
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 from aiida.orm import Data, SinglefileData
 import yaml
@@ -44,8 +46,8 @@ class JanusConfigfile(SinglefileData):
 
     def __init__(
         self,
-        file: Union[str, Path],
-        filename: Optional[str] = None,
+        file: str | Path,
+        filename: str | None = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -85,8 +87,8 @@ class JanusConfigfile(SinglefileData):
 
     def set_file(
         self,
-        file: Union[str, Path],
-        filename: Optional[str] = None,
+        file: str | Path,
+        filename: str | None = None,
         **kwargs: Any,
     ) -> None:
         """

@@ -1,5 +1,7 @@
 """Class for training machine learning models."""
 
+from __future__ import annotations
+
 from pathlib import Path
 import shutil
 

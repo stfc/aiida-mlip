@@ -8,17 +8,46 @@ a short example on how to use the plugin.
 Installation
 ++++++++++++
 
-Use the following commands to install the plugin::
+The latest stable release of ``aiida-mlip``, including its dependencies, can be installed from PyPI by running:
 
-    git clone https://github.com/aiidateam/aiida-mlip .
-    cd aiida-mlip
-    pip install -e .  # also installs aiida, if missing (but not postgres)
-    #pip install -e .[pre-commit,testing] # install extras for more features
+.. code-block:: bash
+
+    python3 -m pip install aiida-mlip
+
+
+To get all the latest changes, ``aiida-mlip`` can also be installed from GitHub:
+
+.. code-block:: bash
+
+    python3 -m pip install git+https://github.com/stfc/aiida-mlip.git
+
+
+By default, no machine learnt interatomic potentials (MLIPs) will be installed with ``aiida-mlip``.
+However, ``aiida-mlip`` currently provides an ``extra``, allowing MACE to be installed:
+
+.. code-block:: bash
+
+    python3 -m pip install aiida-mlip[mace]
+
+
+For additional MLIPs, it is recommended that the ``extra`` dependencies provided by ``janus-core`` are used.
+For example, to install CHGNet and SevenNet, run:
+
+.. code-block:: bash
+
+    python3 -m pip install janus-core[chgnet,sevennet]
+
+
+Please refer to the ``janus-core`` `documentation <https://stfc.github.io/janus-core/getting_started/getting_started.html#installation>`_ for further details.
+
+Once ``aiida-mlip`` and the desired MLIP calculators are installed, run::
+
     verdi quicksetup  # better to set up a new profile
     verdi plugin list aiida.calculations  # should now show your calculation plugins
 
 Then use ``verdi code setup`` with the ``janus`` input plugin
 to set up an AiiDA code for aiida-mlip.
+
 
 Usage
 +++++

@@ -32,36 +32,31 @@ jobs:
           - 5672:5672
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.6.14"
+          python-version: ${{ matrix.python-version }}
 
-    - name: Install poetry
-      run: pipx install poetry
+      - name: Install dependencies
+        run: |
+          uv sync --all-extras
 
-    - name: Install python dependencies
-      run: |
-        poetry env use ${{ matrix.python-version }}
-        poetry install --with dev
-        poetry run pip install mace-torch
+      - name: Run test suite
+        env:
+          # show timings of tests
+          PYTEST_ADDOPTS: "--durations=0"
+        run: uv run pytest --cov aiida_mlip --cov-append .
 
-    - name: Run test suite
-
-      env:
-        # show timings of test
-        PYTEST_ADDOPTS: "--durations=0"
-      run: poetry run pytest --cov aiida_mlip --cov-append .
-
-    - name: Report coverage to Coveralls
-      uses: coverallsapp/github-action@v2
-      with:
-        parallel: true
-        flag-name: run-${{ matrix.python-version }}
-        file: coverage.xml
-        base-path: aiida_mlip
+      - name: Report coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          parallel: true
+          flag-name: run-${{ matrix.python-version }}
+          file: coverage.xml
+          base-path: aiida_mlip
 
   coverage:
     needs: tests
@@ -76,44 +71,37 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.6.14"
+          python-version: "3.12"
 
-    - name: Install poetry
-      run: pipx install poetry
+      - name: Install dependencies
+        run: uv sync
 
-    - name: Install python dependencies
-      run: |
-        poetry env use 3.11
-        poetry install --with docs
-
-    - name: Build docs
-      run: cd docs && poetry run make
+      - name: Build docs
+        run: uv run make html
+        working-directory: ./docs/
 
   pre-commit:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.6.14"
+          python-version: "3.12"
 
-    - name: Install poetry
-      run: pipx install poetry
+      - name: Install dependencies
+        run: uv sync
 
-    - name: Install python dependencies
-      run: |
-        poetry env use 3.11
-        poetry install --with pre-commit,docs,dev
-
-    - name: Run pre-commit
-      run: |
-        poetry run pre-commit install
-        poetry run pre-commit run --all-files || ( git status --short ; git diff ; exit 1 )
+      - name: Run pre-commit
+        run: |
+          uv run pre-commit install
+          uv run pre-commit run --all-files || ( git status --short ; git diff ; exit 1 )

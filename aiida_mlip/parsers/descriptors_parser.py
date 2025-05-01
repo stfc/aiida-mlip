@@ -1,5 +1,7 @@
 """Parsers provided by aiida_mlip."""
 
+from __future__ import annotations
+
 from aiida.common import exceptions
 from aiida.orm.nodes.process.process import ProcessNode
 from aiida.plugins import CalculationFactory

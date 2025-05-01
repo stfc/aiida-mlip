@@ -1,8 +1,10 @@
 """Define Model Data type in AiiDA."""
 
+from __future__ import annotations
+
 import hashlib
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 from urllib import request
 
 from aiida.orm import QueryBuilder, SinglefileData, load_node
@@ -44,7 +46,7 @@ class ModelData(SinglefileData):
     """
 
     @staticmethod
-    def _calculate_hash(file: Union[str, Path]) -> str:
+    def _calculate_hash(file: str | Path) -> str:
         """
         Calculate the hash of a file.
 
@@ -69,9 +71,9 @@ class ModelData(SinglefileData):
 
     def __init__(
         self,
-        file: Union[str, Path],
+        file: str | Path,
         architecture: str,
-        filename: Optional[str] = None,
+        filename: str | None = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -96,9 +98,9 @@ class ModelData(SinglefileData):
 
     def set_file(
         self,
-        file: Union[str, Path],
-        filename: Optional[str] = None,
-        architecture: Optional[str] = None,
+        file: str | Path,
+        filename: str | None = None,
+        architecture: str | None = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -127,9 +129,9 @@ class ModelData(SinglefileData):
     @classmethod
     def from_local(
         cls,
-        file: Union[str, Path],
+        file: str | Path,
         architecture: str,
-        filename: Optional[str] = None,
+        filename: str | None = None,
     ):
         """
         Create a ModelData instance from a local file.
@@ -156,9 +158,9 @@ class ModelData(SinglefileData):
         cls,
         uri: str,
         architecture: str,
-        filename: Optional[str] = "tmp_file.model",
-        cache_dir: Optional[Union[str, Path]] = None,
-        keep_file: Optional[bool] = False,
+        filename: str | None = "tmp_file.model",
+        cache_dir: str | Path | None = None,
+        keep_file: bool | None = False,
     ):
         """
         Download a file from a URI and save it as ModelData.

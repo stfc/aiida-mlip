@@ -72,22 +72,24 @@ verdi run submit_train.py
 ```
 a model will be trained using the provided example config file and xyz files (can be found in the tests folder)
 
+
 ## Development
 
-1. Install [poetry](https://python-poetry.org/docs/#installation)
-2. (Optional) Create a virtual environment
-3. Install `aiida-mlip` with dependencies:
+We recommend installing uv for dependency management when developing for `aiida-mlip`:
+
+1. Install [uv](https://docs.astral.sh/uv/getting-started/installation)
+2. Install `aiida-mlip` with dependencies in a virtual environment:
 
 ```shell
 git clone https://github.com/stfc/aiida-mlip
 cd aiida-mlip
-pip install --upgrade pip
-poetry install --with pre-commit,dev,docs  # install extra dependencies
-pre-commit install  # install pre-commit hooks
-pytest -v  # discover and run all tests
+uv sync  # Create a virtual environment and install dependencies
+source .venv/bin/activate
+pre-commit install  # Install pre-commit hooks
+pytest -v  # Discover and run all tests
 ```
-
 See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/index.html) for more information.
+
 
 ## Repository contents
 

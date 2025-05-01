@@ -1,5 +1,7 @@
 """Test for ModelData class."""
 
+from __future__ import annotations
+
 from pathlib import Path
 
 from aiida_mlip.data.model import ModelData

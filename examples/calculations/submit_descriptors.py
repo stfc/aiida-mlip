@@ -1,5 +1,7 @@
 """Example code for submitting descriptors calculation."""
 
+from __future__ import annotations
+
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
 from aiida.orm import Bool, Str, load_code
