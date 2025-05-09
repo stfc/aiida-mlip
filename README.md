@@ -56,7 +56,8 @@ Registered entry points for aiida.calculations:
 
 The example folder provides scripts to submit calculations in the calculations folder, and tutorials in jupyter notebook format in the tutorials folder.
 
-A quick demo of how to submit a calculation using the provided example files (You might need create a [code](https://aiida.readthedocs.io/projects/aiida-core/en/stable/howto/run_codes.html#how-to-create-a-code) for Janus):
+A quick demo of how to submit a calculation using the provided example files:
+You might need create a [code](https://aiida.readthedocs.io/projects/aiida-core/en/stable/howto/run_codes.html#how-to-create-a-code) for Janus to be recognised as a code by aiida
 ```shell
 verdi daemon start     # make sure the daemon is running
 cd examples/calculations
@@ -83,8 +84,7 @@ We recommend installing uv for dependency management when developing for `aiida-
 ```shell
 git clone https://github.com/stfc/aiida-mlip
 cd aiida-mlip
-uv sync  # Create a virtual environment and install dependencies
-uv sync --extra mace # Install mace seperately
+uv sync --extra mace # Create a virtual environment and install dependencies with mace for tests
 source .venv/bin/activate
 pre-commit install  # Install pre-commit hooks
 pytest -v  # Discover and run all tests
