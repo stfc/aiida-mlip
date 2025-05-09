@@ -39,6 +39,7 @@ We suggest creating a new [virtual environment](https://docs.python.org/3/librar
 
 ```shell
 pip install aiida-mlip
+verdi presto  # better to set up a new profile
 verdi plugin list aiida.calculations
 ```
 The last command should show a list of AiiDA pre-installed calculations and the aiida-mlip plugin calculations:
