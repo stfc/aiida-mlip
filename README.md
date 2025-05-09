@@ -36,7 +36,7 @@ The code relies heavily on [janus-core](https://github.com/stfc/janus-core), whi
 
 ```shell
 pip install aiida-mlip
-verdi quicksetup  # better to set up a new profile
+verdi presto  # better to set up a new profile
 verdi plugin list aiida.calculations
 ```
 The last command should show a list of AiiDA pre-installed calculations and the aiida-mlip plugin calculations (mlip.opt, mlip.sp)
