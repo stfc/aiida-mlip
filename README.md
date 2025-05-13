@@ -68,7 +68,9 @@ verdi presto #Sets up profile
 The example folder provides scripts to submit calculations in the calculations folder, and tutorials in jupyter notebook format in the tutorials folder.
 
 A quick demo of how to submit a calculation using the provided example files:
-You might need create a [code](https://aiida.readthedocs.io/projects/aiida-core/en/stable/howto/run_codes.html#how-to-create-a-code) for Janus to be recognised as a code by aiida
+
+You need to create a [code](https://aiida.readthedocs.io/projects/aiida-core/en/stable/howto/run_codes.html#how-to-create-a-code) for Janus to be recognised as a code by aiida
+
 ```shell
 verdi daemon start     # make sure the daemon is running
 cd examples/calculations
