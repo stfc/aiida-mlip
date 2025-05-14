@@ -34,9 +34,9 @@ The code relies heavily on [janus-core](https://github.com/stfc/janus-core), whi
 
 # Getting Started
 
-## Installation
-We suggest creating a new [virtual environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments) and activating it before running the commands below to install `aiida-mlip`:
+# Getting Started
 
+## Installation
 Create a Python [virtual environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments) and activate it to install aiida-mlip
 
 ```shell
@@ -55,7 +55,7 @@ Registered entry points for aiida.calculations:
 * mlip.train
 * mlip.descriptors
 ```
-## Prerequisites
+## AiiDA Configuration
 
 Now that aiida-mlip plugin has been installed, we can setup the environment to run calculations:
 
