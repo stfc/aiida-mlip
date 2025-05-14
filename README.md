@@ -55,6 +55,9 @@ Registered entry points for aiida.calculations:
 * mlip.train
 * mlip.descriptors
 ```
+
+Aiida-mlip should be ready to run some notebooks at this stage. However, to have full functionality we reccomend configuring aiida-mlip by creating a profile and setting up a broker.
+
 ## AiiDA Configuration
 
 Now that aiida-mlip plugin has been installed, we can setup the environment to run calculations:
@@ -64,7 +67,7 @@ Now that aiida-mlip plugin has been installed, we can setup the environment to r
 ```shell
 verdi presto #Sets up profile
 ```
-`verdi presto` is a quick and simple way to setup the daemon to run some calculations. [Aiida docs](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#) go over a more detailed proccess to setup a profile.
+`verdi presto` is a quick and simple way to setup the daemon to run some calculations, setting up a profile 'presto'; which configures the computer, broker (i.e. RabbitMQ) and database. [Aiida docs](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#) go over a more detailed proccess to setup a profile.
 
 ## AiiDA Configuration
 
@@ -109,6 +112,7 @@ a model will be trained using the provided example config file and xyz files (ca
 ## Development
 
 We recommend installing ``uv`` for dependency management when developing for `aiida-mlip`, and setting up PostgreSQL, as this is currently a requirement for testing:
+
 
 
 1. Install [uv](https://docs.astral.sh/uv/getting-started/installation)
