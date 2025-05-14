@@ -32,8 +32,9 @@ machine learning interatomic potentials aiida plugin
 The code relies heavily on [janus-core](https://github.com/stfc/janus-core), which handles mlip calculations using ASE.
 
 
-## Installation
+# Getting Started
 
+## Installation
 Create a Python [virtual environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments) and activate it to install aiida-mlip
 
 ```shell
@@ -52,7 +53,7 @@ Registered entry points for aiida.calculations:
 * mlip.train
 * mlip.descriptors
 ```
-## Prerequisites
+## AiiDA Configuration
 
 Now that aiida-mlip plugin has been installed, we can setup the environment to run calculations:
 
