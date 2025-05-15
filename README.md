@@ -39,9 +39,10 @@ Create a Python [virtual environment](https://docs.python.org/3/library/venv.htm
 
 ```shell
 pip install aiida-mlip
+verdi presto #Sets up profile
 verdi plugin list aiida.calculations
 ```
-The last command should show a list of AiiDA pre-installed calculations and the aiida-mlip plugin calculations (mlip.opt, mlip.sp)
+The last command should show a list of AiiDA pre-installed calculations and the aiida-mlip plugin calculations:
 ```
 Registered entry points for aiida.calculations:
 * core.arithmetic.add
@@ -54,16 +55,14 @@ Registered entry points for aiida.calculations:
 * mlip.descriptors
 ```
 
-Aiida-mlip should be ready to run some notebooks at this stage. However, to have full functionality we reccomend configuring aiida-mlip by creating a profile and setting up a broker.
+Aiida-mlip should be ready to run some notebooks at this stage . However, to have [full functionality](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_quick.html#quick-install-limitations) we recommend configuring aiida-mlip by creating a profile and setting up a broker.
 
 ## AiiDA Configuration
 
-Now that aiida-mlip plugin has been installed, we can setup the environment to run calculations:
-
-1. Install RabbitMQ ([ Link ](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#rabbitmq))
+1. Install [RabbitMQ](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#rabbitmq)
 2. Run:
 ```shell
-verdi presto #Sets up profile
+verdi presto #Sets up profile and broker for daemon to run
 ```
 `verdi presto` is a quick and simple way to setup the daemon to run some calculations, setting up a profile 'presto'; which configures the computer, broker (i.e. RabbitMQ) and database. [Aiida docs](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#) go over a more detailed proccess to setup a profile.
 
@@ -93,7 +92,7 @@ a model will be trained using the provided example config file and xyz files (ca
 
 ## Development
 
-We recommend installing uv for dependency management when developing for `aiida-mlip`:
+We recommend installing uv for dependency management when developing for `aiida-mlip` and setting up PostgreSQL:
 
 
 1. Install [uv](https://docs.astral.sh/uv/getting-started/installation)
