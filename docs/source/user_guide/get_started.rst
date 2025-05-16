@@ -2,39 +2,36 @@
 Getting started
 ===============
 
-This page should contain a short guide on what the plugin does and
-a short example on how to use the plugin.
-
 Installation
 ++++++++++++
 
-Create a new `virtual environment <https://docs.python.org/3/library/venv.html#creating-virtual-environments>`_ and activate it to run the commands below.
+We suggest creating a new `virtual environment <https://docs.python.org/3/library/venv.html#creating-virtual-environments>`_ and activating it before running the commands below.
 
-The latest stable release of ``aiida-mlip``, including its dependencies, can be installed from PyPI by running in the venv:
+The latest stable release of ``aiida-mlip``, including its dependencies, can be installed from PyPI by running:
 
 .. code-block:: bash
 
-    pip install aiida-mlip
+    python3 -m pip install aiida-mlip
 
 To get all the latest changes, ``aiida-mlip`` can also be installed from GitHub:
 
 .. code-block:: bash
 
-    pip install git+https://github.com/stfc/aiida-mlip.git
+    python3 -m pip install git+https://github.com/stfc/aiida-mlip.git
 
 By default, no machine learnt interatomic potentials (MLIPs) will be installed with ``aiida-mlip``.
 However, ``aiida-mlip`` currently provides an ``extra``, allowing MACE to be installed:
 
 .. code-block:: bash
 
-    pip install aiida-mlip[mace]
+   python3 -m pip install aiida-mlip[mace]
 
 For additional MLIPs, it is recommended that the ``extra`` dependencies provided by ``janus-core`` are used.
 For example, to install CHGNet and SevenNet, run:
 
 .. code-block:: bash
 
-    pip install janus-core[chgnet,sevennet]
+    python3 -m pip install janus-core[chgnet,sevennet]
 
 Please refer to the ``janus-core`` `documentation <https://stfc.github.io/janus-core/getting_started/getting_started.html#installation>`_ for further details.
 
@@ -43,13 +40,17 @@ Once ``aiida-mlip`` and the desired MLIP calculators are installed, run::
     verdi presto  # better to set up a new profile
     verdi plugin list aiida.calculations  # should now show your calculation plugins
 
-Then use ``verdi code setup`` with the ``janus`` input plugin
-to set up an AiiDA code for aiida-mlip. This `notebook <https://github.com/stfc/aiida-mlip/blob/main/examples/tutorials/setup-janus-code.ipynb>`_ may be useful.
+Then, use ``verdi code setup`` with the ``janus`` input plugin
+to set up an AiiDA code for aiida-mlip. The `aiida docs <https://aiida.readthedocs.io/projects/aiida-core/en/stable/howto/run_codes.html#how-to-create-a-code>`_ go over how to create a code.
 
+.. note::
+    If you have not set up the RabbitMQ message broker, you should be now able to ``run`` processes,
+    as demonstrated in the `tutorial notebooks <https://github.com/stfc/aiida-mlip/tree/main/examples/tutorials>`_,
+    but cannot ``submit`` processes.
 
-.. note:: At this point only a profile has been setup, meaning you may be able to run some notebooks but you will have limited functionality.
-    `Aiida docs <https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_quick.html#quick-install-limitations>`_
-    explain the limitations of not setting up a broker or PostgreSQL.
+    The PostgreSQL database is not configured by default.
+    Please refer to the `Aiida documentation <https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_quick.html#quick-install-limitations>`_
+    for more details on the limitations of not setting up a broker or PostgreSQL.
 
 Usage
 +++++

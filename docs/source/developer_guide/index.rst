@@ -25,7 +25,7 @@ This provides a number of useful features, including:
 
 After cloning the repository, dependencies useful for development can then be installed by running::
 
-    uv sync --extra mace
+    uv sync -p 3.12 --extra mace -U
     source .venv/bin/activate
 
 
@@ -63,12 +63,12 @@ Setting up PostgreSQL
 
 ``aiida-mlip`` requires a PostgreSQL database to be set up for the tests to run successfully.
 
-PostgreSQL can be installed outside the Virtual Environment::
+PostgreSQL can be installed outside the virtual environment::
 
     sudo apt install postgresql
 
 The `Ubuntu Server <https://documentation.ubuntu.com/server/how-to/databases/install-postgresql/index.html>`_ docs go over installing PostgreSQL on Ubuntu.
-For other Distros, please refer to the `PostgreSQL documentation <https://www.postgresql.org/download/>`_.
+For other operating systems, please refer to the `PostgreSQL documentation <https://www.postgresql.org/download/>`_.
 
 Then for specific instructions on setting up PostgreSQL for AiiDA, please refer to the `AiiDA documentation <https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#core-psql-dos>`_.
 
@@ -82,7 +82,7 @@ Packages in the ``dev`` dependency group allow tests to be run locally using ``p
 
 .. note::
 
-    MACE must be installed for tests to run successfully. PosytgreSQL must also be installed and running.
+    MACE must be installed for tests to run successfully. PostgreSQL must also be installed and running.
 
 
 Alternatively, tests can be run in separate virtual environments using ``tox``::
