@@ -18,8 +18,12 @@ This provides a number of useful features, including:
 
 - Virtual environment management
 
+- `Building and publishing <https://docs.astral.sh/uv/guides/publish/>`_ tools
 
-Dependencies useful for development can then be installed by running::
+  * Currently, an external build backend, such as `pdm <https://pypi.org/project/pdm-backend>`_, is required
+
+
+After cloning the repository, dependencies useful for development can then be installed by running::
 
     uv sync --extra mace
     source .venv/bin/activate
