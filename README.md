@@ -39,7 +39,6 @@ Create a Python [virtual environment](https://docs.python.org/3/library/venv.htm
 
 ```shell
 pip install aiida-mlip
-verdi presto #Sets up profile
 verdi plugin list aiida.calculations
 ```
 The last command should show a list of AiiDA pre-installed calculations and the aiida-mlip plugin calculations:
@@ -55,16 +54,16 @@ Registered entry points for aiida.calculations:
 * mlip.descriptors
 ```
 
-Aiida-mlip should be ready to run some notebooks at this stage . However, to have [full functionality](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_quick.html#quick-install-limitations) we recommend configuring aiida-mlip by creating a profile and setting up a broker.
+Aiida-mlip is installed at this stage . However, to have [full functionality](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_quick.html#quick-install-limitations) we recommend configuring aiida-mlip by creating a profile and setting up a broker.
 
 ## AiiDA Configuration
 
-1. Install [RabbitMQ](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#rabbitmq)
+1. (Optional) Install [RabbitMQ](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#rabbitmq)
 2. Run:
 ```shell
 verdi presto #Sets up profile and broker for daemon to run
 ```
-`verdi presto` is a quick and simple way to setup the daemon to run some calculations, setting up a profile 'presto'; which configures the computer, broker (i.e. RabbitMQ) and database. [Aiida docs](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#) go over a more detailed proccess to setup a profile.
+Although setting up a message broker like RabbitMQ is optional, we highly recommend doing so to avoid potential errors and to enable full functionality—such as running the `submit` process. If a broker is detected, the `verdi presto` command offers a quick and easy way to set up the daemon for running calculations. It automatically configures a profile named `presto`, which includes setting up the computer, the database, and the broker (e.g. RabbitMQ). For a more detailed guide on setting up a profile, refer to the [AiiDA documentation](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#).
 
 ## Usage
 
@@ -92,7 +91,7 @@ a model will be trained using the provided example config file and xyz files (ca
 
 ## Development
 
-We recommend installing uv for dependency management when developing for `aiida-mlip` and setting up PostgreSQL:
+We recommend installing ``uv`` for dependency management when developing for `aiida-mlip`, and setting up PostgreSQL, as this is currently a requirement for testing:
 
 
 1. Install [uv](https://docs.astral.sh/uv/getting-started/installation)
