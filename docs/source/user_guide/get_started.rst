@@ -43,14 +43,15 @@ Once ``aiida-mlip`` and the desired MLIP calculators are installed, run::
 Then, use ``verdi code setup`` with the ``janus`` input plugin
 to set up an AiiDA code for aiida-mlip. The `aiida docs <https://aiida.readthedocs.io/projects/aiida-core/en/stable/howto/run_codes.html#how-to-create-a-code>`_ go over how to create a code.
 
-.. note::
-    If you have not set up the RabbitMQ message broker, you should be now able to ``run`` processes,
-    as demonstrated in the `tutorial notebooks <https://github.com/stfc/aiida-mlip/tree/main/examples/tutorials>`_,
-    but cannot ``submit`` processes.
 
-    The PostgreSQL database is not configured by default.
-    Please refer to the `Aiida documentation <https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_quick.html#quick-install-limitations>`_
-    for more details on the limitations of not setting up a broker or PostgreSQL.
+
+.. note::
+    Configuring a message broker like RabbitMQ is optional, but highly recommended to avoid errors and enable `full functionality <https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_quick.html#quick-install-limitations>`_ of AiiDA.
+    If you have not set up RabbitMQ, you will still be able to ``run`` processes (as shown in the `tutorial notebooks <https://github.com/stfc/aiida-mlip/tree/main/examples/tutorials>`_) but not be able to ``submit`` them.
+    If a broker is detected, the ``verdi presto`` command can automatically configure a presto profile, including the computer, database, and broker.
+    You’ll also need to set up a code for Janus so it can be recognized by AiiDA. Note that PostgreSQL is not configured by default.
+    Refer to the `AiiDA complete installation guide <https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#>`_ for full setup details.
+
 
 Usage
 +++++
@@ -70,12 +71,12 @@ If you have already set up your own aiida_mlip code using
 Available calculations
 ++++++++++++++++++++++
 
-These are the available calculations::
+These are the available calculations
 
-    class aiida_mlip.calculations.descriptors.Descriptors(*args: Any, **kwargs: Any)
-    class aiida_mlip.calculations.geomopt.GeomOpt(*args: Any, **kwargs: Any)
-    class aiida_mlip.calculations.md.MD(*args: Any, **kwargs: Any)
-    class aiida_mlip.calculations.singlepoint.Singlepoint(*args: Any, **kwargs: Any)
-    class aiida_mlip.calculations.train.Train(*args: Any, **kwargs: Any)
+   * Descriptors
+   * GeomOpt
+   * MD
+   * Singlepoint
+   * Train
 
 For more details on the calculations, please refer to the `calculations section <https://stfc.github.io/aiida-mlip/user_guide/calculations.html>`_.
