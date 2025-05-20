@@ -63,7 +63,7 @@ Once `aiida-mlip` is installed, you have to configure AiiDA by creating a profil
 ```shell
 verdi presto #Sets up profile and broker for daemon to run
 ```
-3. Create a [code](https://aiida.readthedocs.io/projects/aiida-core/en/stable/howto/run_codes.html#how-to-create-a-code) for Janus
+3. Create a [code](https://aiida.readthedocs.io/projects/aiida-core/en/stable/howto/run_codes.html#how-to-create-a-code) for `janus-core`
 
 Setting up a message broker like RabbitMQ is highly recommended to avoid errors and enable full functionality. If detected, `verdi presto` sets up a complete AiiDA profile, including the computer, database, and broker. You'll also need to configure a code for Janus so AiiDA can recognise it. Aiida-mlip [user guide](https://stfc.github.io/aiida-mlip/user_guide/get_started.html) goes into full detail about the installation.
 
