@@ -56,7 +56,7 @@ Registered entry points for aiida.calculations:
 
 ## AiiDA Configuration
 
-Once aiida_mlip is installed, you have to configure aiida-mlip by creating a profile and optionally setting up a broker.
+Once `aiida-mlip` is installed, you have to configure AiiDA by creating a profile to store your data:
 
 1. (Optional) Install [RabbitMQ](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#rabbitmq)
 2. Run:
