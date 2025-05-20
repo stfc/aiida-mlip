@@ -133,7 +133,7 @@ select = [
     # pycodestyle
     "E", "W",
     # Pyflakes
-    "F", "FA",
+    "F",
     # pyupgrade
     "I",
     # pep8-naming

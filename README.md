@@ -54,24 +54,25 @@ Registered entry points for aiida.calculations:
 * mlip.descriptors
 ```
 
-Aiida-mlip is installed at this stage . However, to have [full functionality](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_quick.html#quick-install-limitations) we recommend configuring aiida-mlip by creating a profile and setting up a broker.
-
 ## AiiDA Configuration
+
+Once aiida_mlip is installed, you have to configure aiida-mlip by creating a profile and optionally setting up a broker.
 
 1. (Optional) Install [RabbitMQ](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#rabbitmq)
 2. Run:
 ```shell
 verdi presto #Sets up profile and broker for daemon to run
 ```
-Although setting up a message broker like RabbitMQ is optional, we highly recommend doing so to avoid potential errors and to enable full functionality—such as running the `submit` process. If a broker is detected, the `verdi presto` command offers a quick and easy way to set up the daemon for running calculations. It automatically configures a profile named `presto`, which includes setting up the computer, the database, and the broker (e.g. RabbitMQ). For a more detailed guide on setting up a profile, refer to the [AiiDA documentation](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#).
+3. Create a [code](https://aiida.readthedocs.io/projects/aiida-core/en/stable/howto/run_codes.html#how-to-create-a-code) for Janus
+
+Setting up a message broker like RabbitMQ is highly recommended to avoid errors and enable full functionality. If detected, `verdi presto` sets up a complete AiiDA profile, including the computer, database, and broker. You'll also need to configure a code for Janus so AiiDA can recognise it. Aiida-mlip [user guide](https://stfc.github.io/aiida-mlip/user_guide/get_started.html) goes into full detail about the installation.
 
 ## Usage
 
-The example folder provides scripts to submit calculations in the calculations folder, and tutorials in jupyter notebook format in the tutorials folder.
+The [examples](https://github.com/stfc/aiida-mlip/tree/main/examples) folder provides scripts to submit calculations in the calculations folder, and tutorials in jupyter notebook format in the tutorials folder.
 
 A quick demo of how to submit a calculation using the provided example files:
 
-You need to create a [code](https://aiida.readthedocs.io/projects/aiida-core/en/stable/howto/run_codes.html#how-to-create-a-code) for Janus to be recognised as a code by aiida
 
 ```shell
 verdi daemon start     # make sure the daemon is running
