@@ -49,7 +49,7 @@ to set up an AiiDA code for aiida-mlip. The `aiida docs <https://aiida.readthedo
     Configuring a message broker like RabbitMQ is optional, but highly recommended to avoid errors and enable `full functionality <https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_quick.html#quick-install-limitations>`_ of AiiDA.
     If you have not set up RabbitMQ, you will still be able to ``run`` processes (as shown in the `tutorial notebooks <https://github.com/stfc/aiida-mlip/tree/main/examples/tutorials>`_) but not be able to ``submit`` them.
     If a broker is detected, the ``verdi presto`` command can automatically configure a presto profile, including the computer, database, and broker.
-    You’ll also need to set up a code for Janus so it can be recognized by AiiDA. Note that PostgreSQL is not configured by default.
+    You’ll also need to set up a code for ``janus-core`` so it can be recognised by AiiDA. Note that PostgreSQL is not configured by default.
     Refer to the `AiiDA complete installation guide <https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#>`_ for full setup details.
 
 
