@@ -97,9 +97,17 @@ def test_run_opt(model_folder, janus_code):
     assert result["xyz_output"].filename == "aiida-results.xyz"
 
 
-def test_example_opt(example_path, janus_code):
+def test_example_opt(example_path, janus_code, aiida_profile):
     """Test function to run geometry optimization using the example file provided."""
     example_file_path = example_path / "submit_geomopt.py"
+    profile = aiida_profile
+    command = [
+        "verdi",
+        "profile",
+        "set-default",
+        profile.name,
+    ]
+    subprocess.run(command, capture_output=True, text=True, check=False)
     command = [
         "verdi",
         "run",

@@ -14,7 +14,7 @@ from aiida.orm import InstalledCode, load_code
 from aiida.plugins import CalculationFactory
 import pytest
 
-pytest_plugins = ["aiida.manage.tests.pytest_fixtures"]
+pytest_plugins = ["aiida.tools.pytest_fixtures"]
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -81,14 +81,21 @@ def fixture_localhost(aiida_localhost):
     return localhost
 
 
+@pytest.fixture(scope="module", autouse=True)
+def aiida_profile(aiida_config, aiida_profile_factory):
+    """Create and load a profile."""
+    with aiida_profile_factory(aiida_config) as profile:
+        yield profile
+
+
 @pytest.fixture(scope="function")
-def janus_code(aiida_local_code_factory):
+def janus_code(aiida_code_installed):
     """
     Fixture to get the janus code.
 
     Parameters
     ----------
-    aiida_local_code_factory : fixture
+    aiida_code_installed : fixture
         A fixture providing a factory for creating local codes.
 
     Returns
@@ -97,7 +104,9 @@ def janus_code(aiida_local_code_factory):
         The janus code instance.
     """
     janus_path = shutil.which("janus") or os.environ.get("JANUS_PATH")
-    return aiida_local_code_factory(executable=janus_path, entry_point="mlip.sp")
+    return aiida_code_installed(
+        default_calc_job_plugin="mlip.sp", filepath_executable=janus_path
+    )
 
 
 @pytest.fixture

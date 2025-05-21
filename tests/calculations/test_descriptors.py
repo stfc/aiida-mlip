@@ -98,9 +98,17 @@ def test_run_descriptors(model_folder, janus_code):
     assert obtained_res["mace_descriptors"] == pytest.approx([-0.00207855, -0.00919008])
 
 
-def test_example_descriptors(example_path, janus_code):
+def test_example_descriptors(example_path, janus_code, aiida_profile):
     """Test running descriptors calculation using the example file provided."""
     example_file_path = example_path / "submit_descriptors.py"
+    profile = aiida_profile
+    command = [
+        "verdi",
+        "profile",
+        "set-default",
+        profile.name,
+    ]
+    subprocess.run(command, capture_output=True, text=True, check=False)
     command = [
         "verdi",
         "run",

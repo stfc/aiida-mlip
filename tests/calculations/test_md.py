@@ -203,9 +203,17 @@ def test_run_md(model_folder, structure_folder, janus_code):
     )  # check
 
 
-def test_example_md(example_path, janus_code):
+def test_example_md(example_path, janus_code, aiida_profile):
     """Test function to run MD calculation using the example file provided."""
     example_file_path = example_path / "submit_md.py"
+    profile = aiida_profile
+    command = [
+        "verdi",
+        "profile",
+        "set-default",
+        profile.name,
+    ]
+    subprocess.run(command, capture_output=True, text=True, check=False)
     command = [
         "verdi",
         "run",

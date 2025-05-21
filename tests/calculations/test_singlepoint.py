@@ -149,9 +149,17 @@ def test_run_sp(model_folder, janus_code):
     assert obtained_res["info"]["mace_stress"][0] == pytest.approx(-0.005816546985101)
 
 
-def test_example(example_path, janus_code):
+def test_example(example_path, janus_code, aiida_profile):
     """Test function to run singlepoint calculation using the example file provided."""
     example_file_path = example_path / "submit_singlepoint.py"
+    profile = aiida_profile
+    command = [
+        "verdi",
+        "profile",
+        "set-default",
+        profile.name,
+    ]
+    subprocess.run(command, capture_output=True, text=True, check=False)
     command = [
         "verdi",
         "run",
