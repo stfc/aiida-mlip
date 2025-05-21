@@ -9,8 +9,7 @@ This tutorial guides you through running a single-point calculation using the ai
 Prerequisites
 -------------
 
-1. Install `aiida-mlip`, `aiida-core <https://aiida.readthedocs.io/projects/aiida-core/en/latest/intro/get_started.html>`_, `janus-core <https://github.com/stfc/janus-core>`_.
-
+1. Install ``aiida-mlip``, which also installs `aiida-core <https://github.com/aiidateam/aiida-core>`_ and `janus-core <https://github.com/stfc/janus-core>`_.
 2. Set up an AiiDA profile, `computer <https://aiida.readthedocs.io/projects/aiida-core/en/v2.5.1/howto/run_codes.html#how-to-set-up-a-computer>`_ (localhost or remote) and a `code <https://aiida.readthedocs.io/projects/aiida-core/en/v2.5.1/howto/run_codes.html#how-to-create-a-code>`_ (a predefined path for janus-core).
 
 Usage

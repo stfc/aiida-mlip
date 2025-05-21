@@ -23,9 +23,9 @@ This provides a number of useful features, including:
   * Currently, an external build backend, such as `pdm <https://pypi.org/project/pdm-backend>`_, is required
 
 
-Dependencies useful for development can then be installed by running::
+After cloning the repository, dependencies useful for development can then be installed by running::
 
-    uv sync -p 3.12
+    uv sync -p 3.12 --extra mace -U
     source .venv/bin/activate
 
 
@@ -58,6 +58,20 @@ rather than using ``uv pip install`` to modify the project environment manually.
 
 For further information, please refer to the `documentation <https://docs.astral.sh/uv/>`_.
 
+Setting up PostgreSQL
++++++++++++++++++++++
+
+``aiida-mlip`` requires a PostgreSQL database to be set up for the tests to run successfully.
+
+PostgreSQL can be installed outside the virtual environment::
+
+    sudo apt install postgresql
+
+The `Ubuntu Server <https://documentation.ubuntu.com/server/how-to/databases/install-postgresql/index.html>`_ docs go over installing PostgreSQL on Ubuntu.
+For other operating systems, please refer to the `PostgreSQL documentation <https://www.postgresql.org/download/>`_.
+
+Then for specific instructions on setting up PostgreSQL for AiiDA, please refer to the `AiiDA documentation <https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#core-psql-dos>`_.
+
 
 Running the tests
 +++++++++++++++++
@@ -68,7 +82,7 @@ Packages in the ``dev`` dependency group allow tests to be run locally using ``p
 
 .. note::
 
-    MACE must be installed for tests to run successfully.
+    MACE must be installed for tests to run successfully. PostgreSQL must also be installed and running.
 
 
 Alternatively, tests can be run in separate virtual environments using ``tox``::

@@ -32,14 +32,16 @@ machine learning interatomic potentials aiida plugin
 The code relies heavily on [janus-core](https://github.com/stfc/janus-core), which handles mlip calculations using ASE.
 
 
+# Getting Started
+
 ## Installation
+We suggest creating a new [virtual environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments) and activating it before running the commands below to install `aiida-mlip`:
 
 ```shell
 pip install aiida-mlip
-verdi quicksetup  # better to set up a new profile
 verdi plugin list aiida.calculations
 ```
-The last command should show a list of AiiDA pre-installed calculations and the aiida-mlip plugin calculations (mlip.opt, mlip.sp)
+The last command should show a list of AiiDA pre-installed calculations and the aiida-mlip plugin calculations:
 ```
 Registered entry points for aiida.calculations:
 * core.arithmetic.add
@@ -52,11 +54,30 @@ Registered entry points for aiida.calculations:
 * mlip.descriptors
 ```
 
+## AiiDA Configuration
+
+Once `aiida-mlip` is installed, you have to configure AiiDA by creating a profile to store your data:
+
+1. (Optional) Install [RabbitMQ](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#rabbitmq)
+2. Run:
+```shell
+verdi presto #Sets up profile and broker for daemon to run
+```
+3. Create a [code](https://aiida.readthedocs.io/projects/aiida-core/en/stable/howto/run_codes.html#how-to-create-a-code) for `janus-core`
+
+> [!NOTE]
+> Setting up a message broker like RabbitMQ is recommended to enable full functionality, particularly for production use.
+> If detected, `verdi presto` sets up a complete AiiDA profile, including the computer, database, and broker, but the `janus-core` code must be set up separately, as described above.
+
+Please refer to our [user guide](https://stfc.github.io/aiida-mlip/user_guide/get_started.html) for more details on installation and configuring AiiDA.
+
 ## Usage
 
-The example folder provides scripts to submit calculations in the calculations folder, and tutorials in jupyter notebook format in the tutorials folder.
+The [examples](https://github.com/stfc/aiida-mlip/tree/main/examples) folder provides scripts to submit calculations in the calculations folder, and tutorials in jupyter notebook format in the tutorials folder.
 
 A quick demo of how to submit a calculation using the provided example files:
+
+
 ```shell
 verdi daemon start     # make sure the daemon is running
 cd examples/calculations
@@ -75,82 +96,22 @@ a model will be trained using the provided example config file and xyz files (ca
 
 ## Development
 
-We recommend installing uv for dependency management when developing for `aiida-mlip`:
+We recommend installing ``uv`` for dependency management when developing for `aiida-mlip`, and setting up PostgreSQL, as this is currently a requirement for testing:
+
 
 1. Install [uv](https://docs.astral.sh/uv/getting-started/installation)
-2. Install `aiida-mlip` with dependencies in a virtual environment:
+2. Setup [PostgreSQL](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#core-psql-dos)
+3. Install `aiida-mlip` with dependencies in a virtual environment:
 
 ```shell
 git clone https://github.com/stfc/aiida-mlip
 cd aiida-mlip
-uv sync  # Create a virtual environment and install dependencies
+uv sync --extra mace # Create a virtual environment and install dependencies with mace for tests
 source .venv/bin/activate
 pre-commit install  # Install pre-commit hooks
 pytest -v  # Discover and run all tests
 ```
 See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/index.html) for more information.
-
-
-## Repository contents
-
-* [`.github/`](.github/): [Github Actions](https://github.com/features/actions) configuration
-  * [`ci.yml`](.github/workflows/ci.yml): runs tests, checks test coverage and builds documentation at every new commit
-  * [`publish-on-pypi.yml`](.github/workflows/publish-on-pypi.yml): automatically deploy git tags to PyPI - just generate a [PyPI API token](https://pypi.org/help/#apitoken) for your PyPI account and add it to the `pypi_token` secret of your github repository
-  * [`docs.yml`](.github/workflows/docs.yml): builds and deploys the documentation
-* [`aiida_mlip/`](aiida_mlip/): The main source code of the plugin package
-  * [`data/`](aiida_mlip/data/): Plugin `Data` classes
-    * [`model.py`](aiida_mlip/data/model.py) `ModelData` class to save mlip models as AiiDA data types
-  * [`calculations/`](aiida_mlip/calculations/): Plugin `Calcjob` classes
-    * [`base.py`](aiida_mlip/calculations/base.py): Base `Calcjob` class for other calculations
-    * [`singlepoint.py`](aiida_mlip/calculations/singlepoint.py): `Calcjob` class to run single point calculations using mlips
-    * [`geomopt.py`](aiida_mlip/calculations/geomopt.py): `Calcjob` class to perform geometry optimization using mlips
-    * [`md.py`](aiida_mlip/calculations/md.py): `Calcjob` class to perform molecular dynamics using mlips
-    * [`descriptors.py`](aiida_mlip/calculations/descriptors.py): `Calcjob` class to calculate MLIP descriptors
-  * [`parsers/`](aiida_mlip/parsers/): `Parsers` for the calculations
-    * [`base_parser.py`](aiida_mlip/parsers/base_parser.py): Base `Parser` for all calculations.
-    * [`sp_parser.py`](aiida_mlip/parsers/sp_parser.py): `Parser` for `Singlepoint` calculation.
-    * [`opt_parser.py`](aiida_mlip/parsers/opt_parser.py): `Parser` for `Geomopt` calculation.
-    * [`md_parser.py`](aiida_mlip/parsers/md_parser.py): `Parser` for `MD` calculation.
-    * [`train_parser.py`](aiida_mlip/parsers/train_parser.py): `Parser` for `Train` calculation.
-    * [`descriptors_parser.py`](aiida_mlip/parsers/descriptors_parser.py): `Parser` for `Descriptors` calculation.
-  * [`helpers/`](aiida_mlip/helpers/): `Helpers` to run calculations.
-  * [`workflows/`](aiida_mlip/workflows/): `WorkGraphs` or `WorkChains` for common workflows with mlips.
-    * [`ht_workgraph.py`](aiida_mlip/workflows/ht_workgraph.py): A `WorkGraph` to run high-throughput optimisations.
-* [`docs/`](docs/source/): Code documentation
-  * [`apidoc/`](docs/source/apidoc/): API documentation
-  * [`developer_guide/`](docs/source/developer_guide/): Documentation for developers
-  * [`user_guide/`](docs/source/user_guide/): Documentation for users
-  * [`images/`](docs/source/images/): Logos etc used in the documentation
-* [`examples/`](examples/): Examples for submitting calculations using this plugin
-  * [`tutorials/`](examples/tutorials/): Jupyter notebooks with tutorials for running calculations and other files that are used in the tutorial
-  * [`calculations/`](examples/calculations/): Scripts for submitting calculations
-    * [`submit_singlepoint.py`](examples/calculations/submit_singlepoint.py): Script for submitting a singlepoint calculation
-    * [`submit_geomopt.py`](examples/calculations/submit_geomopt.py): Script for submitting a geometry optimisation calculation
-    * [`submit_md.py`](examples/calculations/submit_md.py): Script for submitting a molecular dynamics calculation
-    * [`submit_train.py`](examples/calculations/submit_train.py): Script for submitting a train calculation.
-    * [`submit_descriptors.py`](examples/calculations/submit_descriptors.py): Script for submitting a descriptors calculation.
-  * [`workflows/`](examples/workflows/): Scripts for submitting workflows
-    * [`submit_ht_workgraph.py`](examples/workflows/submit_ht_workgraph.py): Script for submitting a high-throughput WorkGraph for singlepoint calculation.
-* [`tests/`](tests/): Basic regression tests using the [pytest](https://docs.pytest.org/en/latest/) framework (submitting a calculation, ...). Install `pip install -e .[testing]` and run `pytest`.
-  * [`conftest.py`](tests/conftest.py): Configuration of fixtures for [pytest](https://docs.pytest.org/en/latest/)
-  * [`calculations/`](tests/calculations): Calculations
-    * [`test_singlepoint.py`](tests/calculations/test_singlepoint.py): Test `SinglePoint` calculation
-    * [`test_geomopt.py`](tests/calculations/test_geomopt.py): Test `Geomopt` calculation
-    * [`test_md.py`](tests/calculations/test_md.py): Test `MD` calculation
-    * [`test_train.py`](tests/calculations/test_train.py): Test `Train` calculation
-    * [`test_descriptors.py`](tests/calculations/test_descriptors.py): Test `Descriptors` calculation
-  * [`data/`](tests/data): Data
-    * [`test_model.py`](tests/data/test_model.py): Test `ModelData` type
-    * [`test_config.py`](tests/data/test_config.py): Test `JanusConfigfile` type
-  * [`workflows/`](tests/workflows): Workflows
-    * [`test_ht.py`](tests/workflows/test_ht.py): Test high throughput workgraph.
-* [`.gitignore`](.gitignore): Telling git which files to ignore
-* [`.pre-commit-config.yaml`](.pre-commit-config.yaml): Configuration of [pre-commit hooks](https://pre-commit.com/) that sanitize coding style and check for syntax errors. Enable via `pip install -e .[pre-commit] && pre-commit install`
-* [`LICENSE`](LICENSE): License for the plugin
-* [`README.md`](README.md): This file
-* [`tox.ini`](tox.ini): File to set up tox
-* [`pyproject.toml`](pyproject.toml): Python package metadata for registration on [PyPI](https://pypi.org/) and the [AiiDA plugin registry](https://aiidateam.github.io/aiida-registry/) (including entry points)
-
 
 ## License
 
