@@ -114,7 +114,6 @@ a model will be trained using the provided example config file and xyz files (ca
 We recommend installing ``uv`` for dependency management when developing for `aiida-mlip`, and setting up PostgreSQL, as this is currently a requirement for testing:
 
 
-
 1. Install [uv](https://docs.astral.sh/uv/getting-started/installation)
 2. Setup [PostgreSQL](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#core-psql-dos)
 3. Install `aiida-mlip` with dependencies in a virtual environment:

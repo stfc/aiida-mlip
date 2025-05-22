@@ -5,12 +5,11 @@ from __future__ import annotations
 import os
 from pathlib import Path
 import shutil
+import subprocess
 
-from aiida.common import exceptions
 from aiida.common.folders import SandboxFolder
 from aiida.engine.utils import instantiate_process
 from aiida.manage.manager import get_manager
-from aiida.orm import InstalledCode, load_code
 from aiida.plugins import CalculationFactory
 import pytest
 
@@ -81,79 +80,25 @@ def fixture_localhost(aiida_localhost):
     return localhost
 
 
-@pytest.fixture(scope="module", autouse=True)
-def aiida_profile(aiida_config, aiida_profile_factory):
-    """Create and load a profile."""
-    with aiida_profile_factory(aiida_config) as profile:
-        yield profile
-
-
-@pytest.fixture(scope="function")
-def janus_code(aiida_code_installed):
+@pytest.fixture(autouse=True)
+def janus_code(aiida_code_installed, aiida_profile):
     """
-    Fixture to get the janus code.
+    Function-scoped fixture to get the janus Code.
 
-    Parameters
-    ----------
-    aiida_code_installed : fixture
-        A fixture providing a factory for creating local codes.
-
-    Returns
-    -------
-    `Code`
-        The janus code instance.
+    Ensures AiiDA profile is loaded and set as default.
     """
+    command = [
+        "verdi",
+        "profile",
+        "set-default",
+        aiida_profile.name,
+    ]
+    subprocess.run(command)
+
     janus_path = shutil.which("janus") or os.environ.get("JANUS_PATH")
     return aiida_code_installed(
         default_calc_job_plugin="mlip.sp", filepath_executable=janus_path
     )
-
-
-@pytest.fixture
-def fixture_code(fixture_localhost):
-    """
-    Return a configured `InstalledCode` instance to run calculations on localhost.
-
-    Parameters
-    ----------
-    fixture_localhost : fixture
-        A fixture providing a localhost `Computer` instance.
-
-    Notes
-    -----
-    This fixture returns a function that can be called with the entry point name.
-    If the code with the specified label already exists, it loads and returns it.
-    Otherwise, it creates a new `InstalledCode` instance with the provided
-    parameters.
-    """
-
-    def _fixture_code(entry_point_name):
-        """
-        Create an `InstalledCode` to run calculations of a given entry point.
-
-        Parameters
-        ----------
-        entry_point_name : str
-            The entry point name for the calculation plugin.
-
-        Returns
-        -------
-        aiida.orm.nodes.data.code.Code
-            An `InstalledCode` instance.
-        """
-        label = f"test.{entry_point_name}"
-        janus_path = os.environ.get("JANUS_PATH")
-        try:
-            return load_code(label=label)
-        except exceptions.NotExistent:
-            return InstalledCode(
-                label=label,
-                computer=fixture_localhost,
-                filepath_executable=janus_path,
-                default_calc_job_plugin=entry_point_name,
-            )
-
-    return _fixture_code
 
 
 @pytest.fixture
