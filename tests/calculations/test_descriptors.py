@@ -84,12 +84,6 @@ def test_run_descriptors(model_folder, janus_code):
         "calc_per_atom": Bool(True),
     }
 
-    command = ["verdi", "profile", "list"]
-    # Execute the command
-    resultProf = subprocess.run(command, capture_output=True, text=True, check=False)
-    print("test1////////////////" + resultProf.stdout)
-    assert resultProf.stdout != ""
-
     DescriptorsCalc = CalculationFactory("mlip.descriptors")
     result = run(DescriptorsCalc, **inputs)
 
