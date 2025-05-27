@@ -101,13 +101,13 @@ def test_run_descriptors(model_folder, janus_code):
 def test_example_descriptors(example_path, janus_code):
     """Test running descriptors calculation using the example file provided."""
     example_file_path = example_path / "submit_descriptors.py"
-
     command = [
         "verdi",
         "run",
         example_file_path,
         f"{janus_code.label}@{janus_code.computer.label}",
     ]
+
     # Execute the command
     result = subprocess.run(command, capture_output=True, text=True, check=False)
 
