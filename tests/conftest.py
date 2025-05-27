@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+from asyncio import exceptions
 import os
 from pathlib import Path
 import shutil
+import subprocess
 
-from aiida.common import exceptions
 from aiida.common.folders import SandboxFolder
 from aiida.engine.utils import instantiate_process
 from aiida.manage.manager import get_manager
@@ -14,12 +15,19 @@ from aiida.orm import InstalledCode, load_code
 from aiida.plugins import CalculationFactory
 import pytest
 
-pytest_plugins = ["aiida.manage.tests.pytest_fixtures"]
+pytest_plugins = ["aiida.tools.pytest_fixtures"]
 
 
 @pytest.fixture(scope="function", autouse=True)
 def clear_database_auto(aiida_profile_clean):
     """Automatically clear database in between tests."""
+
+
+@pytest.fixture(scope="session", autouse=True)
+def aiida_profile(aiida_config, aiida_profile_factory):
+    """Session-scoped fixture to create an AiiDA profile."""
+    with aiida_profile_factory(aiida_config, broker_backend="core.rabbitmq") as profile:
+        yield profile
 
 
 @pytest.fixture(scope="session")
@@ -81,26 +89,32 @@ def fixture_localhost(aiida_localhost):
     return localhost
 
 
-@pytest.fixture(scope="function")
-def janus_code(aiida_local_code_factory):
-    """
-    Fixture to get the janus code.
-
-    Parameters
-    ----------
-    aiida_local_code_factory : fixture
-        A fixture providing a factory for creating local codes.
-
-    Returns
-    -------
-    `Code`
-        The janus code instance.
-    """
-    janus_path = shutil.which("janus") or os.environ.get("JANUS_PATH")
-    return aiida_local_code_factory(executable=janus_path, entry_point="mlip.sp")
+@pytest.fixture(autouse=True)
+def set_default_profile(aiida_profile):
+    """Function-scoped fixture to ensure AiiDA profile is loaded and set as default."""
+    command = [
+        "verdi",
+        "profile",
+        "set-default",
+        aiida_profile.name,
+    ]
+    subprocess.run(command)
+    return aiida_profile
 
 
 @pytest.fixture
+def janus_code(aiida_code_installed):
+    """Function-scoped fixture to get the janus Code."""
+    janus_path = shutil.which("janus") or os.environ.get("JANUS_PATH")
+
+    return aiida_code_installed(
+        label="janus",
+        default_calc_job_plugin="mlip.sp",
+        filepath_executable=janus_path,
+    )
+
+
+@pytest.fixture(scope="function", autouse=True)
 def fixture_code(fixture_localhost):
     """
     Return a configured `InstalledCode` instance to run calculations on localhost.
