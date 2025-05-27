@@ -110,7 +110,6 @@ def test_example_descriptors(example_path, janus_code):
 
     # Execute the command
     result = subprocess.run(command, capture_output=True, text=True, check=False)
-
     assert result.stderr == ""
     assert result.returncode == 0
     assert "results from calculation:" in result.stdout
