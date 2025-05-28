@@ -85,7 +85,7 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             "minimize_kwargs",
             valid_type=Dict,
             required=False,
-            help="Other optimisation keywords",
+            help="All other GeomOpt keyword arguments",
         )
 
         spec.inputs["metadata"]["options"]["parser_name"].default = "mlip.opt_parser"
