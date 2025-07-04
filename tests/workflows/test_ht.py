@@ -32,7 +32,7 @@ def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> 
 
     assert wg.state == "FINISHED"
 
-    assert isinstance(wg.process.outputs.final_structures.H2O, SinglefileData)
+    assert isinstance(wg.tasks.ht_calc.outputs.final_structures.H2O, SinglefileData)
     assert isinstance(wg.process.outputs.final_structures.methane, SinglefileData)
 
 

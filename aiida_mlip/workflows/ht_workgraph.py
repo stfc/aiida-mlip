@@ -76,7 +76,14 @@ def build_ht_calc(
             name=f"calc_{file.stem}",
             **calc_inputs,
         )
-        calc_task.set_context({f"structs.{file.stem}": final_struct_key})
+        print(calc_task)
+        print(f"calc_{file.stem}")
+        print({f"structs.{file.stem}": final_struct_key})
+        wg.update_ctx({f"structs.{file.stem}": final_struct_key})
+        print(wg.tasks)
+
+    # wg.outputs.result_H2O = wg.tasks.calc_H2O
+    print(wg.tasks.calc_H2O.outputs)
 
     if structure is None:
         raise FileNotFoundError(
@@ -134,9 +141,9 @@ def get_ht_workgraph(
         recursive=recursive,
     )
 
-    wg.group_outputs = [
-        {"name": "final_structures", "from": "ht_calc.final_structures"}
-    ]
+    # wg.group_outputs = [
+    #     {"name": "final_structures", "from": "ht_calc.final_structures"}
+    # ]
     wg.max_number_jobs = max_number_jobs
 
     return wg
