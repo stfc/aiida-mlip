@@ -21,11 +21,11 @@ readme = "README.md"
 keywords = ["aiida", "plugin"]
 
 dependencies = [
-    "aiida-core<3,>=2.6.3",
+    "aiida-core==2.7.0",
     "ase<4.0,>=3.24",
     "voluptuous<1,>=0.15.2",
     "janus-core<0.8,>=0.7.5",
-    "aiida-workgraph==0.4.10",
+    "aiida-workgraph==0.5.3",
 ]
 
 [project.optional-dependencies]
