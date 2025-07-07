@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from aiida.orm import SinglefileData, StructureData
 from aiida.plugins import CalculationFactory
-import pytest
 
 from aiida_mlip.data.model import ModelData
 from aiida_mlip.workflows.ht_workgraph import get_ht_workgraph
@@ -32,8 +31,8 @@ def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> 
 
     assert wg.state == "FINISHED"
 
-    assert isinstance(wg.tasks.ht_calc.outputs.final_structures.H2O, SinglefileData)
-    assert isinstance(wg.process.outputs.final_structures.methane, SinglefileData)
+    assert isinstance(wg.outputs.final_structures.value.H2O, SinglefileData)
+    assert isinstance(wg.outputs.final_structures.value.methane, SinglefileData)
 
 
 def test_ht_invalid_path(janus_code, workflow_invalid_folder, model_folder) -> None:
@@ -54,8 +53,8 @@ def test_ht_invalid_path(janus_code, workflow_invalid_folder, model_folder) -> N
         final_struct_key="xyz_output",
     )
 
-    with pytest.raises(FileNotFoundError):
-        wg.run()
+    wg.run()
+    assert wg.process.exit_code.status == 302
 
 
 def test_ht_geomopt(janus_code, workflow_structure_folder, model_folder) -> None:
