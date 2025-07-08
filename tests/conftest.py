@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from asyncio import exceptions
 import os
 from pathlib import Path
 import shutil
 
+from aiida.common import exceptions
 from aiida.common.folders import SandboxFolder
 from aiida.engine.utils import instantiate_process
 from aiida.manage.manager import get_manager
