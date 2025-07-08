@@ -6,7 +6,6 @@ from asyncio import exceptions
 import os
 from pathlib import Path
 import shutil
-import subprocess
 
 from aiida.common.folders import SandboxFolder
 from aiida.engine.utils import instantiate_process
@@ -87,19 +86,6 @@ def fixture_localhost(aiida_localhost):
     localhost = aiida_localhost
     localhost.set_default_mpiprocs_per_machine(1)
     return localhost
-
-
-@pytest.fixture(autouse=True)
-def set_default_profile(aiida_profile):
-    """Function-scoped fixture to ensure AiiDA profile is loaded and set as default."""
-    command = [
-        "verdi",
-        "profile",
-        "set-default",
-        aiida_profile.name,
-    ]
-    subprocess.run(command)
-    return aiida_profile
 
 
 @pytest.fixture
