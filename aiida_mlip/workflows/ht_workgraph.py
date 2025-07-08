@@ -13,7 +13,7 @@ from ase.io import read
 from aiida_mlip.helpers.help_load import load_structure
 
 
-@task.graph_builder(outputs=[{"name": "final_structures", "from": "context.structs"}])
+@task.graph_builder(outputs=[{"name": "final_structures", "from": "ctx.structs"}])
 def build_ht_calc(
     calc: CalcJob | Callable | WorkChain | WorkGraph,
     folder: Path | str | Str,
@@ -56,6 +56,7 @@ def build_ht_calc(
         If `folder` has no valid structure files.
     """
     wg = WorkGraph()
+    wg.ctx.structs = {}
     structure = None
 
     if isinstance(folder, Str):
@@ -76,7 +77,12 @@ def build_ht_calc(
             name=f"calc_{file.stem}",
             **calc_inputs,
         )
-        calc_task.set_context({f"structs.{file.stem}": final_struct_key})
+
+        wg.update_ctx(
+            {f"structs.{file.stem}": getattr(calc_task.outputs, final_struct_key)}
+        )
+
+    wg.outputs.final_structures = wg.ctx.structs
 
     if structure is None:
         raise FileNotFoundError(
@@ -122,21 +128,21 @@ def get_ht_workgraph(
         The workgraph ready to be submitted.
     """
     wg = WorkGraph("ht_calculation")
+    wg.add_input("workgraph.any", "calc_inputs")
 
     wg.add_task(
         build_ht_calc,
         name="ht_calc",
         calc=calc,
         folder=folder,
-        calc_inputs=calc_inputs,
+        calc_inputs=wg.inputs.calc_inputs,
         input_struct_key=input_struct_key,
         final_struct_key=final_struct_key,
         recursive=recursive,
     )
 
-    wg.group_outputs = [
-        {"name": "final_structures", "from": "ht_calc.final_structures"}
-    ]
+    wg.inputs.calc_inputs = calc_inputs
+    wg.outputs.final_structures = wg.tasks.ht_calc.outputs.final_structures
     wg.max_number_jobs = max_number_jobs
 
     return wg
