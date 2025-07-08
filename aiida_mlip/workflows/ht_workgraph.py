@@ -78,9 +78,8 @@ def build_ht_calc(
             **calc_inputs,
         )
 
-        struct_name = file.stem
         wg.update_ctx(
-            {f"structs.{struct_name}": getattr(calc_task.outputs, final_struct_key)}
+            {f"structs.{file.stem}": getattr(calc_task.outputs, final_struct_key)}
         )
 
     wg.outputs.final_structures = wg.ctx.structs
