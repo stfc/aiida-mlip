@@ -56,6 +56,7 @@ def build_ht_calc(
         If `folder` has no valid structure files.
     """
     wg = WorkGraph()
+    wg.ctx.structs = {}
     structure = None
 
     if isinstance(folder, Str):
