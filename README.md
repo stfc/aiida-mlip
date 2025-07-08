@@ -34,10 +34,8 @@ The code relies heavily on [janus-core](https://github.com/stfc/janus-core), whi
 
 # Getting Started
 
-# Getting Started
-
 ## Installation
-Create a Python [virtual environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments) and activate it to install aiida-mlip
+We suggest creating a new [virtual environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments) and activating it before running the commands below to install `aiida-mlip`:
 
 ```shell
 pip install aiida-mlip
@@ -55,19 +53,6 @@ Registered entry points for aiida.calculations:
 * mlip.train
 * mlip.descriptors
 ```
-
-Aiida-mlip should be ready to run some notebooks at this stage. However, to have full functionality we reccomend configuring aiida-mlip by creating a profile and setting up a broker.
-
-## AiiDA Configuration
-
-Now that aiida-mlip plugin has been installed, we can setup the environment to run calculations:
-
-1. Install RabbitMQ ([ Link ](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#rabbitmq))
-2. Run:
-```shell
-verdi presto #Sets up profile
-```
-`verdi presto` is a quick and simple way to setup the daemon to run some calculations, setting up a profile 'presto'; which configures the computer, broker (i.e. RabbitMQ) and database. [Aiida docs](https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_complete.html#) go over a more detailed proccess to setup a profile.
 
 ## AiiDA Configuration
 
