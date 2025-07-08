@@ -100,7 +100,7 @@ def janus_code(aiida_code_installed):
     )
 
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture
 def fixture_code(fixture_localhost):
     """
     Return a configured `InstalledCode` instance to run calculations on localhost.
