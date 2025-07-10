@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+title: "aiida-mlip"
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - family-names: Zanca
+    given-names: Federica
+  - family-names: Kasoar
+    given-names: Elliott
+    orcid: "https://orcid.org/0009-0005-2015-9478"
+  - family-names: Wilkins
+    given-names: Jacob
+  - family-names: Elena
+    given-names: Alin
+    orcid: "https://orcid.org/0000-0002-7013-6670"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.10631074
+repository-code: 'https://github.com/stfc/aiida-mlip'
+abstract: Machine learning interatomic potentials AiiDA plugin
+license: BSD-3-Clause
