@@ -44,6 +44,9 @@ jobs:
         run: |
           uv sync --all-extras
 
+      - name: test file
+        run: ls -a /home/runner/.aiida
+
       - name: Run test suite
         env:
           # show timings of tests
