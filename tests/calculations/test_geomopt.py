@@ -97,6 +97,33 @@ def test_run_opt(model_folder, janus_code):
     assert result["xyz_output"].filename == "aiida-results.xyz"
 
 
+def test_cli_kwargs(model_folder, janus_code):
+    """Test that the command line arguments are correctly set."""
+    model_file = model_folder / "mace_mp_small.model"
+    minimize_kwargs = {
+        "traj_kwargs": {"filename": "aiida-traj.xyz"},
+        "filter_kwargs": {"constant_volume": True},
+    }
+    inputs = {
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "code": janus_code,
+        "arch": Str("mace"),
+        "precision": Str("float64"),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "model": ModelData.from_local(model_file, architecture="mace"),
+        "device": Str("cpu"),
+        "opt_cell_fully": Bool(True),
+        "fmax": Float(0.1),
+        "steps": Int(1000),
+        "minimize_kwargs": minimize_kwargs,
+    }
+
+    GeomoptCalc = CalculationFactory("mlip.opt")
+    result = run(GeomoptCalc, **inputs)
+    assert result["final_structure"].cell[0][1] == pytest.approx(2.815)
+    assert result["traj_file"].filename == "aiida-traj.xyz"
+
+
 def test_example_opt(example_path, janus_code):
     """Test function to run geometry optimization using the example file provided."""
     example_file_path = example_path / "submit_geomopt.py"
