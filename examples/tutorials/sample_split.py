@@ -1,7 +1,7 @@
 """Split descriptors files into Test, Train and Validate."""
 
 # Author; alin m elena, alin@elena.re
-# Contribs;
+# Contribs; Muhammad Mohsin
 # Date: 14-09-2024
 # ©alin m elena, GPL v3 https://www.gnu.org/licenses/gpl-3.0.en.html
 from __future__ import annotations
