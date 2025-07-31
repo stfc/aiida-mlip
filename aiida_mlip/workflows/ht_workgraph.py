@@ -7,13 +7,12 @@ from pathlib import Path
 
 from aiida.engine import CalcJob, WorkChain
 from aiida.orm import Str
-from aiida_workgraph import WorkGraph, task
+from aiida_workgraph import WorkGraph
 from ase.io import read
 
 from aiida_mlip.helpers.help_load import load_structure
 
 
-@task.graph_builder(outputs=[{"name": "final_structures", "from": "ctx.structs"}])
 def build_ht_calc(
     calc: CalcJob | Callable | WorkChain | WorkGraph,
     folder: Path | str | Str,
@@ -21,7 +20,7 @@ def build_ht_calc(
     input_struct_key: str = "struct",
     final_struct_key: str = "final_structure",
     recursive: bool = True,
-) -> WorkGraph:
+):
     """
     Build high throughput calculation WorkGraph.
 
@@ -55,41 +54,40 @@ def build_ht_calc(
     FileNotFoundError
         If `folder` has no valid structure files.
     """
-    wg = WorkGraph()
-    wg.ctx.structs = {}
-    structure = None
+    structs = {}
 
     if isinstance(folder, Str):
         folder = Path(folder.value)
     if isinstance(folder, str):
         folder = Path(folder)
 
-    pattern = "**/*" if recursive else "*"
-    for file in filter(Path.is_file, folder.glob(pattern)):
-        try:
-            read(file)
-        except Exception:
-            continue
-        structure = load_structure(file)
-        calc_inputs[input_struct_key] = structure
-        calc_task = wg.add_task(
-            calc,
-            name=f"calc_{file.stem}",
-            **calc_inputs,
-        )
+    with WorkGraph("ht_calculation") as wg:
+        pattern = "**/*" if recursive else "*"
+        for file in filter(Path.is_file, folder.glob(pattern)):
+            try:
+                read(file)
+            except Exception:
+                continue
+            structure = load_structure(file).store()
+            calc_inputs[input_struct_key] = structure
 
-        wg.update_ctx(
-            {f"structs.{file.stem}": getattr(calc_task.outputs, final_struct_key)}
-        )
+            calc_task = wg.add_task(
+                calc,
+                name=f"calc_{file.stem}",
+                **calc_inputs,
+            )
+            structs[f"structs.{file.stem}"] = getattr(
+                calc_task.outputs, final_struct_key
+            )
 
-    wg.outputs.final_structures = wg.ctx.structs
+        wg.outputs.final_structure = structs
 
-    if structure is None:
-        raise FileNotFoundError(
-            f"{folder} is empty or has no readable structure files."
-        )
+        if structure is None:
+            raise FileNotFoundError(
+                f"{folder} is empty or has no readable structure files."
+            )
 
-    return wg
+        return wg
 
 
 def get_ht_workgraph(
@@ -127,22 +125,11 @@ def get_ht_workgraph(
     WorkGraph
         The workgraph ready to be submitted.
     """
-    wg = WorkGraph("ht_calculation")
-    wg.add_input("workgraph.any", "calc_inputs")
-
-    wg.add_task(
-        build_ht_calc,
-        name="ht_calc",
+    return build_ht_calc(
         calc=calc,
         folder=folder,
-        calc_inputs=wg.inputs.calc_inputs,
+        calc_inputs=calc_inputs,
         input_struct_key=input_struct_key,
         final_struct_key=final_struct_key,
         recursive=recursive,
     )
-
-    wg.inputs.calc_inputs = calc_inputs
-    wg.outputs.final_structures = wg.tasks.ht_calc.outputs.final_structures
-    wg.max_number_jobs = max_number_jobs
-
-    return wg

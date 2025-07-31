@@ -25,7 +25,7 @@ dependencies = [
     "ase<4.0,>=3.24",
     "voluptuous<1,>=0.15.2",
     "janus-core<0.8,>=0.7.5",
-    "aiida-workgraph<0.6, >=0.5.3",
+    "aiida-workgraph<0.6.1, >=0.5.3",
 ]
 
 [project.optional-dependencies]
