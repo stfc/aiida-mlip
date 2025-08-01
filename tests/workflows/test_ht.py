@@ -7,7 +7,7 @@ from aiida.plugins import CalculationFactory
 import pytest
 
 from aiida_mlip.data.model import ModelData
-from aiida_mlip.workflows.ht_workgraph import get_ht_workgraph
+from aiida_mlip.workflows.ht_workgraph import build_ht_calc
 
 
 def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> None:
@@ -21,7 +21,7 @@ def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> 
         "code": janus_code,
     }
 
-    wg = get_ht_workgraph(
+    wg = build_ht_calc(
         calc=SinglepointCalc,
         folder=workflow_structure_folder,
         calc_inputs=inputs,
@@ -32,8 +32,8 @@ def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> 
 
     assert wg.state == "FINISHED"
 
-    assert isinstance(wg.outputs.final_structure.structs.H2O.value, SinglefileData)
-    assert isinstance(wg.outputs.final_structure.structs.methane.value, SinglefileData)
+    assert isinstance(wg.outputs.final_structure.H2O.value, SinglefileData)
+    assert isinstance(wg.outputs.final_structure.methane.value, SinglefileData)
 
 
 def test_ht_invalid_path(janus_code, workflow_invalid_folder, model_folder) -> None:
@@ -47,8 +47,8 @@ def test_ht_invalid_path(janus_code, workflow_invalid_folder, model_folder) -> N
         "code": janus_code,
     }
 
-    with pytest.raises(UnboundLocalError):
-        get_ht_workgraph(
+    with pytest.raises(FileNotFoundError):
+        build_ht_calc(
             calc=SinglepointCalc,
             folder=workflow_invalid_folder,
             calc_inputs=inputs,
@@ -67,7 +67,7 @@ def test_ht_geomopt(janus_code, workflow_structure_folder, model_folder) -> None
         "code": janus_code,
     }
 
-    wg = get_ht_workgraph(
+    wg = build_ht_calc(
         calc=GeomoptCalc,
         folder=workflow_structure_folder,
         calc_inputs=inputs,
@@ -77,5 +77,5 @@ def test_ht_geomopt(janus_code, workflow_structure_folder, model_folder) -> None
 
     assert wg.state == "FINISHED"
 
-    assert isinstance(wg.process.outputs.final_structure.structs.H2O, StructureData)
-    assert isinstance(wg.process.outputs.final_structure.structs.methane, StructureData)
+    assert isinstance(wg.process.outputs.final_structure.H2O, StructureData)
+    assert isinstance(wg.process.outputs.final_structure.methane, StructureData)

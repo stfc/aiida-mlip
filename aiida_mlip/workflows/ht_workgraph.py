@@ -20,7 +20,7 @@ def build_ht_calc(
     input_struct_key: str = "struct",
     final_struct_key: str = "final_structure",
     recursive: bool = True,
-):
+) -> WorkGraph:
     """
     Build high throughput calculation WorkGraph.
 
@@ -76,60 +76,13 @@ def build_ht_calc(
                 name=f"calc_{file.stem}",
                 **calc_inputs,
             )
-            structs[f"structs.{file.stem}"] = getattr(
-                calc_task.outputs, final_struct_key
-            )
+            structs[file.stem] = getattr(calc_task.outputs, final_struct_key)
 
         wg.outputs.final_structure = structs
 
-        if structure is None:
+        if not structs:
             raise FileNotFoundError(
                 f"{folder} is empty or has no readable structure files."
             )
 
         return wg
-
-
-def get_ht_workgraph(
-    calc: CalcJob | Callable | WorkChain | WorkGraph,
-    folder: Path | str | Str,
-    calc_inputs: dict,
-    input_struct_key: str = "struct",
-    final_struct_key: str = "final_structure",
-    recursive: bool = True,
-    max_number_jobs: int = 10,
-) -> WorkGraph:
-    """
-    Get WorkGraph to carry out calculation on all structures in a directory.
-
-    Parameters
-    ----------
-    calc : Union[CalcJob, Callable, WorkChain, WorkGraph]
-        Calculation to be performed on all structures.
-    folder : Union[Path, str, Str]
-        Path to the folder containing input structure files.
-    calc_inputs : dict
-        Dictionary of inputs, shared by all the calculations. Must not contain
-        `struct_key`.
-    input_struct_key : str
-        Keyword for input structure for `calc`. Default is "struct".
-    final_struct_key : str
-        Key for final structure output from `calc`. Default is "final_structure".
-    recursive : bool
-        Whether to search `folder` recursively. Default is True.
-    max_number_jobs : int
-        Max number of subprocesses running within the WorkGraph. Default is 10.
-
-    Returns
-    -------
-    WorkGraph
-        The workgraph ready to be submitted.
-    """
-    return build_ht_calc(
-        calc=calc,
-        folder=folder,
-        calc_inputs=calc_inputs,
-        input_struct_key=input_struct_key,
-        final_struct_key=final_struct_key,
-        recursive=recursive,
-    )
