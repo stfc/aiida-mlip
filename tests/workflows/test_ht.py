@@ -32,8 +32,8 @@ def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> 
 
     assert wg.state == "FINISHED"
 
-    assert isinstance(wg.outputs.final_structure.H2O.value, SinglefileData)
-    assert isinstance(wg.outputs.final_structure.methane.value, SinglefileData)
+    assert isinstance(wg.outputs.final_structures.H2O.value, SinglefileData)
+    assert isinstance(wg.outputs.final_structures.methane.value, SinglefileData)
 
 
 def test_ht_invalid_path(janus_code, workflow_invalid_folder, model_folder) -> None:
@@ -77,5 +77,5 @@ def test_ht_geomopt(janus_code, workflow_structure_folder, model_folder) -> None
 
     assert wg.state == "FINISHED"
 
-    assert isinstance(wg.process.outputs.final_structure.H2O, StructureData)
-    assert isinstance(wg.process.outputs.final_structure.methane, StructureData)
+    assert isinstance(wg.process.outputs.final_structures.H2O, StructureData)
+    assert isinstance(wg.process.outputs.final_structures.methane, StructureData)

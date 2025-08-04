@@ -78,7 +78,7 @@ def build_ht_calc(
             )
             structs[file.stem] = getattr(calc_task.outputs, final_struct_key)
 
-        wg.outputs.final_structure = structs
+        wg.outputs.final_structures = structs
 
         if not structs:
             raise FileNotFoundError(
