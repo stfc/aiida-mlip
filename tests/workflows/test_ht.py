@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from aiida.orm import SinglefileData, StructureData
 from aiida.plugins import CalculationFactory
+import pytest
 
 from aiida_mlip.data.model import ModelData
-from aiida_mlip.workflows.ht_workgraph import get_ht_workgraph
+from aiida_mlip.workflows.ht_workgraph import build_ht_calc
 
 
 def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> None:
@@ -20,7 +21,7 @@ def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> 
         "code": janus_code,
     }
 
-    wg = get_ht_workgraph(
+    wg = build_ht_calc(
         calc=SinglepointCalc,
         folder=workflow_structure_folder,
         calc_inputs=inputs,
@@ -31,8 +32,8 @@ def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> 
 
     assert wg.state == "FINISHED"
 
-    assert isinstance(wg.outputs.final_structures.value.H2O, SinglefileData)
-    assert isinstance(wg.outputs.final_structures.value.methane, SinglefileData)
+    assert isinstance(wg.outputs.final_structures.H2O.value, SinglefileData)
+    assert isinstance(wg.outputs.final_structures.methane.value, SinglefileData)
 
 
 def test_ht_invalid_path(janus_code, workflow_invalid_folder, model_folder) -> None:
@@ -46,15 +47,13 @@ def test_ht_invalid_path(janus_code, workflow_invalid_folder, model_folder) -> N
         "code": janus_code,
     }
 
-    wg = get_ht_workgraph(
-        calc=SinglepointCalc,
-        folder=workflow_invalid_folder,
-        calc_inputs=inputs,
-        final_struct_key="xyz_output",
-    )
-
-    wg.run()
-    assert wg.process.exit_code.status == 302
+    with pytest.raises(FileNotFoundError):
+        build_ht_calc(
+            calc=SinglepointCalc,
+            folder=workflow_invalid_folder,
+            calc_inputs=inputs,
+            final_struct_key="xyz_output",
+        )
 
 
 def test_ht_geomopt(janus_code, workflow_structure_folder, model_folder) -> None:
@@ -68,7 +67,7 @@ def test_ht_geomopt(janus_code, workflow_structure_folder, model_folder) -> None
         "code": janus_code,
     }
 
-    wg = get_ht_workgraph(
+    wg = build_ht_calc(
         calc=GeomoptCalc,
         folder=workflow_structure_folder,
         calc_inputs=inputs,
