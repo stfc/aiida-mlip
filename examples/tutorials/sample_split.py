@@ -7,7 +7,6 @@
 from __future__ import annotations
 
 import argparse
-import io
 from pathlib import Path
 
 from aiida import orm
@@ -58,19 +57,26 @@ def descriptors_outputs(**structures):
         Dictionary of structures and Atoms.
 
     """
+    from aiida.orm import SinglefileData
+
+    test = SinglefileData
+
     atoms = []
     stuct = []
 
     for key, socket in structures.items():
-        with socket.open() as handle:
-            ase_atoms = read(handle, format="extxyz")
-
         atoms.append(key)
-        stuct.append(list(ase_atoms))
+        sfdata_content = socket.get_content()
+
+        sfdata = test.from_string(sfdata_content)
+        print(sfdata)
+
+        stuct.append(socket.get_content())
 
     return orm.Dict(dict(zip(atoms, stuct, strict=False)))
 
 
+@task()
 def process_and_split_data(
     trajectory_path, config_types, n_samples, scale, prefix, append_mode
 ):
@@ -85,19 +91,27 @@ def process_and_split_data(
         prefix (str): A prefix string for the output filenames.
         append_mode (bool): If True, append to existing files. Otherwise, overwrite.
     """
-    if isinstance(trajectory_path, list):
+    if isinstance(trajectory_path, dict):
         traj_structs = trajectory_path
 
-        # Convert singlefiledata list into a string
-        structs_combined = ""
+        # # Convert singlefiledata list into a string
+        # structs_combined = ""
 
-        for i in range(len(traj_structs)):
-            structs_combined = structs_combined + traj_structs[i].get_content()
+        # for i in range(len(traj_structs)):
+        #     structs_combined = structs_combined + traj_structs[i].get_content()
 
-        # convert string to file so ase can convert into atom data
-        stream = io.StringIO(structs_combined)
+        # # convert string to file so ase can convert into atom data
+        # stream = io.StringIO(structs_combined)
+        # a = read(stream, format="extxyz", index=":")
 
-        a = read(stream, format="extxyz", index=":")
+        a = []
+
+        for _, data in traj_structs.items():
+            with data.open() as handle:
+                ase_atoms = read(handle, format="extxyz")
+            a.append(ase_atoms)
+
+        print(a)
 
     else:
         traj_path = Path(trajectory_path)
