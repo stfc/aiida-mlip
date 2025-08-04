@@ -65,8 +65,12 @@ pre-commit = [
 ]
 
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+requires = ["uv_build>=0.8.4,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "aiida_mlip"
+module-root = ""
 
 [project.entry-points."aiida.data"]
 "mlip.modeldata" = "aiida_mlip.data.model:ModelData"
