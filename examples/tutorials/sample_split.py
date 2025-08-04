@@ -10,6 +10,8 @@ import argparse
 import io
 from pathlib import Path
 
+from aiida import orm
+from aiida_workgraph import task
 from ase.io import read, write
 from fpsample import fps_npdu_kdtree_sampling as sample
 import numpy as np
@@ -38,6 +40,35 @@ def write_samples(frames, inds, f_s):
     """Write selected frames to a file."""
     for i in inds:
         write(f_s, frames[i], write_info=True, append=True)
+
+
+@task.calcfunction()
+def descriptors_outputs(**structures):
+    """
+    Aggregate stuctures into dictionary.
+
+    Parameters
+    ----------
+    structures: Socket(dict)
+        Socket dictionary of output structures.
+
+    Returns
+    -------
+    orm.Dict
+        Dictionary of structures and Atoms.
+
+    """
+    atoms = []
+    stuct = []
+
+    for key, socket in structures.items():
+        with socket.open() as handle:
+            ase_atoms = read(handle, format="extxyz")
+
+        atoms.append(key)
+        stuct.append(list(ase_atoms))
+
+    return orm.Dict(dict(zip(atoms, stuct, strict=False)))
 
 
 def process_and_split_data(
