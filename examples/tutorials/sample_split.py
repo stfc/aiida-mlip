@@ -57,29 +57,18 @@ def descriptors_outputs(**structures):
         Dictionary of structures and Atoms.
 
     """
-    from aiida.orm import SinglefileData
-
-    test = SinglefileData
-
     atoms = []
     stuct = []
 
     for key, socket in structures.items():
         atoms.append(key)
-        sfdata_content = socket.get_content()
-
-        sfdata = test.from_string(sfdata_content)
-        print(sfdata)
-
         stuct.append(socket.get_content())
 
     return orm.Dict(dict(zip(atoms, stuct, strict=False)))
 
 
-@task()
-def process_and_split_data(
-    trajectory_path, config_types, n_samples, scale, prefix, append_mode
-):
+@task.calcfunction()
+def process_and_split_data(**inputs):
     """
     Split a trajectory into training, validation, and test sets.
 
@@ -91,30 +80,23 @@ def process_and_split_data(
         prefix (str): A prefix string for the output filenames.
         append_mode (bool): If True, append to existing files. Otherwise, overwrite.
     """
-    if isinstance(trajectory_path, dict):
-        traj_structs = trajectory_path
+    print(inputs["prefix"].value)
 
-        # # Convert singlefiledata list into a string
-        # structs_combined = ""
-
-        # for i in range(len(traj_structs)):
-        #     structs_combined = structs_combined + traj_structs[i].get_content()
-
-        # # convert string to file so ase can convert into atom data
-        # stream = io.StringIO(structs_combined)
-        # a = read(stream, format="extxyz", index=":")
+    if isinstance(inputs["trajectory_data"], dict):
+        config_types = inputs["config_types"].value
+        n_samples = inputs["n_samples"].value
+        prefix = inputs["prefix"].value
+        scale = inputs["scale"].value
+        append_mode = inputs["append_mode"].value
 
         a = []
-
-        for _, data in traj_structs.items():
+        for _, data in inputs["trajectory_data"].items():
             with data.open() as handle:
                 ase_atoms = read(handle, format="extxyz")
             a.append(ase_atoms)
 
-        print(a)
-
     else:
-        traj_path = Path(trajectory_path)
+        traj_path = Path(inputs["trajectory_data"])
         if not traj_path.exists():
             print(f"Error: Trajectory file not found at {traj_path}")
             return
@@ -269,7 +251,7 @@ def main():
     args = parser.parse_args()
 
     process_and_split_data(
-        trajectory_path=args.trajectory,
+        trajectory_data=args.trajectory,
         config_types=args.config_types,
         n_samples=args.n_samples,
         scale=args.scale,
