@@ -32,6 +32,10 @@ dependencies = [
 mace = [
     "janus-core[mace]"
 ]
+qe = [
+    "aiida-quantumespresso",
+    "fpsample"
+]
 
 [project.urls]
 repository = "https://github.com/stfc/aiida-mlip/"
