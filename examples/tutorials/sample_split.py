@@ -1,16 +1,11 @@
 """Split descriptors files into Test, Train and Validate."""
 
-# Author; alin m elena, alin@elena.re
-# Contribs; Muhammad Mohsin
-# Date: 14-09-2024
-# ©alin m elena, GPL v3 https://www.gnu.org/licenses/gpl-3.0.en.html
 from __future__ import annotations
 
 from pathlib import Path
 
 from aiida import orm
-from aiida.orm import Int, Str, StructureData
-from aiida_workgraph import WorkGraph, task
+from aiida_workgraph import task
 from ase.io import read, write
 from fpsample import fps_npdu_kdtree_sampling as sample
 import numpy as np
@@ -110,7 +105,6 @@ def process_and_split_data(**inputs):
                 ns_train_target = int(0.8 * n)
                 ns_total_target = n
 
-            # specs = set(sorted(a[indices[0]].get_chemical_symbols()))
             specs = set(a[indices[0]].get_chemical_symbols())
             De = len(specs)
 
@@ -180,69 +174,3 @@ def process_and_split_data(**inputs):
         )
 
     return f"Found {k} structures that were too similar during sampling."
-
-
-def build_filters_workgraph(
-    initial_struct: Path | str | Str,
-    calc_inputs: list,
-    wg_inputs: dict,
-    split_inputs: dict,
-) -> WorkGraph:
-    """
-    Build WorkGraph to run multiple calculations on multiple structures.
-
-    Args:
-        initial_struct (str): Path to the input trajectory file.
-        calc_inputs (list): List of calculations to run.
-        wg_inputs (dict): Inputs of calculations.
-        split_inputs (dict): Inputs of split task.
-    """
-    num_structs = len(read(initial_struct, index=":"))
-
-    with WorkGraph("Calculation Workgraph") as wg:
-        wg.inputs = wg_inputs
-        final_structures = {}
-
-        for i in range(num_structs):
-            structure = StructureData(ase=read(initial_struct, index=i))
-
-            geomopt_calc = wg.add_task(
-                calc_inputs[0],
-                code=wg.inputs.code,
-                model=wg.inputs.model,
-                arch=wg.inputs.arch,
-                precision=wg.inputs.precision,
-                device=wg.inputs.device,
-                metadata=wg.inputs.metadata,
-                fmax=wg.inputs.fmax,
-                opt_cell_lengths=wg.inputs.opt_cell_lengths,
-                opt_cell_fully=wg.inputs.opt_cell_fully,
-                struct=structure,
-            )
-
-            descriptors_calc = wg.add_task(
-                calc_inputs[1],
-                code=wg.inputs.code,
-                model=wg.inputs.model,
-                arch=wg.inputs.arch,
-                precision=wg.inputs.precision,
-                device=wg.inputs.device,
-                metadata=wg.inputs.metadata,
-                struct=geomopt_calc.outputs.final_structure,
-                calc_per_element=True,
-            )
-
-            final_structures[f"structs{i}"] = descriptors_calc.outputs.xyz_output
-
-        split_task_inputs = {
-            "trajectory_data": final_structures,
-            "config_types": split_inputs["config_types"],
-            "n_samples": Int(num_structs),
-            "prefix": split_inputs["prefix"],
-            "scale": split_inputs["scale"],
-            "append_mode": split_inputs["append_mode"],
-        }
-
-        wg.add_task(process_and_split_data, inputs=split_task_inputs)
-
-    return wg
