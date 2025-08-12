@@ -6,11 +6,11 @@
 # ©alin m elena, GPL v3 https://www.gnu.org/licenses/gpl-3.0.en.html
 from __future__ import annotations
 
-import argparse
 from pathlib import Path
 
 from aiida import orm
-from aiida_workgraph import task
+from aiida.orm import Int, Str, StructureData
+from aiida_workgraph import WorkGraph, task
 from ase.io import read, write
 from fpsample import fps_npdu_kdtree_sampling as sample
 import numpy as np
@@ -42,32 +42,6 @@ def write_samples(frames, inds, f_s):
 
 
 @task.calcfunction()
-def descriptors_outputs(**structures):
-    """
-    Aggregate stuctures into dictionary.
-
-    Parameters
-    ----------
-    structures: Socket(dict)
-        Socket dictionary of output structures.
-
-    Returns
-    -------
-    orm.Dict
-        Dictionary of structures and Atoms.
-
-    """
-    atoms = []
-    stuct = []
-
-    for key, socket in structures.items():
-        atoms.append(key)
-        stuct.append(socket.get_content())
-
-    return orm.Dict(dict(zip(atoms, stuct, strict=False)))
-
-
-@task.calcfunction()
 def process_and_split_data(**inputs):
     """
     Split a trajectory into training, validation, and test sets.
@@ -80,8 +54,6 @@ def process_and_split_data(**inputs):
         prefix (str): A prefix string for the output filenames.
         append_mode (bool): If True, append to existing files. Otherwise, overwrite.
     """
-    print(inputs["prefix"].value)
-
     if isinstance(inputs["trajectory_data"], dict):
         config_types = inputs["config_types"].value
         n_samples = inputs["n_samples"].value
@@ -99,7 +71,7 @@ def process_and_split_data(**inputs):
         traj_path = Path(inputs["trajectory_data"])
         if not traj_path.exists():
             print(f"Error: Trajectory file not found at {traj_path}")
-            return
+            return None
         a = read(traj_path, index=":")
 
     if prefix and not prefix.endswith("-"):
@@ -187,78 +159,90 @@ def process_and_split_data(**inputs):
             write_samples(a, train_ind, train_file)
             write_samples(a, test_ind, test_file)
             write_samples(a, valid_ind, valid_file)
-        else:
-            print(
-                f"Config type '{run_type}' not in target list. \
-                    Adding all {len(indices)} frames to training set."
+            return orm.Dict(
+                {
+                    "train_file": str(Path(train_file).resolve()),
+                    "test_file": str(Path(test_file).resolve()),
+                    "valid_file": str(Path(valid_file).resolve()),
+                }
             )
-            write_samples(a, indices, train_file)
 
-    print(f"Found {k} structures that were too similar during sampling.")
+        print(
+            f"Config type '{run_type}' not in target list. \
+                    Adding all {len(indices)} frames to training set."
+        )
+        write_samples(a, indices, train_file)
 
+        return orm.Dict(
+            {
+                "train_file": str(Path(train_file).resolve()),
+            }
+        )
 
-def main():
-    """Take in command line arguments."""
-    parser = argparse.ArgumentParser(
-        prog="split_data",
-        description="Split trajectory data into train, validation, \
-            and test sets using MACE descriptors.",
-    )
-
-    parser.add_argument(
-        "--trajectory",
-        "-t",
-        type=str,
-        required=True,
-        help="Path to the input trajectory file (e.g., data.xyz).",
-    )
-    parser.add_argument(
-        "--scale",
-        "-s",
-        type=float,
-        default=1.0e5,
-        help="Scaling factor for MACE descriptors.",
-    )
-    parser.add_argument(
-        "--n_samples",
-        "-n",
-        type=int,
-        default=10,
-        help="Target number of samples per configuration type.",
-    )
-    parser.add_argument(
-        "--config_types",
-        "-c",
-        type=str,
-        nargs="+",
-        required=True,
-        help="List of configuration types to sample from.",
-    )
-    parser.add_argument(
-        "--pre",
-        "-p",
-        type=str,
-        default="",
-        help="Prefix for output file names (e.g., 'my_split').",
-    )
-    parser.add_argument(
-        "--append",
-        "-a",
-        action=argparse.BooleanOptionalAction,
-        help="Append to existing output files instead of overwriting.",
-    )
-
-    args = parser.parse_args()
-
-    process_and_split_data(
-        trajectory_data=args.trajectory,
-        config_types=args.config_types,
-        n_samples=args.n_samples,
-        scale=args.scale,
-        prefix=args.pre,
-        append_mode=args.append,
-    )
+    return f"Found {k} structures that were too similar during sampling."
 
 
-if __name__ == "__main__":
-    main()
+def build_filters_workgraph(
+    initial_struct: Path | str | Str,
+    calc_inputs: list,
+    wg_inputs: dict,
+    split_inputs: dict,
+) -> WorkGraph:
+    """
+    Build WorkGraph to run multiple calculations on multiple structures.
+
+    Args:
+        initial_struct (str): Path to the input trajectory file.
+        calc_inputs (list): List of calculations to run.
+        wg_inputs (dict): Inputs of calculations.
+        split_inputs (dict): Inputs of split task.
+    """
+    num_structs = len(read(initial_struct, index=":"))
+
+    with WorkGraph("Calculation Workgraph") as wg:
+        wg.inputs = wg_inputs
+        final_structures = {}
+
+        for i in range(num_structs):
+            structure = StructureData(ase=read(initial_struct, index=i))
+
+            geomopt_calc = wg.add_task(
+                calc_inputs[0],
+                code=wg.inputs.code,
+                model=wg.inputs.model,
+                arch=wg.inputs.arch,
+                precision=wg.inputs.precision,
+                device=wg.inputs.device,
+                metadata=wg.inputs.metadata,
+                fmax=wg.inputs.fmax,
+                opt_cell_lengths=wg.inputs.opt_cell_lengths,
+                opt_cell_fully=wg.inputs.opt_cell_fully,
+                struct=structure,
+            )
+
+            descriptors_calc = wg.add_task(
+                calc_inputs[1],
+                code=wg.inputs.code,
+                model=wg.inputs.model,
+                arch=wg.inputs.arch,
+                precision=wg.inputs.precision,
+                device=wg.inputs.device,
+                metadata=wg.inputs.metadata,
+                struct=geomopt_calc.outputs.final_structure,
+                calc_per_element=True,
+            )
+
+            final_structures[f"structs{i}"] = descriptors_calc.outputs.xyz_output
+
+        split_task_inputs = {
+            "trajectory_data": final_structures,
+            "config_types": split_inputs["config_types"],
+            "n_samples": Int(num_structs),
+            "prefix": split_inputs["prefix"],
+            "scale": split_inputs["scale"],
+            "append_mode": split_inputs["append_mode"],
+        }
+
+        wg.add_task(process_and_split_data, inputs=split_task_inputs)
+
+    return wg
