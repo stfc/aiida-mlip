@@ -33,9 +33,13 @@ mace = [
     "janus-core[mace]"
 ]
 qe = [
-    "aiida-quantumespresso",
-    "fpsample"
+    "aiida-quantumespresso<4.13,>=4.12.1",
 ]
+fpsample = [
+    "fpsample<0.4,>=0.3.3",
+]
+
+
 
 [project.urls]
 repository = "https://github.com/stfc/aiida-mlip/"

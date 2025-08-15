@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from aiida import orm
+from aiida.orm import Dict, Str
 from aiida_workgraph import task
 from ase.io import read, write
 from fpsample import fps_npdu_kdtree_sampling as sample
@@ -37,37 +37,65 @@ def write_samples(frames, inds, f_s):
 
 
 @task.calcfunction()
-def process_and_split_data(**inputs):
+def process_and_split_data(
+    config_types: str,
+    n_samples: int,
+    prefix: str,
+    scale: float,
+    append_mode: bool,
+    trajectory_path: str | None = None,
+    **trajectory_data,
+) -> Dict:
     """
     Split a trajectory into training, validation, and test sets.
 
-    Args:
-        trajectory_path (str): Path to the input trajectory file.
-        config_types (list): List of configuration types to process.
-        n_samples (int): The target number of samples for each configuration type.
-        scale (float): Scaling factor for the MACE descriptors.
-        prefix (str): A prefix string for the output filenames.
-        append_mode (bool): If True, append to existing files. Otherwise, overwrite.
-    """
-    if isinstance(inputs["trajectory_data"], dict):
-        config_types = inputs["config_types"].value
-        n_samples = inputs["n_samples"].value
-        prefix = inputs["prefix"].value
-        scale = inputs["scale"].value
-        append_mode = inputs["append_mode"].value
+    Parameters
+    ----------
+    config_types: str
+        List of configuration types to process.
+    n_samples:
+        int The target number of samples for each configuration type.
+    scale: float
+        Scaling factor for the MACE descriptors.
+    prefix str:
+        A prefix string for the output filenames.
+    append_mode: bool
+        If True, append to existing files. Otherwise, overwrite.
+    trajectory_path: str (Optional)
+        Path to trajectory
 
-        a = []
-        for _, data in inputs["trajectory_data"].items():
+    Returns
+    -------
+    aiida.orm.nodes.data.dict.Dict
+        An instance of a orm.Dict with file names and file paths
+
+    """
+    if (trajectory_path is None) == (trajectory_data is None):
+        raise ValueError("Please specify the trajectory_path or trajectory_data.")
+
+    config_types = config_types.value
+    n_samples = n_samples.value
+    prefix = prefix.value
+    scale = scale.value
+    append_mode = append_mode.value
+
+    if trajectory_path is None:
+        print("Using trajectory from data: trajectory_data")
+
+        atoms = []
+        for _, data in trajectory_data.items():
+            # Each trajectory_data item is a single structure
             with data.open() as handle:
                 ase_atoms = read(handle, format="extxyz")
-            a.append(ase_atoms)
+            atoms.append(ase_atoms)
 
     else:
-        traj_path = Path(inputs["trajectory_data"])
+        print(f"Using trajectory from path: {trajectory_path}")
+        traj_path = Path(trajectory_path)
         if not traj_path.exists():
             print(f"Error: Trajectory file not found at {traj_path}")
             return None
-        a = read(traj_path, index=":")
+        atoms = read(traj_path, index=":")
 
     if prefix and not prefix.endswith("-"):
         prefix += "-"
@@ -82,9 +110,9 @@ def process_and_split_data(**inputs):
     print(f"create files: {train_file=}, {valid_file=} and {test_file=}")
 
     stats = {}
-    for i, f in enumerate(a):
-        system_name = f.info.get("system_name", "unknown_system")
-        config_type = f.info.get("config_type", "all")
+    for i, struct in enumerate(atoms):
+        system_name = struct.info.get("system_name", "unknown_system")
+        config_type = struct.info.get("config_type", "all")
         key = (config_type, system_name)
         if key not in stats:
             stats[key] = []
@@ -105,15 +133,15 @@ def process_and_split_data(**inputs):
                 ns_train_target = int(0.8 * n)
                 ns_total_target = n
 
-            specs = set(a[indices[0]].get_chemical_symbols())
-            De = len(specs)
+            specs = set(atoms[indices[0]].get_chemical_symbols())
+            dims = len(specs)
 
             desc_per_spec = [
-                [a[x].info[f"mace_mp_{s}_descriptor"] * scale for s in specs]
+                [atoms[x].info[f"mace_mp_{s}_descriptor"] * scale for s in specs]
                 for x in indices
             ]
 
-            ind_spec_train = sampling(desc_per_spec, De, ns_train_target)
+            ind_spec_train = sampling(desc_per_spec, dims, ns_train_target)
             train_ind = extract(indices, list(ind_spec_train))
 
             ns_train_actual = len(train_ind)
@@ -139,10 +167,10 @@ def process_and_split_data(**inputs):
 
             if left_indices and nvt_target > 0:
                 desc_per_spec_vt = [
-                    [a[x].info[f"mace_mp_{s}_descriptor"] * scale for s in specs]
+                    [atoms[x].info[f"mace_mp_{s}_descriptor"] * scale for s in specs]
                     for x in left_indices
                 ]
-                vt_spec = sampling(desc_per_spec_vt, De, nvt_target)
+                vt_spec = sampling(desc_per_spec_vt, dims, nvt_target)
                 vt_ind = extract(left_indices, list(vt_spec))
 
                 test_ind = vt_ind[0::2]
@@ -150,10 +178,10 @@ def process_and_split_data(**inputs):
             else:
                 test_ind, valid_ind = [], []
 
-            write_samples(a, train_ind, train_file)
-            write_samples(a, test_ind, test_file)
-            write_samples(a, valid_ind, valid_file)
-            return orm.Dict(
+            write_samples(atoms, train_ind, train_file)
+            write_samples(atoms, test_ind, test_file)
+            write_samples(atoms, valid_ind, valid_file)
+            return Dict(
                 {
                     "train_file": str(Path(train_file).resolve()),
                     "test_file": str(Path(test_file).resolve()),
@@ -165,12 +193,12 @@ def process_and_split_data(**inputs):
             f"Config type '{run_type}' not in target list. \
                     Adding all {len(indices)} frames to training set."
         )
-        write_samples(a, indices, train_file)
+        write_samples(atoms, indices, train_file)
 
-        return orm.Dict(
+        return Dict(
             {
                 "train_file": str(Path(train_file).resolve()),
             }
         )
 
-    return f"Found {k} structures that were too similar during sampling."
+    return Str(f"Found {k} structures that were too similar during sampling.")
