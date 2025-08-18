@@ -120,13 +120,13 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             "arch",
             valid_type=Str,
             required=False,
-            help="Mlip architecture to use for calculation, defaults to mace",
+            help="MLIP architecture to use for calculation",
         )
         spec.input(
             "model",
             valid_type=ModelData,
             required=False,
-            help="Mlip model used for calculation",
+            help="MLIP model used for calculation",
         )
         spec.input(
             "struct",
