@@ -24,7 +24,14 @@ def clear_database_auto(aiida_profile_clean):
 
 @pytest.fixture(scope="session", autouse=True)
 def aiida_profile(aiida_config, aiida_profile_factory):
-    """Session-scoped fixture to create an AiiDA profile."""
+    """
+    Session-scoped fixture to create an AiiDA profile.
+
+    Returns
+    -------
+    `Profile`
+        A default profile instance.
+    """
     with aiida_profile_factory(aiida_config, broker_backend="core.rabbitmq") as profile:
         yield profile
 
@@ -88,9 +95,21 @@ def fixture_localhost(aiida_localhost):
     return localhost
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def janus_code(aiida_code_installed):
-    """Function-scoped fixture to get the janus Code."""
+    """
+    Fixture to get the janus code.
+
+    Parameters
+    ----------
+    aiida_local_code_factory : fixture
+        A fixture providing a factory for creating local codes.
+
+    Returns
+    -------
+    `Code`
+        The janus code instance.
+    """
     janus_path = shutil.which("janus") or os.environ.get("JANUS_PATH")
 
     return aiida_code_installed(
