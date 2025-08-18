@@ -44,6 +44,9 @@ jobs:
         run: |
           uv sync --all-extras
 
+      - name: TESTING profile
+        run: verdi presto --use-postgres
+
       - name: Run test suite
         env:
           # show timings of tests
