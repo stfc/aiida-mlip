@@ -27,8 +27,8 @@ def aiida_profile(aiida_config, aiida_profile_factory):
     """
     Session-scoped fixture to create an AiiDA profile.
 
-    Returns
-    -------
+    Yields
+    ------
     `Profile`
         A default profile instance.
     """
