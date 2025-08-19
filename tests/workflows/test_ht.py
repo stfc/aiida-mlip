@@ -8,6 +8,7 @@ import pytest
 
 from aiida_mlip.data.model import ModelData
 
+
 def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> None:
     """Test high throughput singlepoint calculation."""
     from aiida_mlip.workflows.ht_workgraph import build_ht_calc
