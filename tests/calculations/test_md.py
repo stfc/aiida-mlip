@@ -15,6 +15,7 @@ import pytest
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
+from tests.utils import chdir
 
 
 def test_md(fixture_sandbox, generate_calc_job, janus_code, model_folder):
@@ -98,71 +99,78 @@ def test_md(fixture_sandbox, generate_calc_job, janus_code, model_folder):
 
 
 def test_md_with_config(
-    fixture_sandbox, generate_calc_job, janus_code, model_folder, config_folder
+    fixture_sandbox,
+    generate_calc_job,
+    janus_code,
+    model_folder,
+    config_folder,
+    tmp_path,
 ):
     """Test generating MD calculation job."""
-    # Create a temporary cif file to use as input
-    nacl = bulk("NaCl", "rocksalt", a=5.63)
-    write("NaCl.cif", nacl)
+    with chdir(tmp_path):
+        # Create a temporary cif file to use as input
+        nacl = bulk("NaCl", "rocksalt", a=5.63)
+        write("NaCl.cif", nacl)
 
-    entry_point_name = "mlip.md"
-    model_file = model_folder / "mace_mp_small.model"
-    inputs = {
-        "code": janus_code,
-        "model": ModelData.from_local(file=model_file, architecture="mace"),
-        "metadata": {"options": {"resources": {"num_machines": 1}}},
-        "config": JanusConfigfile(config_folder / "config_janus_md.yaml"),
-    }
+        entry_point_name = "mlip.md"
+        model_file = model_folder / "mace_mp_small.model"
+        inputs = {
+            "code": janus_code,
+            "model": ModelData.from_local(file=model_file, architecture="mace"),
+            "metadata": {"options": {"resources": {"num_machines": 1}}},
+            "config": JanusConfigfile(config_folder / "config_janus_md.yml"),
+        }
 
-    calc_info = generate_calc_job(fixture_sandbox, entry_point_name, inputs)
+        calc_info = generate_calc_job(fixture_sandbox, entry_point_name, inputs)
 
-    cmdline_params = [
-        "md",
-        "--struct",
-        "aiida.xyz",
-        "--log",
-        "aiida.log",
-        "--arch",
-        "mace",
-        "--calc-kwargs",
-        "{'model': 'mlff.model'}",
-        "--config",
-        "config.yaml",
-        "--ensemble",
-        "nvt",
-        "--summary",
-        "md_summary.yml",
-        "--traj-file",
-        "aiida-traj.xyz",
-        "--stats-file",
-        "aiida-stats.dat",
-    ]
-
-    retrieve_list = [
-        calc_info.uuid,
-        "aiida.log",
-        "aiida-stdout.txt",
-        "aiida-traj.xyz",
-        "aiida-stats.dat",
-        "md_summary.yml",
-    ]
-
-    # Check the attributes of the returned `CalcInfo`
-    assert sorted(fixture_sandbox.get_content_list()) == sorted(
-        [
+        cmdline_params = [
+            "md",
+            "--struct",
             "aiida.xyz",
+            "--log",
+            "aiida.log",
+            "--arch",
+            "mace",
+            "--calc-kwargs",
+            "{'model': 'mlff.model'}",
+            "--config",
             "config.yaml",
-            "mlff.model",
+            "--ensemble",
+            "nvt",
+            "--summary",
+            "md_summary.yml",
+            "--traj-file",
+            "aiida-traj.xyz",
+            "--stats-file",
+            "aiida-stats.dat",
         ]
-    )
-    assert isinstance(calc_info, datastructures.CalcInfo)
-    assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
-    assert len(calc_info.codes_info[0].cmdline_params) == len(cmdline_params)
-    assert sorted(map(str, calc_info.codes_info[0].cmdline_params)) == sorted(
-        map(str, cmdline_params)
-    )
-    assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
-    Path("NaCl.cif").unlink()
+
+        retrieve_list = [
+            calc_info.uuid,
+            "aiida.log",
+            "aiida-stdout.txt",
+            "aiida-traj.xyz",
+            "aiida-stats.dat",
+            "md_summary.yml",
+        ]
+
+        # Check the attributes of the returned `CalcInfo`
+        assert sorted(fixture_sandbox.get_content_list()) == sorted(
+            [
+                "aiida.xyz",
+                "config.yaml",
+                "mlff.model",
+            ]
+        )
+        assert isinstance(calc_info, datastructures.CalcInfo)
+        assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
+        assert len(calc_info.codes_info[0].cmdline_params) == len(cmdline_params)
+        assert sorted(map(str, calc_info.codes_info[0].cmdline_params)) == sorted(
+            map(str, cmdline_params)
+        )
+        assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
+
+        Path("NaCl.cif").unlink(missing_ok=True)
 
 
 def test_run_md(model_folder, structure_folder, janus_code):
@@ -196,11 +204,38 @@ def test_run_md(model_folder, structure_folder, janus_code):
     assert "traj_output" in result
     assert "traj_file" in result
     assert "results_dict" in result
-    # obtained_res = result["results_dict"].get_dict()
     assert result["traj_output"].numsteps == 4
-    assert node.outputs.final_structure.get_cell_volume() == pytest.approx(
-        179.406
-    )  # check
+    assert node.outputs.final_structure.get_cell_volume() == pytest.approx(179.406)
+
+
+def test_run_md_config(model_folder, janus_code, config_folder, tmp_path):
+    """Test running molecular dynamics simulation with config file."""
+    with chdir(tmp_path):
+        # Create a temporary cif file to use as input
+        nacl = bulk("NaCl", "rocksalt", a=5.63)
+        write("NaCl.cif", nacl)
+
+        model_file = model_folder / "mace_mp_small.model"
+        inputs = {
+            "metadata": {"options": {"resources": {"num_machines": 1}}},
+            "code": janus_code,
+            "model": ModelData.from_local(model_file, architecture="mace"),
+            "config": JanusConfigfile(config_folder / "config_janus_md.yml"),
+        }
+
+        MDCalc = CalculationFactory("mlip.md")
+        result, node = run_get_node(MDCalc, **inputs)
+
+        assert "final_structure" in result
+        assert "traj_output" in result
+        assert "traj_file" in result
+        assert "results_dict" in result
+        assert result["traj_output"].numsteps == 4
+        assert node.outputs.final_structure.get_cell_volume() == pytest.approx(
+            44.61338675
+        )
+
+        Path("NaCl.cif").unlink(missing_ok=True)
 
 
 def test_example_md(example_path, janus_code):
