@@ -4,4 +4,4 @@ properties:
 arch: mace_mp
 struct: "NaCl.cif"
 calc_kwargs:
-  dispersion: True
+  dispersion: False

@@ -35,6 +35,8 @@ def test_descriptors(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "descriptors",
         "--arch",
         "mace",
+        "--model",
+        "mlff.model",
         "--struct",
         "aiida.xyz",
         "--device",
@@ -44,7 +46,7 @@ def test_descriptors(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "--out",
         "aiida-results.xyz",
         "--calc-kwargs",
-        "{'default_dtype': 'float64', 'model': 'mlff.model'}",
+        "{'default_dtype': 'float64'}",
         "--invariants-only",
     ]
 
