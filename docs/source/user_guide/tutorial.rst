@@ -59,7 +59,6 @@ The other inputs can be set up as AiiDA Str. There is a default for every input 
         "model": model,
         "structure": structure,
         "architecture": Str(model.architecture),
-        "precision": Str("float64"),
         "device": Str("cpu"),
         "max_force": Float(0.1), # Specific to geometry optimisation: convergence criteria
         "opt_cell_lengths": Bool(False), # Specific to geometry optimisation
@@ -165,7 +164,6 @@ The calculation can also be interacted with through verdi cli. Use `verdi proces
     log_filename     1128  Str
     max_force        1124  Float
     model            1119  ModelData
-    precision        1122  Str
     structure        1120  StructureData
     traj             1129  Str
     opt_cell_lengths 1125  Bool
