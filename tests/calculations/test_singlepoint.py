@@ -173,8 +173,9 @@ def test_run_sp_config(model_folder, janus_code, config_folder, tmp_path):
         assert "results_dict" in result
         obtained_res = result["results_dict"].get_dict()
         assert "xyz_output" in result
-        assert obtained_res["info"]["mace_mp_energy"] == pytest.approx(-6.7575203839729)
-        assert obtained_res["info"]["mace_mp_stress"][0] == pytest.approx(
+        print(obtained_res["info"].keys())
+        assert obtained_res["info"]["mace_energy"] == pytest.approx(-6.7575203839729)
+        assert obtained_res["info"]["mace_stress"][0] == pytest.approx(
             -0.005816546985101
         )
 
