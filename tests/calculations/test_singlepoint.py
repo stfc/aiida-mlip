@@ -7,7 +7,7 @@ import subprocess
 
 from aiida.common import InputValidationError, datastructures
 from aiida.engine import run
-from aiida.orm import Str, StructureData
+from aiida.orm import Dict, Str, StructureData
 from aiida.plugins import CalculationFactory
 from ase.build import bulk
 from ase.io import write
@@ -26,7 +26,7 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
         "arch": Str("mace"),
-        "precision": Str("float64"),
+        "calc_kwargs": Dict({"default_dtype": "float64"}),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
@@ -77,7 +77,6 @@ def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, janus_cod
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
         "arch": Str("mace"),
-        "precision": Str("float64"),
         "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
@@ -139,7 +138,6 @@ def test_run_sp(model_folder, janus_code):
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
         "arch": Str("mace"),
-        "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),

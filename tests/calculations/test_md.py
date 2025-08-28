@@ -26,7 +26,7 @@ def test_md(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
         "arch": Str("mace"),
-        "precision": Str("float64"),
+        "calc_kwargs": Dict({"default_dtype": "float64"}),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
@@ -121,6 +121,7 @@ def test_md_with_config(
             "model": ModelData.from_local(file=model_file, architecture="mace"),
             "metadata": {"options": {"resources": {"num_machines": 1}}},
             "config": JanusConfigfile(config_folder / "config_janus_md.yml"),
+            "calc_kwargs": Dict({"default_dtype": "float64"}),
         }
 
         calc_info = generate_calc_job(fixture_sandbox, entry_point_name, inputs)
@@ -133,8 +134,10 @@ def test_md_with_config(
             "aiida.log",
             "--arch",
             "mace",
+            "--model",
+            "mlff.model",
             "--calc-kwargs",
-            "{'model': 'mlff.model'}",
+            "{'default_dtype': 'float64'}",
             "--config",
             "config.yaml",
             "--ensemble",
@@ -183,7 +186,7 @@ def test_run_md(model_folder, structure_folder, janus_code):
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
         "arch": Str("mace"),
-        "precision": Str("float64"),
+        "calc_kwargs": Dict({"default_dtype": "float64"}),
         "struct": StructureData(ase=read(structure_file)),
         "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
