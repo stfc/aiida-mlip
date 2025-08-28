@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 import subprocess
 
 from aiida.common import InputValidationError, datastructures
@@ -9,10 +10,12 @@ from aiida.engine import run
 from aiida.orm import Str, StructureData
 from aiida.plugins import CalculationFactory
 from ase.build import bulk
+from ase.io import write
 import pytest
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
+from tests.utils import chdir
 
 
 def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folder):
@@ -147,6 +150,35 @@ def test_run_sp(model_folder, janus_code):
     assert "xyz_output" in result
     assert obtained_res["info"]["mace_energy"] == pytest.approx(-6.7575203839729)
     assert obtained_res["info"]["mace_stress"][0] == pytest.approx(-0.005816546985101)
+
+
+def test_run_sp_config(model_folder, janus_code, config_folder, tmp_path):
+    """Test running single point calculation with config file."""
+    with chdir(tmp_path):
+        # Create a temporary cif file to use as input
+        nacl = bulk("NaCl", "rocksalt", a=5.63)
+        write("NaCl.cif", nacl)
+
+        model_file = model_folder / "mace_mp_small.model"
+        inputs = {
+            "metadata": {"options": {"resources": {"num_machines": 1}}},
+            "code": janus_code,
+            "model": ModelData.from_local(model_file, architecture="mace"),
+            "config": JanusConfigfile(config_folder / "config_janus_sp.yml"),
+        }
+
+        SinglepointCalc = CalculationFactory("mlip.sp")
+        result = run(SinglepointCalc, **inputs)
+
+        assert "results_dict" in result
+        obtained_res = result["results_dict"].get_dict()
+        assert "xyz_output" in result
+        assert obtained_res["info"]["mace_mp_energy"] == pytest.approx(-6.7575203839729)
+        assert obtained_res["info"]["mace_mp_stress"][0] == pytest.approx(
+            -0.005816546985101
+        )
+
+        Path("NaCl.cif").unlink(missing_ok=True)
 
 
 def test_example(example_path, janus_code):
