@@ -135,12 +135,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             help="The input structure.",
         )
         spec.input(
-            "precision",
-            valid_type=Str,
-            required=False,
-            help="Precision level for calculation",
-        )
-        spec.input(
             "device",
             valid_type=Str,
             required=False,
@@ -175,7 +169,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             "calc_kwargs",
             valid_type=Dict,
             required=False,
-            default=lambda: Dict({}),
             help="Keyword arguments to pass to selected calculator.",
         )
 
@@ -236,13 +229,8 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             cmd_line["device"] = device
 
         # Set calc_kwargs from dict and specific stored inputs
-        calc_kwargs = self.inputs.calc_kwargs.get_dict()
-
-        if "precision" in self.inputs:
-            precision = self.inputs.precision.value
-            calc_kwargs["default_dtype"] = precision
-
-        cmd_line["calc-kwargs"] = calc_kwargs
+        if "calc_kwargs" in self.inputs:
+            cmd_line["calc-kwargs"] = self.inputs.calc_kwargs.get_dict()
 
         # Define architecture from model if model is given,
         # otherwise get architecture from inputs and download default model
