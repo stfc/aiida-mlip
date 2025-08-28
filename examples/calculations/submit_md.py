@@ -41,7 +41,6 @@ def md(params: dict) -> None:
         "arch": Str(params["arch"]),
         "struct": structure,
         "model": model,
-        "precision": Str(params["precision"]),
         "device": Str(params["device"]),
         "ensemble": Str(params["ensemble"]),
         "md_kwargs": Dict(params["md_dict"]),
@@ -78,9 +77,6 @@ def md(params: dict) -> None:
     "--device", default="cpu", type=str, help="Device to run calculations on."
 )
 @click.option(
-    "--precision", default="float64", type=str, help="Chosen level of precision."
-)
-@click.option(
     "--ensemble", default="nve", type=str, help="Name of thermodynamic ensemble."
 )
 @click.option(
@@ -89,9 +85,7 @@ def md(params: dict) -> None:
     type=str,
     help="String containing a dictionary with other md parameters",
 )
-def cli(
-    codelabel, struct, model, arch, device, precision, ensemble, md_dict_str
-) -> None:
+def cli(codelabel, struct, model, arch, device, ensemble, md_dict_str) -> None:
     """Click interface."""
     md_dict = ast.literal_eval(md_dict_str)
     try:
@@ -106,7 +100,6 @@ def cli(
         "model": model,
         "arch": arch,
         "device": device,
-        "precision": precision,
         "ensemble": ensemble,
         "md_dict": md_dict,
     }

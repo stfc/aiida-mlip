@@ -39,7 +39,6 @@ def singlepoint(params: dict) -> None:
         "arch": Str(params["arch"]),
         "struct": structure,
         "model": model,
-        "precision": Str(params["precision"]),
         "device": Str(params["device"]),
     }
 
@@ -73,10 +72,7 @@ def singlepoint(params: dict) -> None:
 @click.option(
     "--device", default="cpu", type=str, help="Device to run calculations on."
 )
-@click.option(
-    "--precision", default="float64", type=str, help="Chosen level of precision."
-)
-def cli(codelabel, struct, model, arch, device, precision) -> None:
+def cli(codelabel, struct, model, arch, device) -> None:
     """Click interface."""
     try:
         code = load_code(codelabel)
@@ -90,7 +86,6 @@ def cli(codelabel, struct, model, arch, device, precision) -> None:
         "model": model,
         "arch": arch,
         "device": device,
-        "precision": precision,
     }
 
     # Submit single point

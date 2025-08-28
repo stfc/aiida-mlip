@@ -39,7 +39,6 @@ def geomopt(params: dict) -> None:
         "arch": Str(params["arch"]),
         "struct": structure,
         "model": model,
-        "precision": Str(params["precision"]),
         "device": Str(params["device"]),
         "fmax": Float(params["fmax"]),
         "opt_cell_lengths": Bool(params["opt_cell_lengths"]),
@@ -78,9 +77,6 @@ def geomopt(params: dict) -> None:
 @click.option(
     "--device", default="cpu", type=str, help="Device to run calculations on."
 )
-@click.option(
-    "--precision", default="float64", type=str, help="Chosen level of precision."
-)
 @click.option("--fmax", default=0.1, type=float, help="Maximum force for convergence.")
 @click.option(
     "--opt_cell_lengths",
@@ -103,7 +99,6 @@ def cli(
     model,
     arch,
     device,
-    precision,
     fmax,
     opt_cell_lengths,
     opt_cell_fully,
@@ -122,7 +117,6 @@ def cli(
         "model": model,
         "arch": arch,
         "device": device,
-        "precision": precision,
         "fmax": fmax,
         "opt_cell_lengths": opt_cell_lengths,
         "opt_cell_fully": opt_cell_fully,

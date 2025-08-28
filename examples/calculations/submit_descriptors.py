@@ -39,7 +39,6 @@ def descriptors(params: dict) -> None:
         "arch": Str(params["arch"]),
         "struct": structure,
         "model": model,
-        "precision": Str(params["precision"]),
         "device": Str(params["device"]),
         "invariants_only": Bool(params["invariants_only"]),
         "calc_per_element": Bool(params["calc_per_element"]),
@@ -77,9 +76,6 @@ def descriptors(params: dict) -> None:
     "--device", default="cpu", type=str, help="Device to run calculations on."
 )
 @click.option(
-    "--precision", default="float64", type=str, help="Chosen level of precision."
-)
-@click.option(
     "--invariants-only",
     default=False,
     type=bool,
@@ -103,7 +99,6 @@ def cli(
     model,
     arch,
     device,
-    precision,
     invariants_only,
     calc_per_element,
     calc_per_atom,
@@ -121,7 +116,6 @@ def cli(
         "model": model,
         "arch": arch,
         "device": device,
-        "precision": precision,
         "invariants_only": invariants_only,
         "calc_per_element": calc_per_element,
         "calc_per_atom": calc_per_atom,
