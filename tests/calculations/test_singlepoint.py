@@ -211,6 +211,8 @@ def test_example(example_path, janus_code):
         "run",
         example_file_path,
         f"{janus_code.label}@{janus_code.computer.label}",
+        "--calc-kwargs",
+        "{'dispersion': True}",
     ]
 
     # Execute the command
