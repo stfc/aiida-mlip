@@ -42,6 +42,8 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "cpu",
         "--log",
         "aiida.log",
+        "--summary",
+        "geomopt-summary.yml",
         "--out",
         "aiida-results.xyz",
         "--calc-kwargs",
@@ -57,6 +59,7 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "aiida-results.xyz",
         "aiida-stdout.txt",
         "aiida-traj.xyz",
+        "geomopt-summary.yml",
     ]
 
     # Check the attributes of the returned `CalcInfo`

@@ -23,6 +23,8 @@ class Descriptors(Singlepoint):  # numpydoc ignore=PR01
         Create the input files for the `CalcJob`.
     """
 
+    DEFAULT_SUMMARY_FILE = "descriptors-summary.yml"
+
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
         """
