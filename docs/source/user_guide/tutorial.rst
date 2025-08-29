@@ -53,13 +53,15 @@ The other inputs can be set up as AiiDA Str. There is a default for every input 
 
 .. code-block:: python
 
-    from aiida.orm import Bool, Float, Str
+    from aiida.orm import Bool, Dict, Float, Str
+
     inputs = {
         "code": code,
         "model": model,
         "structure": structure,
         "architecture": Str(model.architecture),
         "device": Str("cpu"),
+        "calc_kwargs": Dict({}),
         "max_force": Float(0.1), # Specific to geometry optimisation: convergence criteria
         "opt_cell_lengths": Bool(False), # Specific to geometry optimisation
         "opt_cell_fully": Bool(True), # Specific to geometry optimisation: to optimise the cell
@@ -158,6 +160,7 @@ The calculation can also be interacted with through verdi cli. Use `verdi proces
     Inputs             PK  Type
     ---------------  ----  -------------
     architecture     1121  Str
+    calc_kwargs      1122  Dict
     code                2  InstalledCode
     device           1123  Str
     opt_cell_fully   1126  Bool

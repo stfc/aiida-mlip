@@ -41,6 +41,7 @@ The inputs can be grouped into a dictionary:
             "structure": StructureData,
             "model": ModelData,
             "device": Str,
+            "calc_kwargs": Dict,
         }
     SinglePointCalculation = CalculationFactory("mlip.sp")
     submit(SinglePointCalculation, **inputs)
@@ -57,6 +58,9 @@ The config file contains the parameters in yaml format:
     device: "cpu"
     struct: "path/to/structure.cif"
     model: "path/to/model.model"
+    calc_kwargs:
+      dispersion: True
+
 
 And it is used as shown below. Note that some parameters, which are specific to AiiDA, need to be given individually.
 
