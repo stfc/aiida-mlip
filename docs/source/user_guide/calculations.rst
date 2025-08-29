@@ -40,8 +40,8 @@ The inputs can be grouped into a dictionary:
             "architecture": Str,
             "structure": StructureData,
             "model": ModelData,
-            "precision": Str,
             "device": Str,
+            "calc_kwargs": Dict,
         }
     SinglePointCalculation = CalculationFactory("mlip.sp")
     submit(SinglePointCalculation, **inputs)
@@ -58,6 +58,9 @@ The config file contains the parameters in yaml format:
     device: "cpu"
     struct: "path/to/structure.cif"
     model: "path/to/model.model"
+    calc_kwargs:
+      dispersion: True
+
 
 And it is used as shown below. Note that some parameters, which are specific to AiiDA, need to be given individually.
 
@@ -101,8 +104,6 @@ In this case  the structure used is going to be "path/to/structure2.xyz" rather 
 Refer to the API documentation for additional parameters that can be passed.
 Some parameters are not required and don't have a default value set in aiida-mlip. In that case the default values will be the same as `janus <https://stfc.github.io/janus-core/>`_
 The only default parameters defined in aiida-mlip are the names of the input and output files, as they do not affect the results of the calculation itself, and are needed in AiiDA to parse the results.
-For example in the code above the parameter "precision" is never defined, neither in the config nor in the run_get_node function.
-The parameter will default to the janus default, which is "float64"
 
 
 Submission
@@ -120,7 +121,7 @@ They will be converted to AiiDA data types by the script itself.
 
 .. code-block:: python
 
-    verdi run submit_singlepoint.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --precision "float64" --device "cpu"
+    verdi run submit_singlepoint.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --device "cpu"
 
 The submit_using_config.py script can be used to facilitate submission using a config file.
 
@@ -157,7 +158,7 @@ They will be converted to AiiDA data types by the script itself.
 
 .. code-block:: python
 
-    verdi run submit_geomopt.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --precision "float64" --device "cpu"
+    verdi run submit_geomopt.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --device "cpu"
 
 
 

@@ -2,17 +2,20 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 import subprocess
 
 from aiida.common import InputValidationError, datastructures
 from aiida.engine import run
-from aiida.orm import Str, StructureData
+from aiida.orm import Dict, Str, StructureData
 from aiida.plugins import CalculationFactory
 from ase.build import bulk
+from ase.io import write
 import pytest
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
+from tests.utils import chdir
 
 
 def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folder):
@@ -23,7 +26,6 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
         "arch": Str("mace"),
-        "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
@@ -35,6 +37,8 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "singlepoint",
         "--arch",
         "mace",
+        "--model",
+        "mlff.model",
         "--struct",
         "aiida.xyz",
         "--device",
@@ -43,8 +47,6 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "aiida.log",
         "--out",
         "aiida-results.xyz",
-        "--calc-kwargs",
-        "{'default_dtype': 'float64', 'model': 'mlff.model'}",
     ]
 
     retrieve_list = [
@@ -72,7 +74,6 @@ def test_sp_nostruct(fixture_sandbox, generate_calc_job, model_folder, janus_cod
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
         "arch": Str("mace"),
-        "precision": Str("float64"),
         "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
     }
@@ -134,7 +135,6 @@ def test_run_sp(model_folder, janus_code):
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
         "arch": Str("mace"),
-        "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
@@ -149,6 +149,60 @@ def test_run_sp(model_folder, janus_code):
     assert obtained_res["info"]["mace_stress"][0] == pytest.approx(-0.005816546985101)
 
 
+def test_run_config(model_folder, janus_code, config_folder, tmp_path):
+    """Test running single point calculation with config file."""
+    with chdir(tmp_path):
+        # Create a temporary cif file to use as input
+        nacl = bulk("NaCl", "rocksalt", a=5.63)
+        write("NaCl.cif", nacl)
+
+        model_file = model_folder / "mace_mp_small.model"
+        inputs = {
+            "metadata": {"options": {"resources": {"num_machines": 1}}},
+            "code": janus_code,
+            "model": ModelData.from_local(model_file, architecture="mace"),
+            "config": JanusConfigfile(config_folder / "config_janus_sp.yml"),
+        }
+
+        SinglepointCalc = CalculationFactory("mlip.sp")
+        result = run(SinglepointCalc, **inputs)
+
+        assert "results_dict" in result
+        obtained_res = result["results_dict"].get_dict()
+        assert "xyz_output" in result
+        print(obtained_res["info"].keys())
+        assert obtained_res["info"]["mace_d3_energy"] == pytest.approx(-7.166011197778)
+        assert obtained_res["info"]["mace_d3_stress"][0] == pytest.approx(
+            -0.0020789278865308
+        )
+
+        Path("NaCl.cif").unlink(missing_ok=True)
+
+
+def test_run_calc_kwargs(model_folder, janus_code, config_folder, tmp_path):
+    """Test running single point calculation with calc_kwargs set."""
+    model_file = model_folder / "mace_mp_small.model"
+    inputs = {
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "code": janus_code,
+        "model": ModelData.from_local(model_file, architecture="mace"),
+        "calc_kwargs": Dict({"dispersion": True}),
+    }
+
+    SinglepointCalc = CalculationFactory("mlip.sp")
+    result = run(SinglepointCalc, **inputs)
+
+    assert "results_dict" in result
+    obtained_res = result["results_dict"].get_dict()
+    assert "xyz_output" in result
+    print(obtained_res["info"].keys())
+    assert obtained_res["info"]["mace_d3_energy"] == pytest.approx(-7.166011197778)
+    assert obtained_res["info"]["mace_d3_stress"][0] == pytest.approx(
+        -0.0020789278865308
+    )
+
+
 def test_example(example_path, janus_code):
     """Test function to run singlepoint calculation using the example file provided."""
     example_file_path = example_path / "submit_singlepoint.py"
@@ -157,6 +211,8 @@ def test_example(example_path, janus_code):
         "run",
         example_file_path,
         f"{janus_code.label}@{janus_code.computer.label}",
+        "--calc-kwargs",
+        "{'dispersion': True}",
     ]
 
     # Execute the command

@@ -8,7 +8,7 @@ from aiida.common import InputValidationError, datastructures
 import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
 import aiida.engine.processes
-from aiida.orm import SinglefileData, Str, StructureData
+from aiida.orm import Dict, SinglefileData, Str, StructureData
 from ase.io import read, write
 
 from aiida_mlip.data.config import JanusConfigfile
@@ -135,12 +135,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             help="The input structure.",
         )
         spec.input(
-            "precision",
-            valid_type=Str,
-            required=False,
-            help="Precision level for calculation",
-        )
-        spec.input(
             "device",
             valid_type=Str,
             required=False,
@@ -169,6 +163,13 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             valid_type=str,
             default="_scheduler-stdout.txt",
             help="Filename to which the content of stdout of the scheduler is written.",
+        )
+
+        spec.input(
+            "calc_kwargs",
+            valid_type=Dict,
+            required=False,
+            help="Keyword arguments to pass to selected calculator.",
         )
 
         spec.input(
@@ -223,12 +224,13 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         }
 
         # The inputs are saved in the node, but we want their value as a string
-        if "precision" in self.inputs:
-            precision = (self.inputs.precision).value
-            cmd_line["calc-kwargs"] = {"default_dtype": precision}
         if "device" in self.inputs:
-            device = (self.inputs.device).value
+            device = self.inputs.device.value
             cmd_line["device"] = device
+
+        # Set calc_kwargs from dict and specific stored inputs
+        if "calc_kwargs" in self.inputs:
+            cmd_line["calc-kwargs"] = self.inputs.calc_kwargs.get_dict()
 
         # Define architecture from model if model is given,
         # otherwise get architecture from inputs and download default model
@@ -310,7 +312,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         dict
             Dictionary containing the cmd line keys updated with the model.
         """
-        model_path = None
         if "model" in self.inputs:
             # Raise error if model is None (different than model not given as input)
             if self.inputs.model is None:
@@ -322,5 +323,4 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             ):
                 shutil.copyfileobj(source, target)
 
-            model_path = "mlff.model"
-            cmd_line.setdefault("calc-kwargs", {})["model"] = model_path
+            cmd_line["model"] = "mlff.model"
