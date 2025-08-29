@@ -86,8 +86,10 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         Default stdout file name.
     DEFAULT_INPUT_FILE : str
         Default input file name.
-    LOG_FILE : str
+    DEFAULT_LOG_FILE : str
         Default log file name.
+    DEFAULT_SUMMARY_FILE : str
+        Default summary file name.
 
     Methods
     -------
@@ -101,7 +103,8 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
     DEFAULT_OUTPUT_FILE = "aiida-stdout.txt"
     DEFAULT_INPUT_FILE = "aiida.xyz"
-    LOG_FILE = "aiida.log"
+    DEFAULT_LOG_FILE = "aiida.log"
+    DEFAULT_SUMMARY_FILE = "aiida-summary.yml"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
@@ -145,8 +148,15 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             "log_filename",
             valid_type=Str,
             required=False,
-            default=lambda: Str(cls.LOG_FILE),
+            default=lambda: Str(cls.DEFAULT_LOG_FILE),
             help="Name of the log output file",
+        )
+        spec.input(
+            "summary",
+            valid_type=Str,
+            required=False,
+            default=lambda: Str(cls.DEFAULT_SUMMARY_FILE),
+            help="Name of the summary output file",
         )
         spec.input(
             "metadata.options.output_filename",
@@ -217,10 +227,13 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         with folder.open(input_filename, mode="w", encoding="utf8") as file:
             write(file.name, images=atoms)
 
-        log_filename = (self.inputs.log_filename).value
+        log_filename = self.inputs.log_filename.value
+        summary = self.inputs.summary.value
+
         cmd_line = {
             "struct": input_filename,
             "log": log_filename,
+            "summary": summary,
         }
 
         # The inputs are saved in the node, but we want their value as a string
@@ -267,6 +280,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             self.metadata.options.output_filename,
             self.uuid,
             log_filename,
+            summary,
         ]
 
         return calcinfo
