@@ -225,3 +225,56 @@ def test_example(example_path, janus_code):
     assert "results from calculation:" in result.stdout
     assert "'results_dict': <Dict: uuid:" in result.stdout
     assert "'xyz_output': <SinglefileData: uuid:" in result.stdout
+
+
+def test_output_files(fixture_sandbox, generate_calc_job, janus_code, model_folder):
+    """Test setting log and summary output files."""
+    entry_point_name = "mlip.sp"
+    model_file = model_folder / "mace_mp_small.model"
+    inputs = {
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "code": janus_code,
+        "arch": Str("mace"),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "model": ModelData.from_local(model_file, architecture="mace"),
+        "device": Str("cpu"),
+        "summary": Str("test.yml"),
+        "log_filename": Str("test.log"),
+    }
+
+    calc_info = generate_calc_job(fixture_sandbox, entry_point_name, inputs)
+
+    cmdline_params = [
+        "singlepoint",
+        "--arch",
+        "mace",
+        "--model",
+        "mlff.model",
+        "--struct",
+        "aiida.xyz",
+        "--device",
+        "cpu",
+        "--log",
+        "test.log",
+        "--summary",
+        "test.yml",
+        "--out",
+        "aiida-results.xyz",
+    ]
+
+    retrieve_list = [
+        calc_info.uuid,
+        "test.log",
+        "aiida-results.xyz",
+        "aiida-stdout.txt",
+        "test.yml",
+    ]
+
+    # Check the attributes of the returned `CalcInfo`
+    assert sorted(fixture_sandbox.get_content_list()) == sorted(
+        ["aiida.xyz", "mlff.model"]
+    )
+    assert isinstance(calc_info, datastructures.CalcInfo)
+    assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
+    assert sorted(calc_info.codes_info[0].cmdline_params) == sorted(cmdline_params)
+    assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
