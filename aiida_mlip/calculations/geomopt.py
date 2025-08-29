@@ -81,10 +81,10 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
         )
 
         spec.input(
-            "opt_kwargs",
+            "minimize_kwargs",
             valid_type=Dict,
             required=False,
-            help="Other optimisation keywords",
+            help="All other GeomOpt keyword arguments",
         )
 
         spec.inputs["metadata"]["options"]["parser_name"].default = "mlip.opt_parser"
@@ -121,9 +121,9 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             "minimize-kwargs": minimize_kwargs,
             "write-traj": True,
         }
-        if "opt_kwargs" in self.inputs:
-            opt_kwargs = self.inputs.opt_kwargs.get_dict()
-            geom_opt_cmdline["opt-kwargs"] = opt_kwargs
+        if "minimize_kwargs" in self.inputs:
+            minimize_kwargs = self.inputs.minimize_kwargs.get_dict()
+            geom_opt_cmdline["minimize-kwargs"] = minimize_kwargs
         if "opt_cell_fully" in self.inputs:
             geom_opt_cmdline["opt-cell-fully"] = self.inputs.opt_cell_fully.value
         if "opt_cell_lengths" in self.inputs:
