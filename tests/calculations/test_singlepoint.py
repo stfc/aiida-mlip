@@ -45,6 +45,8 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "cpu",
         "--log",
         "aiida.log",
+        "--summary",
+        "singlepoint-summary.yml",
         "--out",
         "aiida-results.xyz",
     ]
@@ -54,6 +56,7 @@ def test_singlepoint(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "aiida.log",
         "aiida-results.xyz",
         "aiida-stdout.txt",
+        "singlepoint-summary.yml",
     ]
 
     # Check the attributes of the returned `CalcInfo`

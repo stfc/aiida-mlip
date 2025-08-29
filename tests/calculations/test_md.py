@@ -57,7 +57,7 @@ def test_md(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "--log",
         "aiida.log",
         "--summary",
-        "md_summary.yml",
+        "md-summary.yml",
         "--calc-kwargs",
         "{'default_dtype': 'float64'}",
         "--ensemble",
@@ -84,7 +84,7 @@ def test_md(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "aiida-stdout.txt",
         "aiida-traj.xyz",
         "aiida-stats.dat",
-        "md_summary.yml",
+        "md-summary.yml",
     ]
 
     # Check the attributes of the returned `CalcInfo`
@@ -143,7 +143,7 @@ def test_md_with_config(
             "--ensemble",
             "nvt",
             "--summary",
-            "md_summary.yml",
+            "md-summary.yml",
             "--traj-file",
             "aiida-traj.xyz",
             "--stats-file",
@@ -156,7 +156,7 @@ def test_md_with_config(
             "aiida-stdout.txt",
             "aiida-traj.xyz",
             "aiida-stats.dat",
-            "md_summary.yml",
+            "md-summary.yml",
         ]
 
         # Check the attributes of the returned `CalcInfo`

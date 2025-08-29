@@ -43,6 +43,8 @@ def test_descriptors(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "cpu",
         "--log",
         "aiida.log",
+        "--summary",
+        "descriptors-summary.yml",
         "--out",
         "aiida-results.xyz",
         "--calc-kwargs",
@@ -55,6 +57,7 @@ def test_descriptors(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "aiida.log",
         "aiida-results.xyz",
         "aiida-stdout.txt",
+        "descriptors-summary.yml",
     ]
 
     # Check the attributes of the returned `CalcInfo`
