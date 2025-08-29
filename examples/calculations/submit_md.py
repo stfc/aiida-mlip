@@ -46,6 +46,10 @@ def md(params: dict) -> None:
         "md_kwargs": Dict(params["md_dict"]),
     }
 
+    # Only calc_kwargs add if set
+    if params["calc_kwargs"]:
+        inputs["calc_kwargs"] = Dict(params["calc_kwargs"])
+
     # Run calculation
     result, node = run_get_node(MDCalc, **inputs)
     print(f"Printing results from calculation: {result}")
@@ -77,6 +81,12 @@ def md(params: dict) -> None:
     "--device", default="cpu", type=str, help="Device to run calculations on."
 )
 @click.option(
+    "--calc-kwargs",
+    default="{}",
+    type=str,
+    help="Keyword arguments to pass to calculator.",
+)
+@click.option(
     "--ensemble", default="nve", type=str, help="Name of thermodynamic ensemble."
 )
 @click.option(
@@ -85,9 +95,13 @@ def md(params: dict) -> None:
     type=str,
     help="String containing a dictionary with other md parameters",
 )
-def cli(codelabel, struct, model, arch, device, ensemble, md_dict_str) -> None:
+def cli(
+    codelabel, struct, model, arch, device, calc_kwargs, ensemble, md_dict_str
+) -> None:
     """Click interface."""
     md_dict = ast.literal_eval(md_dict_str)
+    calc_kwargs = ast.literal_eval(calc_kwargs)
+
     try:
         code = load_code(codelabel)
     except NotExistent as exc:
@@ -100,6 +114,7 @@ def cli(codelabel, struct, model, arch, device, ensemble, md_dict_str) -> None:
         "model": model,
         "arch": arch,
         "device": device,
+        "calc_kwargs": calc_kwargs,
         "ensemble": ensemble,
         "md_dict": md_dict,
     }

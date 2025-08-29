@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import ast
+
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
-from aiida.orm import Str, load_code
+from aiida.orm import Dict, Str, load_code
 from aiida.plugins import CalculationFactory
 import click
 
@@ -42,6 +44,10 @@ def singlepoint(params: dict) -> None:
         "device": Str(params["device"]),
     }
 
+    # Only calc_kwargs add if set
+    if params["calc_kwargs"]:
+        inputs["calc_kwargs"] = Dict(params["calc_kwargs"])
+
     # Run calculation
     result, node = run_get_node(SinglepointCalc, **inputs)
     print(f"Printing results from calculation: {result}")
@@ -72,8 +78,16 @@ def singlepoint(params: dict) -> None:
 @click.option(
     "--device", default="cpu", type=str, help="Device to run calculations on."
 )
-def cli(codelabel, struct, model, arch, device) -> None:
+@click.option(
+    "--calc-kwargs",
+    default="{}",
+    type=str,
+    help="Keyword arguments to pass to calculator.",
+)
+def cli(codelabel, struct, model, arch, device, calc_kwargs) -> None:
     """Click interface."""
+    calc_kwargs = ast.literal_eval(calc_kwargs)
+
     try:
         code = load_code(codelabel)
     except NotExistent as exc:
@@ -86,6 +100,7 @@ def cli(codelabel, struct, model, arch, device) -> None:
         "model": model,
         "arch": arch,
         "device": device,
+        "calc_kwargs": calc_kwargs,
     }
 
     # Submit single point

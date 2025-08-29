@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import ast
+
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
-from aiida.orm import Bool, Float, Int, Str, load_code
+from aiida.orm import Bool, Dict, Float, Int, Str, load_code
 from aiida.plugins import CalculationFactory
 import click
 
@@ -47,6 +49,10 @@ def geomopt(params: dict) -> None:
         "steps": Int(params["steps"]),
     }
 
+    # Only calc_kwargs add if set
+    if params["calc_kwargs"]:
+        inputs["calc_kwargs"] = Dict(params["calc_kwargs"])
+
     # Run calculation
     result, node = run_get_node(GeomoptCalc, **inputs)
     print(f"Printing results from calculation: {result}")
@@ -77,6 +83,12 @@ def geomopt(params: dict) -> None:
 @click.option(
     "--device", default="cpu", type=str, help="Device to run calculations on."
 )
+@click.option(
+    "--calc-kwargs",
+    default="{}",
+    type=str,
+    help="Keyword arguments to pass to calculator.",
+)
 @click.option("--fmax", default=0.1, type=float, help="Maximum force for convergence.")
 @click.option(
     "--opt_cell_lengths",
@@ -99,12 +111,15 @@ def cli(
     model,
     arch,
     device,
+    calc_kwargs,
     fmax,
     opt_cell_lengths,
     opt_cell_fully,
     steps,
 ) -> None:
     """Click interface."""
+    calc_kwargs = ast.literal_eval(calc_kwargs)
+
     try:
         code = load_code(codelabel)
     except NotExistent as exc:
@@ -117,6 +132,7 @@ def cli(
         "model": model,
         "arch": arch,
         "device": device,
+        "calc_kwargs": calc_kwargs,
         "fmax": fmax,
         "opt_cell_lengths": opt_cell_lengths,
         "opt_cell_fully": opt_cell_fully,
