@@ -200,6 +200,7 @@ nitpick_ignore = [
     ("py:class", "Logger"),
     ("py:class", "QbFields"),
     ("py:class", "aiida_workgraph.workgraph.WorkGraph"),
+    ("py:class", "AiidaLoggerType"),
 ]
 
 
