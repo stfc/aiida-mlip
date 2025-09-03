@@ -53,7 +53,7 @@ numpydoc_validation_exclude = {r"\.__weakref__$", r"\.__repr__$"}
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "aiida": ("https://aiida.readthedocs.io/projects/aiida-core/en/latest", None),
-    "ase": ("https://wiki.fysik.dtu.dk/ase/", None),
+    "ase": ("https://ase-lib.org", None),
 }
 
 # Add any paths that contain templates here, relative to this directory.

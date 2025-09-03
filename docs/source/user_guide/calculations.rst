@@ -1,13 +1,13 @@
-==============================
+============
 Calculations
-==============================
+============
 
 In these examples, we will assume that the `janus-core <https://github.com/stfc/janus-core>`_ package is installed and saved in the AiiDA database as an ``InstalledCode`` instance named 'janus@localhost'.
 
 The structure should be a path to a file. Here, the structure file is specified as ``path/to/structure``.
 
 .. note::
-   Any format that `ASE <https://wiki.fysik.dtu.dk/ase/>`_ can read is a valid structure file for a calculation.
+   Any format that `ASE <https://ase-lib.org>`_ can read is a valid structure file for a calculation.
 
 The model file determines the specific MLIP to be used. It can be a local file or a URI to a file to download. In these examples, it is assumed to be a local file located at ``path/to/model``.
 
