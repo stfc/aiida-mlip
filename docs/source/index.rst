@@ -1,11 +1,11 @@
 The aiida-mlip plugin for `AiiDA`_
 =====================================================
 
-``aiida-mlip`` is available at http://github.com/aiidateam/aiida-mlip
+``aiida-mlip`` is available at http://github.com/stfc/aiida-mlip
 
 .. image::  images/aiida-mlip.png
    :height: 298px
-   :target: http://github.com/aiidateam/aiida-mlip
+   :target: http://github.com/stfc/aiida-mlip
 
 
 .. toctree::
