@@ -36,7 +36,7 @@ mace = [
 [project.urls]
 repository = "https://github.com/stfc/aiida-mlip/"
 documentation = "https://stfc.github.io/aiida-mlip/"
-source = "https://github.com/aiidateam/aiida-mlip"
+source = "https://github.com/stfc/aiida-mlip"
 
 [dependency-groups]
 dev = [
