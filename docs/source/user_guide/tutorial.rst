@@ -58,15 +58,15 @@ The other inputs can be set up as AiiDA ``Str``. There is a default for every in
     inputs = {
         "code": code,
         "model": model,
-        "structure": structure,
-        "architecture": Str(model.architecture),
+        "struct": structure,
+        "arch": Str(model.architecture),
         "device": Str("cpu"),
         "calc_kwargs": Dict({}),
-        "max_force": Float(0.1), # Specific to geometry optimisation: convergence criteria
-        "opt_cell_lengths": Bool(False), # Specific to geometry optimisation
-        "opt_cell_fully": Bool(True), # Specific to geometry optimisation: to optimise the cell
+        "fmax": Float(0.1),
+        "opt_cell_lengths": Bool(False),
+        "opt_cell_fully": Bool(True),
         "metadata": {"options": {"resources": {"num_machines": 1}}},
-    }
+        }
 
 It's worth noting that the architecture is already defined within the model, accessible through the architecture property in the ``ModelData``. Even if not explicitly provided as input, it will be automatically retrieved from the model. The parameters that are not specific to geometry optimisation are the same for the single point calculation.
 
