@@ -1,5 +1,5 @@
 The aiida-mlip plugin for `AiiDA`_
-=====================================================
+==================================
 
 ``aiida-mlip`` is available at http://github.com/stfc/aiida-mlip
 

@@ -41,7 +41,7 @@ Once ``aiida-mlip`` and the desired MLIP calculators are installed, run::
     verdi plugin list aiida.calculations  # should now show your calculation plugins
 
 Then, use ``verdi code setup`` with the ``janus`` input plugin
-to set up an AiiDA code for aiida-mlip. The `aiida docs <https://aiida.readthedocs.io/projects/aiida-core/en/stable/howto/run_codes.html#how-to-create-a-code>`_ go over how to create a code.
+to set up an AiiDA code for ``aiida-mlip``. The `aiida docs <https://aiida.readthedocs.io/projects/aiida-core/en/stable/howto/run_codes.html#how-to-create-a-code>`_ go over how to create a code.
 
 
 

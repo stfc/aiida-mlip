@@ -4,7 +4,7 @@ Tutorial
 Running a Geometry optimisation Calculation in aiida-mlip
 ---------------------------------------------------------
 
-This tutorial guides you through running a single-point calculation using the aiida-mlip package.
+This tutorial guides you through running a single-point calculation using the ``aiida-mlip`` package.
 
 Prerequisites
 -------------
@@ -15,12 +15,12 @@ Prerequisites
 Usage
 -----
 
-This code can be run in a `verdi shell` or as a python script through `verdi run` command.
+This code can be run in a ``verdi shell`` or as a python script through ``verdi run`` command.
 
-To run a geometry optimisation using aiida-mlip you need to define some inputs as AiiDA data types, to then pass to the calculation.
+To run a geometry optimisation using ``aiida-mlip`` you need to define some inputs as AiiDA data types, to then pass to the calculation.
 
-To start, you will need a structure to optimise. Let's assume the structure is a cif file `/path/to/structure.cif`.
-The input structure in aiida-mlip needs to be saved as a StructureData type:
+To start, you will need a structure to optimise. Let's assume the structure is a cif file ``/path/to/structure.cif``.
+The input structure in ``aiida-mlip`` needs to be saved as a StructureData type:
 
 .. code-block:: python
 
@@ -28,7 +28,7 @@ The input structure in aiida-mlip needs to be saved as a StructureData type:
     structure = StructureData(ase=read("/path/to/structure.cif"))
 
 Then we need to choose a model and architecture to be used for the calculation and save it as ModelData type, a specific data type of this plugin.
-In this example we use MACE with a model that we download from this URI: "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model", and we save the file in the cache folder (default="~/.cache/mlips/"):
+In this example we use MACE with a model that we download from this URI: "https://github.com/stfc/janus-core/raw/main/tests/models/mace_mp_small.model", and we save the file in the cache folder (default: ``~/.cache/mlips/``):
 
 .. code-block:: python
 
@@ -42,14 +42,14 @@ If we already have the model saved in some folder we can save it as:
 
     model = ModelData.from_local("/path/to/model", architecture="mace")
 
-Another parameter that we need to define as AiiDA type is the code. Assuming the code is saved as `janus` in the `localhost` computer, the code info that are needed can be loaded as follow:
+Another parameter that we need to define as AiiDA type is the code. Assuming the code is saved as ``janus`` in the ``localhost`` computer, the code info that are needed can be loaded as follow:
 
 .. code-block:: python
 
     from aiida.orm import load_code
     code = load_code("janus@localhost")
 
-The other inputs can be set up as AiiDA Str. There is a default for every input except the structure and code. This is a list of possible inputs:
+The other inputs can be set up as AiiDA ``Str``. There is a default for every input except the structure and code. This is a list of possible inputs:
 
 .. code-block:: python
 
@@ -68,7 +68,7 @@ The other inputs can be set up as AiiDA Str. There is a default for every input 
         "metadata": {"options": {"resources": {"num_machines": 1}}},
     }
 
-It's worth noting that the architecture is already defined within the model, accessible through the architecture property in the ModelData. Even if not explicitly provided as input, it will be automatically retrieved from the model. The parameters that are not specific to geometry optimisation are the same for the single point calculation.
+It's worth noting that the architecture is already defined within the model, accessible through the architecture property in the ``ModelData``. Even if not explicitly provided as input, it will be automatically retrieved from the model. The parameters that are not specific to geometry optimisation are the same for the single point calculation.
 
 The calculation must be set:
 
@@ -77,7 +77,7 @@ The calculation must be set:
     from aiida.plugins import CalculationFactory
     geomoptCalculation = CalculationFactory("mlip.opt")
 
-In this case, since we are running a geometry optimisation, the entry point for the calculation is `mlip.opt`. For a single point calculation, the entry point would be `mlip.sp`.
+In this case, since we are running a geometry optimisation, the entry point for the calculation is ``mlip.opt``. For a single point calculation, the entry point would be ``mlip.sp``.
 
 Finally, run the calculation:
 
@@ -86,7 +86,7 @@ Finally, run the calculation:
     from aiida.engine import run_get_node
     result, node = run_get_node(geomoptCalculation, **inputs)
 
-`results` is a dictionary of the available results obtained from the calculation:
+``results`` is a dictionary of the available results obtained from the calculation:
 
 .. code-block:: python
 
@@ -103,7 +103,7 @@ Finally, run the calculation:
     'retrieved': <FolderData: uuid: 5601957c-da54-4cd5-9e01-8a215e8ac4cf (pk: 1132)>}
 
 
-If more information are needed on specifi outputs they can be called like:
+If more information are needed on specific outputs they can be called like:
 
 .. code-block:: python
 
@@ -117,11 +117,11 @@ If more information are needed on specifi outputs they can be called like:
 
 
 Each data type has some properties that can be explored.
-In these examples traj_output contains info on the structures at every step of the optimisation(as a TrajectoryData), while final_structure contains info on the optimised structure (as a StructureData).
-The properties `numsteps` and `cell` are specific to the respective data types.
+In these examples ``traj_output`` contains info on the structures at every step of the optimisation (as a ``TrajectoryData``), while ``final_structure`` contains info on the optimised structure (as a ``StructureData``).
+The properties ``numsteps`` and ``cell`` are specific to the respective data types.
 
 
-while `node` is the node of the calculation
+while ``node`` is the node of the calculation
 
 .. code-block:: python
 
@@ -132,7 +132,7 @@ while `node` is the node of the calculation
     Out: uuid: 1d46ad08-2ea7-4892-9dd6-0240b9aeda8b (pk: 1130) (aiida.calculations:mlip.opt)
 
 
-The calculation can also be interacted with through verdi cli. Use `verdi process list` to show the list of calculations.
+The calculation can also be interacted with through verdi cli. Use ``verdi process list`` to show the list of calculations.
 
 .. code-block:: python
 
@@ -189,7 +189,7 @@ The calculation can also be interacted with through verdi cli. Use `verdi proces
     There are 1 log messages for this calculation
     Run 'verdi process report 1130' to see them
 
-The results can be examined using `verdi calcjob` commands, such as:
+The results can be examined using ``verdi calcjob`` commands, such as:
 
 .. code-block:: python
 
@@ -274,4 +274,4 @@ The results can be examined using `verdi calcjob` commands, such as:
         ]
     }
 
-`verdi res` contains the results dictionary, which in these calculations is a dictionary containing the `xyz_output` file content.
+``verdi res`` contains the results dictionary, which in these calculations is a dictionary containing the ``xyz_output`` file content.
