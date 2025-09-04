@@ -122,7 +122,7 @@ See the [developer guide](https://stfc.github.io/aiida-mlip/developer_guide/inde
 Contributors to this project were funded by
 
 [![PSDI](https://raw.githubusercontent.com/stfc/aiida-mlip/main/docs/source/images/psdi-100.webp)](https://www.psdi.ac.uk/)
-[![ALC](https://raw.githubusercontent.com/stfc/aiida-mlip/main/docs/source/images/alc-100.webp)](https://adalovelacecentre.ac.uk/)
+[<img src="docs/source/images/alc.svg" width="200" height="100" />](https://adalovelacecentre.ac.uk/)
 [![CoSeC](https://raw.githubusercontent.com/stfc/aiida-mlip/main/docs/source/images/cosec-100.webp)](https://www.scd.stfc.ac.uk/Pages/CoSeC.aspx)
 
 
