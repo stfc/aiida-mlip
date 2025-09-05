@@ -33,7 +33,7 @@ mace = [
     "janus-core[mace]"
 ]
 qe = [
-    "aiida-quantumespresso<4.13,>=4.12.1",
+    "aiida-quantumespresso<5,>=4.12.1",
 ]
 fpsample = [
     "fpsample<0.4,>=0.3.3",
