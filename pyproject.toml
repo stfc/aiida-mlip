@@ -24,7 +24,7 @@ dependencies = [
     "aiida-core<3,>=2.7",
     "ase<4.0,>=3.24",
     "voluptuous<1,>=0.15.2",
-    "janus-core<0.8,>=0.7.5",
+    "janus-core<0.9,>=0.8.3",
     "aiida-workgraph<0.7, >=0.6.0",
 ]
 
@@ -36,7 +36,7 @@ mace = [
 [project.urls]
 repository = "https://github.com/stfc/aiida-mlip/"
 documentation = "https://stfc.github.io/aiida-mlip/"
-source = "https://github.com/aiidateam/aiida-mlip"
+source = "https://github.com/stfc/aiida-mlip"
 
 [dependency-groups]
 dev = [

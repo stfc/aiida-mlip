@@ -1,0 +1,7 @@
+properties:
+  - energy
+  - stress
+arch: mace_mp
+struct: "NaCl.cif"
+calc_kwargs:
+  dispersion: True

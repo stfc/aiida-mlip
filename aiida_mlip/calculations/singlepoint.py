@@ -31,6 +31,7 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
     """
 
     XYZ_OUTPUT = "aiida-results.xyz"
+    DEFAULT_SUMMARY_FILE = "singlepoint-summary.yml"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
