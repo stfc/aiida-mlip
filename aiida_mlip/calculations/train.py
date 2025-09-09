@@ -13,6 +13,7 @@ from aiida.orm import Bool, Dict, FolderData, SinglefileData
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
+from aiida_mlip.helpers.converters import kwarg_to_param
 
 
 def validate_inputs(
@@ -190,18 +191,16 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         codeinfo = datastructures.CodeInfo()
 
         # Initialize cmdline_params with train command
-        codeinfo.cmdline_params = ["train"]
         # Create the rest of the command line
-        cmd_line = {"mlip-config": config_copy}
-        if self.inputs.fine_tune:
-            cmd_line["fine-tune"] = None
+        cmd_line = {
+            "mlip-config": config_copy,
+            "fine-tune": bool(self.inputs.fine_tune),
+        }
 
-        # Add cmd line params to codeinfo
-        for flag, value in cmd_line.items():
-            if value is None:
-                codeinfo.cmdline_params += [f"--{flag}"]
-            else:
-                codeinfo.cmdline_params += [f"--{flag}", str(value)]
+        codeinfo.cmdline_params = [
+            "train",
+            *kwarg_to_param(cmd_line),
+        ]
 
         # Node where the code is saved
         codeinfo.code_uuid = self.inputs.code.uuid

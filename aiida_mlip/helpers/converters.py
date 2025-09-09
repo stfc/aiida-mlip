@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from aiida.orm import Bool, Dict, Str, StructureData, TrajectoryData, load_code
 from ase.io import read
@@ -99,3 +100,41 @@ def convert_to_nodes(dictionary: dict, convert_all: bool = False) -> dict:
             continue
         new_dict[key] = value
     return new_dict
+
+
+def kwarg_to_param(params: dict[str, Any]) -> list[str]:
+    """
+    Convert a dictionary of kwargs to a set of commandline flags.
+
+    Bools are converted as though ``store_true`` flag keys.
+
+    Parameters
+    ----------
+    params : dict[str, Any]
+        Dictionary of arguments to convert.
+
+    Returns
+    -------
+    list[str]
+        Commandline arguments as flags.
+
+    Examples
+    --------
+    >>> kwarg_to_param({"name": "Geoff", "key": True})
+    ['--name', 'Geoff', '--key']
+    >>> kwarg_to_param({"value": 6, "falsey": False})
+    ['--value', '6']
+    """
+    cmdline_params = []
+
+    for key, val in params.items():
+        key = key.replace("_", "-")
+        match val:
+            case bool() if val:
+                cmdline_params.append(f"--{key}")
+            case bool():
+                ...
+            case _:
+                cmdline_params.extend((f"--{key}", str(val)))
+
+    return cmdline_params
