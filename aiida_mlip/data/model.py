@@ -16,12 +16,12 @@ class ModelData(SinglefileData):
 
     Parameters
     ----------
-    file : Union[str, Path]
+    file : str | Path
         Absolute path to the file.
     architecture : str
         Architecture of the mlip model.
-    filename : Optional[str], optional
-        Name to be used for the file (defaults to the name of provided file).
+    filename : str | None
+        Name to be used for the file. Default is the name of provided file.
 
     Attributes
     ----------
@@ -52,7 +52,7 @@ class ModelData(SinglefileData):
 
         Parameters
         ----------
-        file : Union[str, Path]
+        file : str | Path
             Path to the file for which hash needs to be calculated.
 
         Returns
@@ -81,12 +81,12 @@ class ModelData(SinglefileData):
 
         Parameters
         ----------
-        file : Union[str, Path]
+        file : str | Path
             Absolute path to the file.
-        architecture : [str]
+        architecture : str
             Architecture of the mlip model.
-        filename : Optional[str], optional
-            Name to be used for the file (defaults to the name of provided file).
+        filename : str | None
+            Name to be used for the file. Default is the name of provided file.
 
         Other Parameters
         ----------------
@@ -108,12 +108,12 @@ class ModelData(SinglefileData):
 
         Parameters
         ----------
-        file : Union[str, Path]
+        file : str | Path
             Absolute path to the file.
-        filename : Optional[str], optional
-            Name to be used for the file (defaults to the name of provided file).
-        architecture : Optional[str], optional
-            Architecture of the mlip model.
+        filename : str | None
+            Name to be used for the file. Defaults is the name of provided file.
+        architecture : str | None
+            Architecture of the mlip model. Default is `None`.
 
         Other Parameters
         ----------------
@@ -138,12 +138,12 @@ class ModelData(SinglefileData):
 
         Parameters
         ----------
-        file : Union[str, Path]
+        file : str | Path
             Path to the file.
-        architecture : [str]
+        architecture : str
             Architecture of the mlip model.
-        filename : Optional[str], optional
-            Name to be used for the file (defaults to the name of provided file).
+        filename : str | None
+            Name to be used for the file. Default is the name of provided file.
 
         Returns
         -------
@@ -169,16 +169,16 @@ class ModelData(SinglefileData):
         ----------
         uri : str
             URI of the file to download.
-        architecture : [str]
+        architecture : str
             Architecture of the mlip model.
-        filename : Optional[str], optional
+        filename : str | None
             Name to be used for the file defaults to tmp_file.model.
-        cache_dir : Optional[Union[str, Path]], optional
-            Path to the folder where the file has to be saved
-            (defaults to "~/.cache/mlips/").
-        keep_file : Optional[bool], optional
+        cache_dir : str | Path | None
+            Path to the folder where the file has to be saved. Defaults is
+            "~/.cache/mlips/".
+        keep_file : bool | None
             True to keep the downloaded model, even if there are duplicates.
-            (default: False, the file is deleted and only saved in the database).
+            Default is `False`, so the file is deleted and only saved in the database.
 
         Returns
         -------

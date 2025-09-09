@@ -95,7 +95,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
     -------
     define(spec: CalcJobProcessSpec) -> None:
         Define the process specification, its inputs, outputs and exit codes.
-    validate_inputs(value: dict, port_namespace: PortNamespace) -> Optional[str]:
+    validate_inputs(value: dict, port_namespace: PortNamespace) -> str | None:
         Check if the inputs are valid.
     prepare_for_submission(folder: Folder) -> CalcInfo:
         Create the input files for the `CalcJob`.
