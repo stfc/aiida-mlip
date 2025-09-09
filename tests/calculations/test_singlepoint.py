@@ -278,3 +278,22 @@ def test_output_files(fixture_sandbox, generate_calc_job, janus_code, model_fold
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
     assert sorted(calc_info.codes_info[0].cmdline_params) == sorted(cmdline_params)
     assert sorted(calc_info.retrieve_list) == sorted(retrieve_list)
+
+
+def test_submit_config_example(example_path, janus_code):
+    """Test running calculation using the example submit with config file."""
+    example_file_path = example_path / "submit_using_config.py"
+    command = [
+        "verdi",
+        "run",
+        example_file_path,
+        f"{janus_code.label}@{janus_code.computer.label}",
+    ]
+
+    # Execute the command
+    result = subprocess.run(command, capture_output=True, text=True, check=False)
+    assert result.stderr == ""
+    assert result.returncode == 0
+    assert "results from calculation:" in result.stdout
+    assert "'results_dict': <Dict: uuid:" in result.stdout
+    assert "'xyz_output': <SinglefileData: uuid:" in result.stdout

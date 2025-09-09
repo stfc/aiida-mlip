@@ -123,7 +123,14 @@ They will be converted to AiiDA data types by the script itself.
 
     verdi run submit_singlepoint.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --device "cpu"
 
-The ``submit_using_config.py`` script can be used to facilitate submission using a config file.
+The ``submit_using_config.py`` script provides an example of submission using a config file.
+
+.. note::
+
+    The structure and model are hard-coded into ``submit_using_config.py`` to avoid
+    issues with relative paths. These should be modified, or removed and set through
+    the configuration file, for your structure and model of interest.
+
 
 Geometry Optimisation calculation
 ---------------------------------
