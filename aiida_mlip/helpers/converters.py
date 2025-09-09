@@ -40,7 +40,7 @@ def xyz_to_aiida_traj(
 
     Parameters
     ----------
-    traj_file : Union[str, Path]
+    traj_file : str | Path
         The path to the XYZ file.
 
     Returns
