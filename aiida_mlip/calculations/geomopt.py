@@ -18,6 +18,7 @@ from aiida.orm import (
 )
 
 from aiida_mlip.calculations.singlepoint import Singlepoint
+from aiida_mlip.helpers.converters import kwarg_to_param
 
 
 class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
@@ -136,15 +137,7 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
 
         # Adding command line params for when we run janus
         # 'geomopt' is overwriting the placeholder "calculation" from the base.py file
-        codeinfo.cmdline_params[0] = "geomopt"
-
-        for flag, value in geom_opt_cmdline.items():
-            if isinstance(value, bool):
-                # Add boolean flags without value if True
-                if value:
-                    codeinfo.cmdline_params.append(f"--{flag}")
-            else:
-                codeinfo.cmdline_params += [f"--{flag}", value]
+        codeinfo.cmdline_params = ["geomopt", *kwarg_to_param(geom_opt_cmdline)]
 
         calcinfo.retrieve_list.append(self.inputs.traj.value)
 
