@@ -13,6 +13,7 @@ from ase.io import read, write
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
+from aiida_mlip.helpers.converters import kwarg_to_param
 
 
 def validate_inputs(
@@ -261,10 +262,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         codeinfo = datastructures.CodeInfo()
 
         # Initialize cmdline_params with a placeholder "calculation" command
-        codeinfo.cmdline_params = ["calculation"]
-
-        for flag, value in cmd_line.items():
-            codeinfo.cmdline_params += [f"--{flag}", str(value)]
+        codeinfo.cmdline_params = ["calculation", *kwarg_to_param(cmd_line)]
 
         # Node where the code is saved
         codeinfo.code_uuid = self.inputs.code.uuid
