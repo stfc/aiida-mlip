@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 import subprocess
 
 from aiida.common import InputValidationError, datastructures
@@ -178,8 +177,6 @@ def test_run_config(model_folder, janus_code, config_folder, tmp_path):
         assert obtained_res["info"]["mace_d3_stress"][0] == pytest.approx(
             -0.0020789278865308
         )
-
-        Path("NaCl.cif").unlink(missing_ok=True)
 
 
 def test_run_calc_kwargs(model_folder, janus_code, config_folder, tmp_path):
