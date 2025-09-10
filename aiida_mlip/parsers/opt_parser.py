@@ -10,6 +10,7 @@ from aiida.orm import SinglefileData
 from aiida.orm.nodes.process.process import ProcessNode
 from aiida.plugins import CalculationFactory
 
+from aiida_mlip.calculations.geomopt import GeomOpt
 from aiida_mlip.helpers.converters import xyz_to_aiida_traj
 from aiida_mlip.parsers.sp_parser import SPParser
 
@@ -75,7 +76,9 @@ class GeomOptParser(SPParser):
         exit_code = super().parse(**kwargs)
 
         if exit_code == ExitCode(0):
-            traj_file = (self.node.inputs.traj).value
+            traj_file = GeomOpt.set_minimize_kwargs(self.node.inputs)["traj_kwargs"][
+                "filename"
+            ]
 
             # Parse the trajectory file and save it as `SingleFileData`
             with self.retrieved.open(traj_file, "rb") as handle:
