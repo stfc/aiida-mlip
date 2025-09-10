@@ -1,0 +1,11 @@
+arch: mace_mp
+struct: "NaCl.cif"
+calc_kwargs:
+  dispersion: True
+minimize_kwargs:
+  filter_kwargs:
+    constant_volume: True
+  traj_kwargs:
+    filename: "test-traj.xyz"
+fmax: 0.1
+opt_cell_lengths: True
