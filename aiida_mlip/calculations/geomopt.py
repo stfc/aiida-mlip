@@ -5,17 +5,17 @@ from __future__ import annotations
 from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJobProcessSpec
-import aiida.engine.processes
 from aiida.orm import (
     Bool,
     Dict,
     Float,
     Int,
     SinglefileData,
-    Str,
     StructureData,
     TrajectoryData,
 )
+from aiida.orm.utils.managers import NodeLinksManager
+from plumpy.utils import AttributesFrozendict
 
 from aiida_mlip.calculations.singlepoint import Singlepoint
 
@@ -49,13 +49,6 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
 
         # Additional inputs for geometry optimisation
         spec.input(
-            "traj",
-            valid_type=Str,
-            required=False,
-            default=lambda: Str(cls.DEFAULT_TRAJ_FILE),
-            help="Path to save optimisation frames to",
-        )
-        spec.input(
             "opt_cell_fully",
             valid_type=Bool,
             required=False,
@@ -85,7 +78,7 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             "minimize_kwargs",
             valid_type=Dict,
             required=False,
-            help="All other GeomOpt keyword arguments",
+            help="All other keyword arguments to pass to geometry optimizer",
         )
 
         spec.inputs["metadata"]["options"]["parser_name"].default = "mlip.opt_parser"
@@ -114,17 +107,12 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
         calcinfo = super().prepare_for_submission(folder)
         codeinfo = calcinfo.codes_info[0]
 
-        minimize_kwargs = (
-            f"{{'traj_kwargs': {{'filename': '{self.inputs.traj.value}'}}}}"
-        )
+        minimize_kwargs = self.set_minimize_kwargs(self.inputs)
 
         geom_opt_cmdline = {
             "minimize-kwargs": minimize_kwargs,
             "write-traj": True,
         }
-        if "minimize_kwargs" in self.inputs:
-            minimize_kwargs = self.inputs.minimize_kwargs.get_dict()
-            geom_opt_cmdline["minimize-kwargs"] = minimize_kwargs
         if "opt_cell_fully" in self.inputs:
             geom_opt_cmdline["opt-cell-fully"] = self.inputs.opt_cell_fully.value
         if "opt_cell_lengths" in self.inputs:
@@ -146,6 +134,36 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             else:
                 codeinfo.cmdline_params += [f"--{flag}", value]
 
-        calcinfo.retrieve_list.append(self.inputs.traj.value)
+        calcinfo.retrieve_list.append(minimize_kwargs["traj_kwargs"]["filename"])
 
         return calcinfo
+
+    @classmethod
+    def set_minimize_kwargs(
+        cls, inputs: AttributesFrozendict | NodeLinksManager
+    ) -> dict[str, dict[str, str]]:
+        """
+        Set minimize kwargs from CalcJob inputs.
+
+        Parameters
+        ----------
+        inputs : x
+            CalcJob inputs.
+
+        Returns
+        -------
+        dict[str, dict[str, str]]
+            Set minimize_kwargs dict with trajectory filename extracted from `traj`,
+            the config file, or set as the default.
+        """
+        if "minimize_kwargs" in inputs:
+            minimize_kwargs = inputs.minimize_kwargs.get_dict()
+        elif "config" in inputs:
+            minimize_kwargs = inputs.config.as_dictionary.get("minimize_kwargs", {})
+        else:
+            minimize_kwargs = {}
+
+        minimize_kwargs.setdefault("traj_kwargs", {})
+        minimize_kwargs["traj_kwargs"].setdefault("filename", cls.DEFAULT_TRAJ_FILE)
+
+        return minimize_kwargs
