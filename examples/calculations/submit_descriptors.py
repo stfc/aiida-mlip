@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import ast
+
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
-from aiida.orm import Bool, Str, load_code
+from aiida.orm import Bool, Dict, Str, load_code
 from aiida.plugins import CalculationFactory
 import click
 
@@ -39,12 +41,15 @@ def descriptors(params: dict) -> None:
         "arch": Str(params["arch"]),
         "struct": structure,
         "model": model,
-        "precision": Str(params["precision"]),
         "device": Str(params["device"]),
         "invariants_only": Bool(params["invariants_only"]),
         "calc_per_element": Bool(params["calc_per_element"]),
         "calc_per_atom": Bool(params["calc_per_atom"]),
     }
+
+    # Only calc_kwargs add if set
+    if params["calc_kwargs"]:
+        inputs["calc_kwargs"] = Dict(params["calc_kwargs"])
 
     # Run calculation
     result, node = run_get_node(DescriptorsCalc, **inputs)
@@ -77,7 +82,10 @@ def descriptors(params: dict) -> None:
     "--device", default="cpu", type=str, help="Device to run calculations on."
 )
 @click.option(
-    "--precision", default="float64", type=str, help="Chosen level of precision."
+    "--calc-kwargs",
+    default="{}",
+    type=str,
+    help="Keyword arguments to pass to calculator.",
 )
 @click.option(
     "--invariants-only",
@@ -103,12 +111,14 @@ def cli(
     model,
     arch,
     device,
-    precision,
+    calc_kwargs,
     invariants_only,
     calc_per_element,
     calc_per_atom,
 ) -> None:
     """Click interface."""
+    calc_kwargs = ast.literal_eval(calc_kwargs)
+
     try:
         code = load_code(codelabel)
     except NotExistent as exc:
@@ -121,7 +131,7 @@ def cli(
         "model": model,
         "arch": arch,
         "device": device,
-        "precision": precision,
+        "calc_kwargs": calc_kwargs,
         "invariants_only": invariants_only,
         "calc_per_element": calc_per_element,
         "calc_per_atom": calc_per_atom,

@@ -2,12 +2,12 @@
 Training machine learning models
 ================================
 
-The `Train` class represents a `CalcJob` object within the AiiDA framework, designed for training machine learning models.
+The ``Train`` class represents a ``CalcJob`` object within the AiiDA framework, designed for training machine learning models.
 
 Usage
 ^^^^^
 
-This calculation can be executed using either the `run` or `submit` AiiDA commands.
+This calculation can be executed using either the ``run`` or ``submit`` AiiDA commands.
 Below is a usage example with some additional training parameters. These parameters must be AiiDA data types.
 
 .. code-block:: python
@@ -76,7 +76,7 @@ while the other parameters are optional. Here is an example (can be found in the
     keep_isolated_atoms: True
     save_cpu: True
 
-It is also possible to fine-tune models using the same type of `Calcjob`.
+It is also possible to fine-tune models using the same type of ``Calcjob``.
 In that case some additional parameters must be used: foundation_model and fine_tune.
 
 
@@ -93,8 +93,8 @@ In that case some additional parameters must be used: foundation_model and fine_
     TrainCalculation = CalculationFactory("mlip.train")
     submit(TrainCalculation,inputs)
 
-A model to fine-tune has to be provided as an input, either as a `ModelData` type (in which case it has to be a model file), or in the config file at the keyword `foundation_model`.
-If the keyword `fine_tune` is True but no model is given either way, it will return an error.
+A model to fine-tune has to be provided as an input, either as a ``ModelData`` type (in which case it has to be a model file), or in the config file at the keyword ``foundation_model``.
+If the keyword ``fine_tune`` is True but no model is given either way, it will return an error.
 
 .. note::
 
@@ -107,7 +107,7 @@ Submission
 ^^^^^^^^^^
 
 To facilitate the submission process and prepare inputs as AiiDA data types, an example script is provided.
-This script can be used as is or by changing, in the file, the path to the config file, then submitted to `verdi` as shown
+This script can be used as is or by changing, in the file, the path to the config file, then submitted to ``verdi`` as shown
 
 .. code-block:: python
 

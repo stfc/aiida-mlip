@@ -8,7 +8,7 @@ from aiida.common import InputValidationError, datastructures
 import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
 import aiida.engine.processes
-from aiida.orm import SinglefileData, Str, StructureData
+from aiida.orm import Dict, SinglefileData, Str, StructureData
 from ase.io import read, write
 
 from aiida_mlip.data.config import JanusConfigfile
@@ -86,14 +86,16 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         Default stdout file name.
     DEFAULT_INPUT_FILE : str
         Default input file name.
-    LOG_FILE : str
+    DEFAULT_LOG_FILE : str
         Default log file name.
+    DEFAULT_SUMMARY_FILE : str
+        Default summary file name.
 
     Methods
     -------
     define(spec: CalcJobProcessSpec) -> None:
         Define the process specification, its inputs, outputs and exit codes.
-    validate_inputs(value: dict, port_namespace: PortNamespace) -> Optional[str]:
+    validate_inputs(value: dict, port_namespace: PortNamespace) -> str | None:
         Check if the inputs are valid.
     prepare_for_submission(folder: Folder) -> CalcInfo:
         Create the input files for the `CalcJob`.
@@ -101,7 +103,8 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
 
     DEFAULT_OUTPUT_FILE = "aiida-stdout.txt"
     DEFAULT_INPUT_FILE = "aiida.xyz"
-    LOG_FILE = "aiida.log"
+    DEFAULT_LOG_FILE = "aiida.log"
+    DEFAULT_SUMMARY_FILE = "aiida-summary.yml"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
@@ -120,25 +123,19 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             "arch",
             valid_type=Str,
             required=False,
-            help="Mlip architecture to use for calculation, defaults to mace",
+            help="MLIP architecture to use for calculation",
         )
         spec.input(
             "model",
             valid_type=ModelData,
             required=False,
-            help="Mlip model used for calculation",
+            help="MLIP model used for calculation",
         )
         spec.input(
             "struct",
             valid_type=StructureData,
             required=False,
             help="The input structure.",
-        )
-        spec.input(
-            "precision",
-            valid_type=Str,
-            required=False,
-            help="Precision level for calculation",
         )
         spec.input(
             "device",
@@ -151,8 +148,15 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             "log_filename",
             valid_type=Str,
             required=False,
-            default=lambda: Str(cls.LOG_FILE),
+            default=lambda: Str(cls.DEFAULT_LOG_FILE),
             help="Name of the log output file",
+        )
+        spec.input(
+            "summary",
+            valid_type=Str,
+            required=False,
+            default=lambda: Str(cls.DEFAULT_SUMMARY_FILE),
+            help="Name of the summary output file",
         )
         spec.input(
             "metadata.options.output_filename",
@@ -169,6 +173,13 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             valid_type=str,
             default="_scheduler-stdout.txt",
             help="Filename to which the content of stdout of the scheduler is written.",
+        )
+
+        spec.input(
+            "calc_kwargs",
+            valid_type=Dict,
+            required=False,
+            help="Keyword arguments to pass to selected calculator.",
         )
 
         spec.input(
@@ -216,19 +227,23 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         with folder.open(input_filename, mode="w", encoding="utf8") as file:
             write(file.name, images=atoms)
 
-        log_filename = (self.inputs.log_filename).value
+        log_filename = self.inputs.log_filename.value
+        summary = self.inputs.summary.value
+
         cmd_line = {
             "struct": input_filename,
             "log": log_filename,
+            "summary": summary,
         }
 
         # The inputs are saved in the node, but we want their value as a string
-        if "precision" in self.inputs:
-            precision = (self.inputs.precision).value
-            cmd_line["calc-kwargs"] = {"default_dtype": precision}
         if "device" in self.inputs:
-            device = (self.inputs.device).value
+            device = self.inputs.device.value
             cmd_line["device"] = device
+
+        # Set calc_kwargs from dict and specific stored inputs
+        if "calc_kwargs" in self.inputs:
+            cmd_line["calc-kwargs"] = self.inputs.calc_kwargs.get_dict()
 
         # Define architecture from model if model is given,
         # otherwise get architecture from inputs and download default model
@@ -265,6 +280,7 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             self.metadata.options.output_filename,
             self.uuid,
             log_filename,
+            summary,
         ]
 
         return calcinfo
@@ -310,7 +326,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
         dict
             Dictionary containing the cmd line keys updated with the model.
         """
-        model_path = None
         if "model" in self.inputs:
             # Raise error if model is None (different than model not given as input)
             if self.inputs.model is None:
@@ -322,5 +337,4 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             ):
                 shutil.copyfileobj(source, target)
 
-            model_path = "mlff.model"
-            cmd_line.setdefault("calc-kwargs", {})["model"] = model_path
+            cmd_line["model"] = "mlff.model"

@@ -6,7 +6,7 @@ import subprocess
 
 from aiida.common import datastructures
 from aiida.engine import run
-from aiida.orm import Bool, Float, Int, Str, StructureData
+from aiida.orm import Bool, Dict, Float, Int, Str, StructureData
 from aiida.plugins import CalculationFactory
 from ase.build import bulk
 import pytest
@@ -22,9 +22,9 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
         "arch": Str("mace"),
-        "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.from_local(model_file, architecture="mace"),
+        "calc_kwargs": Dict({"default_dtype": "float64"}),
         "device": Str("cpu"),
     }
 
@@ -34,16 +34,20 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "geomopt",
         "--arch",
         "mace",
+        "--model",
+        "mlff.model",
         "--struct",
         "aiida.xyz",
         "--device",
         "cpu",
         "--log",
         "aiida.log",
+        "--summary",
+        "geomopt-summary.yml",
         "--out",
         "aiida-results.xyz",
         "--calc-kwargs",
-        "{'default_dtype': 'float64', 'model': 'mlff.model'}",
+        "{'default_dtype': 'float64'}",
         "--minimize-kwargs",
         "{'traj_kwargs': {'filename': 'aiida-traj.xyz'}}",
         "--write-traj",
@@ -55,6 +59,7 @@ def test_geomopt(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "aiida-results.xyz",
         "aiida-stdout.txt",
         "aiida-traj.xyz",
+        "geomopt-summary.yml",
     ]
 
     # Check the attributes of the returned `CalcInfo`
@@ -77,7 +82,6 @@ def test_run_opt(model_folder, janus_code):
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
         "arch": Str("mace"),
-        "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),

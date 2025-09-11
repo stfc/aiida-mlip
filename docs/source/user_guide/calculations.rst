@@ -1,27 +1,27 @@
-==============================
+============
 Calculations
-==============================
+============
 
-In these examples, we will assume that the `janus-core <https://github.com/stfc/janus-core>`_ package is installed and saved in the AiiDA database as an `InstalledCode` instance named 'janus@localhost'.
+In these examples, we will assume that the `janus-core <https://github.com/stfc/janus-core>`_ package is installed and saved in the AiiDA database as an ``InstalledCode`` instance named 'janus@localhost'.
 
-The structure should be a path to a file. Here, the structure file is specified as `path/to/structure`.
+The structure should be a path to a file. Here, the structure file is specified as ``path/to/structure``.
 
 .. note::
-   Any format that `ASE <https://wiki.fysik.dtu.dk/ase/>`_ can read is a valid structure file for a calculation.
+   Any format that `ASE <https://ase-lib.org>`_ can read is a valid structure file for a calculation.
 
-The model file determines the specific MLIP to be used. It can be a local file or a URI to a file to download. In these examples, it is assumed to be a local file located at `path/to/model`.
+The model file determines the specific MLIP to be used. It can be a local file or a URI to a file to download. In these examples, it is assumed to be a local file located at ``path/to/model``.
 
 
 SinglePoint Calculation
 -----------------------
 
-A `Singlepoint` Calculation represents a `Calcjob` object within the AiiDA framework.
+A ``Singlepoint`` Calculation represents a ``Calcjob`` object within the AiiDA framework.
 
 
 Usage
 ^^^^^
 
-This calculation can be executed using either the `run` or `submit` AiiDA commands.
+This calculation can be executed using either the ``run`` or ``submit`` AiiDA commands.
 Below is a usage example with the minimum required parameters. These parameters must be AiiDA data types.
 
 
@@ -40,8 +40,8 @@ The inputs can be grouped into a dictionary:
             "architecture": Str,
             "structure": StructureData,
             "model": ModelData,
-            "precision": Str,
             "device": Str,
+            "calc_kwargs": Dict,
         }
     SinglePointCalculation = CalculationFactory("mlip.sp")
     submit(SinglePointCalculation, **inputs)
@@ -58,6 +58,9 @@ The config file contains the parameters in yaml format:
     device: "cpu"
     struct: "path/to/structure.cif"
     model: "path/to/model.model"
+    calc_kwargs:
+      dispersion: True
+
 
 And it is used as shown below. Note that some parameters, which are specific to AiiDA, need to be given individually.
 
@@ -83,7 +86,7 @@ And it is used as shown below. Note that some parameters, which are specific to 
     )
 
 If a parameter is defined twice, in the config file and manually, the manually defined one will overwrite the config one.
-If for example the same config file as before is used, but this time the parameter "struct" is added to the launch function, the code would look like this:
+If for example the same config file as before is used, but this time the parameter ``struct`` is added to the launch function, the code would look like this:
 
 .. code-block:: python
 
@@ -96,13 +99,11 @@ If for example the same config file as before is used, but this time the paramet
         config=config,
     )
 
-In this case  the structure used is going to be "path/to/structure2.xyz" rather than ""path/to/structure.cif", which was defined in the config file.
+In this case  the structure used is going to be ``path/to/structure2.xyz`` rather than ``path/to/structure.cif``, which was defined in the config file.
 
 Refer to the API documentation for additional parameters that can be passed.
-Some parameters are not required and don't have a default value set in aiida-mlip. In that case the default values will be the same as `janus <https://stfc.github.io/janus-core/>`_
-The only default parameters defined in aiida-mlip are the names of the input and output files, as they do not affect the results of the calculation itself, and are needed in AiiDA to parse the results.
-For example in the code above the parameter "precision" is never defined, neither in the config nor in the run_get_node function.
-The parameter will default to the janus default, which is "float64"
+Some parameters are not required and don't have a default value set in ``aiida-mlip``. In that case the default values will be the same as `janus-core <https://github.com/stfc/janus-core>`_
+The only default parameters defined in ``aiida-mlip`` are the names of the input and output files, as they do not affect the results of the calculation itself, and are needed in AiiDA to parse the results.
 
 
 Submission
@@ -111,29 +112,36 @@ Submission
 To facilitate the submission process and prepare inputs as AiiDA data types, example scripts are provided.
 The submit_singlepoint.py script can be used as is, submitted to verdi, and the parameters passed as strings to the CLI.
 They will be converted to AiiDA data types by the script itself.
+
 .. note::
 
-
     The example files are set up with default values, ensuring that calculations runs even if no input is provided via the cli.
-    However, the aiida-mlip code itself does require certain parameters, (e.g. the structure on which to perform the calculation).
+    However, the ``aiida-mlip`` code itself does require certain parameters, (e.g. the structure on which to perform the calculation).
 
 
 .. code-block:: python
 
-    verdi run submit_singlepoint.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --precision "float64" --device "cpu"
+    verdi run submit_singlepoint.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --device "cpu"
 
-The submit_using_config.py script can be used to facilitate submission using a config file.
+The ``submit_using_config.py`` script provides an example of submission using a config file.
+
+.. note::
+
+    The structure and model are hard-coded into ``submit_using_config.py`` to avoid
+    issues with relative paths. These should be modified, or removed and set through
+    the configuration file, for your structure and model of interest.
+
 
 Geometry Optimisation calculation
 ---------------------------------
 
-A `GeomOpt` Calculation represents a `Calcjob` object within the AiiDA framework.
+A ``GeomOpt`` Calculation represents a ``Calcjob`` object within the AiiDA framework.
 
 
 Usage
 ^^^^^
 
-This calculation can be executed using either the `run` or `submit` AiiDA commands.
+This calculation can be executed using either the ``run`` or ``submit`` AiiDA commands.
 Below is a usage example with some additional geometry optimisation parameters. These parameters must be AiiDA data types.
 
 
@@ -157,20 +165,20 @@ They will be converted to AiiDA data types by the script itself.
 
 .. code-block:: python
 
-    verdi run submit_geomopt.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --precision "float64" --device "cpu"
+    verdi run submit_geomopt.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --device "cpu"
 
 
 
 Molecular Dynamics calculation
 ------------------------------
 
-An `MD` Calculation represents a `Calcjob` object within the AiiDA framework.
+An ``MD`` Calculation represents a ``Calcjob`` object within the AiiDA framework.
 
 
 Usage
 ^^^^^
 
-This calculation can be executed using either the `run` or `submit` AiiDA commands.
+This calculation can be executed using either the ``run`` or ``submit`` AiiDA commands.
 Below is a usage example with some additional geometry optimisation parameters. These parameters must be AiiDA data types.
 
 
