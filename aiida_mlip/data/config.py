@@ -17,10 +17,10 @@ class JanusConfigfile(SinglefileData):
 
     Parameters
     ----------
-    file : Union[str, Path]
+    file : str | Path
         Absolute path to the file.
-    filename : Optional[str], optional
-        Name to be used for the file (defaults to the name of provided file).
+    filename : str | None
+        Name to be used for the file. Default is the name of provided file.
 
     Attributes
     ----------
@@ -51,14 +51,14 @@ class JanusConfigfile(SinglefileData):
         **kwargs: Any,
     ) -> None:
         """
-        Initialize the ModelData object.
+        Initialize the JanusConfigfile object.
 
         Parameters
         ----------
-        file : Union[str, Path]
+        file : str | Path
             Absolute path to the file.
-        filename : Optional[str], optional
-            Name to be used for the file (defaults to the name of provided file).
+        filename : str | None
+            Name to be used for the file. Defaults is the name of provided file.
 
         Other Parameters
         ----------------
@@ -96,10 +96,10 @@ class JanusConfigfile(SinglefileData):
 
         Parameters
         ----------
-        file : Union[str, Path]
+        file : str | Path
             Absolute path to the file.
-        filename : Optional[str], optional
-            Name to be used for the file (defaults to the name of provided file).
+        filename : str | None
+            Name to be used for the file. Default is the name of provided file.
 
         Other Parameters
         ----------------
