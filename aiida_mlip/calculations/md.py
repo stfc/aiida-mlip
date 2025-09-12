@@ -25,7 +25,7 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
 
     DEFAULT_TRAJ_FILE = "aiida-traj.xyz"
     DEFAULT_STATS_FILE = "aiida-stats.dat"
-    DEFAULT_SUMMARY_FILE = "md_summary.yml"
+    DEFAULT_SUMMARY_FILE = "md-summary.yml"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:
@@ -55,7 +55,6 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
                 {
                     "traj-file": cls.DEFAULT_TRAJ_FILE,
                     "stats-file": cls.DEFAULT_STATS_FILE,
-                    "summary": cls.DEFAULT_SUMMARY_FILE,
                 }
             ),
             help="Keywords for molecular dynamics",
@@ -100,7 +99,6 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
 
         md_dictionary.setdefault("traj-file", str(self.DEFAULT_TRAJ_FILE))
         md_dictionary.setdefault("stats-file", str(self.DEFAULT_STATS_FILE))
-        md_dictionary.setdefault("summary", str(self.DEFAULT_SUMMARY_FILE))
 
         if "ensemble" in self.inputs:
             ensemble = self.inputs.ensemble.value.lower()
@@ -123,6 +121,5 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
 
         calcinfo.retrieve_list.append(md_dictionary["traj-file"])
         calcinfo.retrieve_list.append(md_dictionary["stats-file"])
-        calcinfo.retrieve_list.append(md_dictionary["summary"])
 
         return calcinfo

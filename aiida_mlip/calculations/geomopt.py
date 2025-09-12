@@ -33,6 +33,7 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
     """
 
     DEFAULT_TRAJ_FILE = "aiida-traj.xyz"
+    DEFAULT_SUMMARY_FILE = "geomopt-summary.yml"
 
     @classmethod
     def define(cls, spec: CalcJobProcessSpec) -> None:

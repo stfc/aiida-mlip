@@ -1,11 +1,11 @@
 The aiida-mlip plugin for `AiiDA`_
-=====================================================
+==================================
 
-``aiida-mlip`` is available at http://github.com/aiidateam/aiida-mlip
+``aiida-mlip`` is available at http://github.com/stfc/aiida-mlip
 
 .. image::  images/aiida-mlip.png
    :height: 298px
-   :target: http://github.com/aiidateam/aiida-mlip
+   :target: http://github.com/stfc/aiida-mlip
 
 
 .. toctree::
@@ -15,10 +15,6 @@ The aiida-mlip plugin for `AiiDA`_
    developer_guide/index
    API documentation <apidoc/aiida_mlip>
    AiiDA Documentation <https://aiida.readthedocs.io>
-
-If you use this plugin for your research, please cite the following work:
-
-.. highlights:: Author Name1, Author Name2, *Paper title*, Jornal Name XXX, YYYY (Year).
 
 If you use AiiDA for your research, please cite the following work:
 
@@ -38,7 +34,7 @@ Contributors to ``aiida-mlip`` were supported by
    :height: 100px
    :target: https://www.psdi.ac.uk/
 
-.. image:: images/alc-100.webp
+.. image:: images/alc.svg
    :height: 100px
    :target: https://adalovelacecentre.ac.uk/
 

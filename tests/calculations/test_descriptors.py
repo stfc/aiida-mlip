@@ -6,7 +6,7 @@ import subprocess
 
 from aiida.common import datastructures
 from aiida.engine import run
-from aiida.orm import Bool, Str, StructureData
+from aiida.orm import Bool, Dict, Str, StructureData
 from aiida.plugins import CalculationFactory
 from ase.build import bulk
 import pytest
@@ -22,10 +22,10 @@ def test_descriptors(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
         "arch": Str("mace"),
-        "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
+        "calc_kwargs": Dict({"default_dtype": "float64"}),
         "invariants_only": Bool(True),
     }
 
@@ -35,16 +35,20 @@ def test_descriptors(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "descriptors",
         "--arch",
         "mace",
+        "--model",
+        "mlff.model",
         "--struct",
         "aiida.xyz",
         "--device",
         "cpu",
         "--log",
         "aiida.log",
+        "--summary",
+        "descriptors-summary.yml",
         "--out",
         "aiida-results.xyz",
         "--calc-kwargs",
-        "{'default_dtype': 'float64', 'model': 'mlff.model'}",
+        "{'default_dtype': 'float64'}",
         "--invariants-only",
     ]
 
@@ -53,6 +57,7 @@ def test_descriptors(fixture_sandbox, generate_calc_job, janus_code, model_folde
         "aiida.log",
         "aiida-results.xyz",
         "aiida-stdout.txt",
+        "descriptors-summary.yml",
     ]
 
     # Check the attributes of the returned `CalcInfo`
@@ -75,7 +80,6 @@ def test_run_descriptors(model_folder, janus_code):
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": janus_code,
         "arch": Str("mace"),
-        "precision": Str("float64"),
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),

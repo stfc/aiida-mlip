@@ -30,9 +30,9 @@ def build_ht_calc(
 
     Parameters
     ----------
-    calc : Union[CalcJob, Callable, WorkChain, WorkGraph]
+    calc : CalcJob | Callable | WorkChain | WorkGraph
         Calculation to be performed on all structures.
-    folder : Union[Path, str, Str]
+    folder : Path | str | Str
         Path to the folder containing input structure files.
     calc_inputs : dict
         Dictionary of inputs, shared by all the calculations. Must not contain

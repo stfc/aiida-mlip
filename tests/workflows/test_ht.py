@@ -7,11 +7,12 @@ from aiida.plugins import CalculationFactory
 import pytest
 
 from aiida_mlip.data.model import ModelData
-from aiida_mlip.workflows.ht_workgraph import build_ht_calc
 
 
 def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> None:
     """Test high throughput singlepoint calculation."""
+    from aiida_mlip.workflows.ht_workgraph import build_ht_calc
+
     SinglepointCalc = CalculationFactory("mlip.sp")
 
     model_file = model_folder / "mace_mp_small.model"
@@ -38,6 +39,8 @@ def test_ht_singlepoint(janus_code, workflow_structure_folder, model_folder) -> 
 
 def test_ht_invalid_path(janus_code, workflow_invalid_folder, model_folder) -> None:
     """Test invalid path for high throughput calculation."""
+    from aiida_mlip.workflows.ht_workgraph import build_ht_calc
+
     SinglepointCalc = CalculationFactory("mlip.sp")
 
     model_file = model_folder / "mace_mp_small.model"
@@ -58,6 +61,8 @@ def test_ht_invalid_path(janus_code, workflow_invalid_folder, model_folder) -> N
 
 def test_ht_geomopt(janus_code, workflow_structure_folder, model_folder) -> None:
     """Test high throughput geometry optimisation."""
+    from aiida_mlip.workflows.ht_workgraph import build_ht_calc
+
     GeomoptCalc = CalculationFactory("mlip.opt")
 
     model_file = model_folder / "mace_mp_small.model"

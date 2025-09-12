@@ -27,11 +27,11 @@ def load_model(
 
     Parameters
     ----------
-    model : Optional[Union[str, Path]]
+    model : str | Path | None
         Model file path or a URI for downloading the model or None to use the default.
     architecture : str
         The architecture of the model.
-    cache_dir : Optional[Union[str, Path]]
+    cache_dir : str | Path | None
         Directory where to save the dowloaded model.
 
     Returns
@@ -64,7 +64,7 @@ def load_structure(struct: str | Path | int | None = None) -> StructureData:
 
     Parameters
     ----------
-    struct : Optional[Union[str, Path, int]]
+    struct : str | Path | int | None
         The input value representing either a path to a structure file, a node PK,
         or None.
 
