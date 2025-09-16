@@ -45,13 +45,16 @@ def geomopt(params: dict) -> None:
         "fmax": Float(params["fmax"]),
         "opt_cell_lengths": Bool(params["opt_cell_lengths"]),
         "opt_cell_fully": Bool(params["opt_cell_fully"]),
-        # "opt_kwargs": Dict({"restart": "rest.pkl"}),
         "steps": Int(params["steps"]),
     }
 
     # Only calc_kwargs add if set
     if params["calc_kwargs"]:
         inputs["calc_kwargs"] = Dict(params["calc_kwargs"])
+
+    # Only minimize_kwargs add if set
+    if params["minimize_kwargs"]:
+        inputs["minimize_kwargs"] = Dict(params["minimize_kwargs"])
 
     # Run calculation
     result, node = run_get_node(GeomoptCalc, **inputs)
@@ -105,6 +108,15 @@ def geomopt(params: dict) -> None:
 @click.option(
     "--steps", default=1000, type=int, help="Maximum number of optimisation steps."
 )
+@click.option(
+    "--minimize-kwargs",
+    default="{}",
+    type=str,
+    help=(
+        "Keyword arguments to pass to geometry optimizer, including 'opt_kwargs', "
+        "'filter_kwargs', and 'traj_kwargs'."
+    ),
+)
 def cli(
     codelabel,
     struct,
@@ -116,9 +128,11 @@ def cli(
     opt_cell_lengths,
     opt_cell_fully,
     steps,
+    minimize_kwargs,
 ) -> None:
     """Click interface."""
     calc_kwargs = ast.literal_eval(calc_kwargs)
+    minimize_kwargs = ast.literal_eval(minimize_kwargs)
 
     try:
         code = load_code(codelabel)
@@ -137,6 +151,7 @@ def cli(
         "opt_cell_lengths": opt_cell_lengths,
         "opt_cell_fully": opt_cell_fully,
         "steps": steps,
+        "minimize_kwargs": minimize_kwargs,
     }
 
     # Submit single point

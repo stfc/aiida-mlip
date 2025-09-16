@@ -65,6 +65,7 @@ The other inputs can be set up as AiiDA ``Str``. There is a default for every in
         "fmax": Float(0.1),
         "opt_cell_lengths": Bool(False),
         "opt_cell_fully": Bool(True),
+        "minimize_kwargs": Dict({"filter_kwargs": {"constant_volume": True}}),
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         }
 
@@ -168,7 +169,7 @@ The calculation can also be interacted with through verdi cli. Use ``verdi proce
     max_force        1124  Float
     model            1119  ModelData
     structure        1120  StructureData
-    traj             1129  Str
+    minimize_kwargs  1129  Dict
     opt_cell_lengths 1125  Bool
     xyz_output_name  1127  Str
 

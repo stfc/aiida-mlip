@@ -1,0 +1,9 @@
+arch: mace_mp
+struct: "NaCl.cif"
+calc_kwargs:
+  dispersion: True
+minimize_kwargs:
+  opt_kwargs:
+    alpha: 100
+fmax: 0.1
+opt_cell_lengths: True
