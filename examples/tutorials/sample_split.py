@@ -16,26 +16,26 @@ from fpsample import fps_npdu_kdtree_sampling as sample
 import numpy as np
 
 
-def extract(data, inds):
+def extract(data: Sequence[T], inds: Iterable[SupportsIndex]) -> list[T]:
     """Extract elements from a list based on indices."""
     return [data[i] for i in inds]
 
 
-def sampling(data, dims, n_samples):
+def sampling(data: Sequence[T], dims: int, n_samples: int) -> set[T]:
     """Perform furthest point sampling on the given data."""
     n = len(data)
-    if n == 0:
+    if not n:
         return set()
     ldata = np.array(data)
     ldata.reshape(n, dims)
     # Ensure n_samples does not exceed the number of available data points
     actual_n_samples = min(n_samples, n)
-    if actual_n_samples == 0:
+    if not actual_n_samples:
         return set()
     return set(sample(ldata, n_samples=actual_n_samples, start_idx=0))
 
 
-def write_samples(frames, inds, f_s):
+def write_samples(frames: Sequence[Any], inds: Iterable[SupportsIndex], f_s: TextIO) -> None:
     """Write selected frames to a file."""
     for i in inds:
         write(f_s, frames[i], write_info=True, append=True)
@@ -61,28 +61,24 @@ def process_and_split_data(**inputs):
         scale = inputs["scale"].value
         append_mode = inputs["append_mode"].value
 
-        a = []
-        for _, data in inputs["trajectory_data"].items():
-            with data.open() as handle:
-                ase_atoms = read(handle, format="extxyz")
-            a.append(ase_atoms)
+        a = [read(pth, format="extxyz") 
+             for pth in inputs["trajectory_data"].values()]
 
     else:
         traj_path = Path(inputs["trajectory_data"])
         if not traj_path.exists():
-            print(f"Error: Trajectory file not found at {traj_path}")
-            return None
+            raise FileNotFoundError(f"Error: Trajectory file not found at {traj_path}")
         a = read(traj_path, index=":")
 
-    if prefix and not prefix.endswith("-"):
-        prefix += "-"
+    prefix = prefix.rstrip("-") + "-"
 
     train_file = Path(f"{prefix}train.xyz")
     valid_file = Path(f"{prefix}valid.xyz")
     test_file = Path(f"{prefix}test.xyz")
 
     if not append_mode:
-        _ = [p.unlink(missing_ok=True) for p in [train_file, valid_file, test_file]]
+        for file in (train_file, valid_file, test_file):
+            file.unlink(missing_ok=True)
 
     print(f"create files: {train_file=}, {valid_file=} and {test_file=}")
 
@@ -91,8 +87,7 @@ def process_and_split_data(**inputs):
         system_name = f.info.get("system_name", "unknown_system")
         config_type = f.info.get("config_type", "all")
         key = (config_type, system_name)
-        if key not in stats:
-            stats[key] = []
+        stats.setdefault(key, [])
         stats[key].append(i)
 
     k = 0
@@ -110,9 +105,8 @@ def process_and_split_data(**inputs):
                 ns_train_target = int(0.8 * n)
                 ns_total_target = n
 
-            # specs = set(sorted(a[indices[0]].get_chemical_symbols()))
             specs = set(a[indices[0]].get_chemical_symbols())
-            De = len(specs)
+            de = len(specs)
 
             desc_per_spec = [
                 [a[x].info[f"mace_mp_{s}_descriptor"] * scale for s in specs]
@@ -120,7 +114,7 @@ def process_and_split_data(**inputs):
             ]
 
             ind_spec_train = sampling(desc_per_spec, De, ns_train_target)
-            train_ind = extract(indices, list(ind_spec_train))
+            train_ind = extract(indices, ind_spec_train)
 
             ns_train_actual = len(train_ind)
 
@@ -149,7 +143,7 @@ def process_and_split_data(**inputs):
                     for x in left_indices
                 ]
                 vt_spec = sampling(desc_per_spec_vt, De, nvt_target)
-                vt_ind = extract(left_indices, list(vt_spec))
+                vt_ind = extract(left_indices, vt_spec)
 
                 test_ind = vt_ind[0::2]
                 valid_ind = vt_ind[1::2]
