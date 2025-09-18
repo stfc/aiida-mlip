@@ -1,19 +1,18 @@
 """Split descriptors files into Test, Train and Validate."""
 
-# Author; alin m elena, alin@elena.re
-# Contribs; Muhammad Mohsin
-# Date: 14-09-2024
-# ©alin m elena, GPL v3 https://www.gnu.org/licenses/gpl-3.0.en.html
 from __future__ import annotations
 
+from collections.abc import Iterable, Sequence
 from pathlib import Path
+from typing import Any, SupportsIndex, TextIO, TypeVar
 
 from aiida import orm
-from aiida.orm import Int, Str, StructureData
-from aiida_workgraph import WorkGraph, task
+from aiida_workgraph import task
 from ase.io import read, write
 from fpsample import fps_npdu_kdtree_sampling as sample
 import numpy as np
+
+T = TypeVar("T")
 
 
 def extract(data: Sequence[T], inds: Iterable[SupportsIndex]) -> list[T]:
@@ -35,7 +34,9 @@ def sampling(data: Sequence[T], dims: int, n_samples: int) -> set[T]:
     return set(sample(ldata, n_samples=actual_n_samples, start_idx=0))
 
 
-def write_samples(frames: Sequence[Any], inds: Iterable[SupportsIndex], f_s: TextIO) -> None:
+def write_samples(
+    frames: Sequence[Any], inds: Iterable[SupportsIndex], f_s: TextIO
+) -> None:
     """Write selected frames to a file."""
     for i in inds:
         write(f_s, frames[i], write_info=True, append=True)
@@ -46,13 +47,25 @@ def process_and_split_data(**inputs):
     """
     Split a trajectory into training, validation, and test sets.
 
-    Args:
-        trajectory_path (str): Path to the input trajectory file.
-        config_types (list): List of configuration types to process.
-        n_samples (int): The target number of samples for each configuration type.
-        scale (float): Scaling factor for the MACE descriptors.
-        prefix (str): A prefix string for the output filenames.
-        append_mode (bool): If True, append to existing files. Otherwise, overwrite.
+    Parameters
+    ----------
+        trajectory_path : str
+            Path to the input trajectory file.
+        config_types : list
+            List of configuration types to process.
+        n_samples : int
+            The target number of samples for each configuration type.
+        scale : float
+            Scaling factor for the MACE descriptors.
+        prefix : str
+            A prefix string for the output filenames.
+        append_mode : bool
+            If True, append to existing files. Otherwise, overwrite.
+
+    Returns
+    -------
+    AiiDA Dict : orm.Dict
+        A Dict instance with file paths
     """
     if isinstance(inputs["trajectory_data"], dict):
         config_types = inputs["config_types"].value
@@ -61,8 +74,11 @@ def process_and_split_data(**inputs):
         scale = inputs["scale"].value
         append_mode = inputs["append_mode"].value
 
-        a = [read(pth, format="extxyz") 
-             for pth in inputs["trajectory_data"].values()]
+        a = []
+        for data in inputs["trajectory_data"].values():
+            with data.open() as handle:
+                ase_atoms = read(handle, format="extxyz")
+            a.append(ase_atoms)
 
     else:
         traj_path = Path(inputs["trajectory_data"])
@@ -70,7 +86,8 @@ def process_and_split_data(**inputs):
             raise FileNotFoundError(f"Error: Trajectory file not found at {traj_path}")
         a = read(traj_path, index=":")
 
-    prefix = prefix.rstrip("-") + "-"
+    if prefix:
+        prefix = prefix.rstrip("-") + "-"
 
     train_file = Path(f"{prefix}train.xyz")
     valid_file = Path(f"{prefix}valid.xyz")
@@ -106,7 +123,7 @@ def process_and_split_data(**inputs):
                 ns_total_target = n
 
             specs = set(a[indices[0]].get_chemical_symbols())
-            de = len(specs)
+            De = len(specs)
 
             desc_per_spec = [
                 [a[x].info[f"mace_mp_{s}_descriptor"] * scale for s in specs]
@@ -174,69 +191,3 @@ def process_and_split_data(**inputs):
         )
 
     return f"Found {k} structures that were too similar during sampling."
-
-
-def build_filters_workgraph(
-    initial_struct: Path | str | Str,
-    calc_inputs: list,
-    wg_inputs: dict,
-    split_inputs: dict,
-) -> WorkGraph:
-    """
-    Build WorkGraph to run multiple calculations on multiple structures.
-
-    Args:
-        initial_struct (str): Path to the input trajectory file.
-        calc_inputs (list): List of calculations to run.
-        wg_inputs (dict): Inputs of calculations.
-        split_inputs (dict): Inputs of split task.
-    """
-    num_structs = len(read(initial_struct, index=":"))
-
-    with WorkGraph("Calculation Workgraph") as wg:
-        wg.inputs = wg_inputs
-        final_structures = {}
-
-        for i in range(num_structs):
-            structure = StructureData(ase=read(initial_struct, index=i))
-
-            geomopt_calc = wg.add_task(
-                calc_inputs[0],
-                code=wg.inputs.code,
-                model=wg.inputs.model,
-                arch=wg.inputs.arch,
-                precision=wg.inputs.precision,
-                device=wg.inputs.device,
-                metadata=wg.inputs.metadata,
-                fmax=wg.inputs.fmax,
-                opt_cell_lengths=wg.inputs.opt_cell_lengths,
-                opt_cell_fully=wg.inputs.opt_cell_fully,
-                struct=structure,
-            )
-
-            descriptors_calc = wg.add_task(
-                calc_inputs[1],
-                code=wg.inputs.code,
-                model=wg.inputs.model,
-                arch=wg.inputs.arch,
-                precision=wg.inputs.precision,
-                device=wg.inputs.device,
-                metadata=wg.inputs.metadata,
-                struct=geomopt_calc.outputs.final_structure,
-                calc_per_element=True,
-            )
-
-            final_structures[f"structs{i}"] = descriptors_calc.outputs.xyz_output
-
-        split_task_inputs = {
-            "trajectory_data": final_structures,
-            "config_types": split_inputs["config_types"],
-            "n_samples": Int(num_structs),
-            "prefix": split_inputs["prefix"],
-            "scale": split_inputs["scale"],
-            "append_mode": split_inputs["append_mode"],
-        }
-
-        wg.add_task(process_and_split_data, inputs=split_task_inputs)
-
-    return wg
