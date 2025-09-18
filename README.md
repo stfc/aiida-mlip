@@ -96,6 +96,12 @@ a model will be trained using the provided example config file and xyz files (ca
 
 ## Development
 
+Please ensure you have consulted our
+[contribution guidelines](contributing.md)
+and
+[coding style](coding_style.md)
+before proceeding.
+
 We recommend installing ``uv`` for dependency management when developing for `aiida-mlip`, and setting up PostgreSQL, as this is currently a requirement for testing:
 
 
