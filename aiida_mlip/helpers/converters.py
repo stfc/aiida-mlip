@@ -133,7 +133,7 @@ def kwarg_to_param(params: dict[str, Any]) -> list[str]:
             case bool() if val:
                 cmdline_params.append(f"--{key}")
             case bool():
-                ...
+                cmdline_params.append(f"--no-{key}")
             case _:
                 cmdline_params.extend((f"--{key}", str(val)))
 
