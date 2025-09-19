@@ -123,7 +123,7 @@ def kwarg_to_param(params: dict[str, Any]) -> list[str]:
     >>> kwarg_to_param({"name": "Geoff", "key": True})
     ['--name', 'Geoff', '--key']
     >>> kwarg_to_param({"value": 6, "falsey": False})
-    ['--value', '6']
+    ['--value', '6', '--no-falsey']
     """
     cmdline_params = []
 
