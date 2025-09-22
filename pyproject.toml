@@ -32,6 +32,11 @@ dependencies = [
 mace = [
     "janus-core[mace]"
 ]
+fpsample = [
+    "fpsample<0.4,>=0.3.3",
+]
+
+
 
 [project.urls]
 repository = "https://github.com/stfc/aiida-mlip/"
