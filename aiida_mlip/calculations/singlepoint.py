@@ -97,11 +97,15 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
 
         # Adding command line params for when we run janus
         # singlepoint is overwriting the placeholder "calculation" from the base.py file
-        codeinfo.cmdline_params[0] = "singlepoint"
 
         # The inputs are saved in the node, but we want their value as a string
         xyz_filename = (self.inputs.out).value
-        codeinfo.cmdline_params += ["--out", xyz_filename]
+        codeinfo.cmdline_params = [
+            "singlepoint",
+            *codeinfo.cmdline_params[1:],
+            "--out",
+            xyz_filename,
+        ]
 
         if "properties" in self.inputs:
             properties = self.inputs.properties.value

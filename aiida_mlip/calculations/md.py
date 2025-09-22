@@ -9,6 +9,7 @@ import aiida.engine.processes
 from aiida.orm import Dict, SinglefileData, Str, StructureData, TrajectoryData
 
 from aiida_mlip.calculations.base import BaseJanus
+from aiida_mlip.helpers.converters import kwarg_to_param
 
 
 class MD(BaseJanus):  # numpydoc ignore=PR01
@@ -108,16 +109,13 @@ class MD(BaseJanus):  # numpydoc ignore=PR01
             raise ValueError("'ensemble' not provided.")
 
         # md is overwriting the placeholder "calculation" from the base.py file
-        codeinfo.cmdline_params[0] = "md"
-
-        codeinfo.cmdline_params += ["--ensemble", ensemble]
-
-        for flag, value in md_dictionary.items():
-            # Add boolean flags without value if True
-            if isinstance(value, bool) and value:
-                codeinfo.cmdline_params.append(f"--{flag}")
-            else:
-                codeinfo.cmdline_params += [f"--{flag}", value]
+        codeinfo.cmdline_params = [
+            "md",
+            *codeinfo.cmdline_params[1:],
+            "--ensemble",
+            ensemble,
+            *kwarg_to_param(md_dictionary),
+        ]
 
         calcinfo.retrieve_list.append(md_dictionary["traj-file"])
         calcinfo.retrieve_list.append(md_dictionary["stats-file"])

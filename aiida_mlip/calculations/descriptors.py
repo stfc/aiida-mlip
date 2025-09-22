@@ -9,6 +9,7 @@ import aiida.engine.processes
 from aiida.orm import Bool
 
 from aiida_mlip.calculations.singlepoint import Singlepoint
+from aiida_mlip.helpers.converters import kwarg_to_param
 
 
 class Descriptors(Singlepoint):  # numpydoc ignore=PR01
@@ -89,7 +90,6 @@ class Descriptors(Singlepoint):  # numpydoc ignore=PR01
 
         # Adding command line params for when we run janus
         # descriptors is overwriting the placeholder "calculation" from the base.py file
-        codeinfo.cmdline_params[0] = "descriptors"
 
         cmdline_options = {
             key.replace("_", "-"): getattr(self.inputs, key).value
@@ -97,12 +97,10 @@ class Descriptors(Singlepoint):  # numpydoc ignore=PR01
             if key in self.inputs
         }
 
-        for flag, value in cmdline_options.items():
-            if isinstance(value, bool):
-                # Add boolean flags without value if True
-                if value:
-                    codeinfo.cmdline_params.append(f"--{flag}")
-            else:
-                codeinfo.cmdline_params += [f"--{flag}", value]
+        codeinfo.cmdline_params = [
+            "descriptors",
+            *codeinfo.cmdline_params[1:],
+            *kwarg_to_param(cmdline_options),
+        ]
 
         return calcinfo
