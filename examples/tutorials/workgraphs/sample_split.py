@@ -6,8 +6,6 @@ from collections.abc import Iterable, Sequence
 from pathlib import Path
 from typing import Any, SupportsIndex, TextIO, TypeVar
 
-from aiida import orm
-from aiida_workgraph import task
 from ase.io import read, write
 from fpsample import fps_npdu_kdtree_sampling as sample
 import numpy as np
@@ -42,7 +40,6 @@ def write_samples(
         write(f_s, frames[i], write_info=True, append=True)
 
 
-@task.calcfunction()
 def process_and_split_data(**inputs):
     """
     Split a trajectory into training, validation, and test sets.
@@ -64,8 +61,8 @@ def process_and_split_data(**inputs):
 
     Returns
     -------
-    AiiDA Dict : orm.Dict
-        A Dict instance with file paths
+        files : dict
+            A dict instance with file paths
     """
     if isinstance(inputs["trajectory_data"], dict):
         config_types = inputs["config_types"].value
@@ -170,13 +167,11 @@ def process_and_split_data(**inputs):
             write_samples(a, train_ind, train_file)
             write_samples(a, test_ind, test_file)
             write_samples(a, valid_ind, valid_file)
-            return orm.Dict(
-                {
-                    "train_file": str(Path(train_file).resolve()),
-                    "test_file": str(Path(test_file).resolve()),
-                    "valid_file": str(Path(valid_file).resolve()),
-                }
-            )
+            return {
+                "train_file": str(Path(train_file).resolve()),
+                "test_file": str(Path(test_file).resolve()),
+                "valid_file": str(Path(valid_file).resolve()),
+            }
 
         print(
             f"Config type '{run_type}' not in target list. \
@@ -184,10 +179,8 @@ def process_and_split_data(**inputs):
         )
         write_samples(a, indices, train_file)
 
-        return orm.Dict(
-            {
-                "train_file": str(Path(train_file).resolve()),
-            }
-        )
+        return {
+            "train_file": str(Path(train_file).resolve()),
+        }
 
     return f"Found {k} structures that were too similar during sampling."
