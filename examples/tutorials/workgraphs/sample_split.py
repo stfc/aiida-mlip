@@ -46,8 +46,8 @@ def process_and_split_data(**inputs):
 
     Parameters
     ----------
-        trajectory_path : str
-            Path to the input trajectory file.
+        trajectory_data : dict
+            A dict of structures as SinglefileData type.
         config_types : list
             List of configuration types to process.
         n_samples : int
@@ -62,7 +62,7 @@ def process_and_split_data(**inputs):
     Returns
     -------
         files : dict
-            A dict instance with file paths
+            A dict instance with file paths.
     """
     if isinstance(inputs["trajectory_data"], dict):
         config_types = inputs["config_types"].value
@@ -139,7 +139,7 @@ def process_and_split_data(**inputs):
             ):
                 train_ind.append(indices[-1])
 
-            left_indices = list(set(indices) - set(train_ind))
+            leftover_indices = list(set(indices) - set(train_ind))
 
             nvt_target = ns_total_target - ns_train_actual
             if nvt_target < 0:
@@ -151,13 +151,13 @@ def process_and_split_data(**inputs):
                     vt_target={nvt_target}"
             )
 
-            if left_indices and nvt_target > 0:
+            if leftover_indices and nvt_target > 0:
                 desc_per_spec_vt = [
                     [a[x].info[f"mace_mp_{s}_descriptor"] * scale for s in specs]
-                    for x in left_indices
+                    for x in leftover_indices
                 ]
                 vt_spec = sampling(desc_per_spec_vt, De, nvt_target)
-                vt_ind = extract(left_indices, vt_spec)
+                vt_ind = extract(leftover_indices, vt_spec)
 
                 test_ind = vt_ind[0::2]
                 valid_ind = vt_ind[1::2]
