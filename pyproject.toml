@@ -36,7 +36,7 @@ fpsample = [
     "fpsample<0.4,>=0.3.3",
 ]
 aiida-psuedo = [
-    "aiida-pseudo<0.2,>=1.7.2",
+    "aiida-pseudo>=1.0.0; python_version<'3.13'",
 ]
 
 
