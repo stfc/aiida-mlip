@@ -181,7 +181,7 @@ class Train(CalcJob):  # numpydoc ignore=PR01
             with self.inputs.foundation_model.open(mode="rb") as source:
                 with folder.open("mlff.model", mode="wb") as target:
                     shutil.copyfileobj(source, target)
-            config_parse += "foundation_model: mlff.model"
+            config_parse += "\nfoundation_model: mlff.model"
 
         # Copy config file content inside the folder where the calculation is run
         config_copy = "mlip_train.yml"
