@@ -46,6 +46,7 @@ def geomopt(params: dict) -> None:
         "opt_cell_lengths": Bool(params["opt_cell_lengths"]),
         "opt_cell_fully": Bool(params["opt_cell_fully"]),
         "steps": Int(params["steps"]),
+        "pressure": Float(params["pressure"]),
     }
 
     # Only calc_kwargs add if set
@@ -109,6 +110,9 @@ def geomopt(params: dict) -> None:
     "--steps", default=1000, type=int, help="Maximum number of optimisation steps."
 )
 @click.option(
+    "--pressure", default=5.0, type=float, help="Pressure to use for the calculation."
+)
+@click.option(
     "--minimize-kwargs",
     default="{}",
     type=str,
@@ -128,6 +132,7 @@ def cli(
     opt_cell_lengths,
     opt_cell_fully,
     steps,
+    pressure,
     minimize_kwargs,
 ) -> None:
     """Click interface."""
@@ -151,6 +156,7 @@ def cli(
         "opt_cell_lengths": opt_cell_lengths,
         "opt_cell_fully": opt_cell_fully,
         "steps": steps,
+        "pressure": pressure,
         "minimize_kwargs": minimize_kwargs,
     }
 
