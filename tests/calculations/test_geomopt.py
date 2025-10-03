@@ -91,6 +91,7 @@ def test_run_geomopt(model_folder, janus_code):
         "opt_cell_fully": Bool(True),
         "fmax": Float(0.1),
         "steps": Int(1000),
+        "pressure": Float(5.0),
         "minimize_kwargs": Dict({"traj_kwargs": {"filename": "test-traj.xyz"}}),
     }
 
@@ -102,7 +103,7 @@ def test_run_geomopt(model_folder, janus_code):
     assert "traj_file" in result
     assert result["traj_output"].numsteps == 3
     assert result["final_structure"].cell[0][0] == pytest.approx(0)
-    assert result["final_structure"].cell[0][1] == pytest.approx(2.8438848145858)
+    assert result["final_structure"].cell[0][1] == pytest.approx(2.710938102987)
     assert result["xyz_output"].filename == "aiida-results.xyz"
     assert result["traj_file"].filename == "test-traj.xyz"
 
@@ -124,6 +125,7 @@ def test_cli_kwargs(model_folder, janus_code):
         "opt_cell_fully": Bool(True),
         "fmax": Float(0.1),
         "steps": Int(1000),
+        "pressure": Float(5.0),
         "minimize_kwargs": minimize_kwargs,
     }
 
