@@ -82,6 +82,13 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             help="All other keyword arguments to pass to geometry optimizer",
         )
 
+        spec.input(
+            "pressure",
+            valid_type=Float,
+            required=False,
+            help="External pressure (float)",
+        )
+
         spec.inputs["metadata"]["options"]["parser_name"].default = "mlip.opt_parser"
 
         spec.output("traj_file", valid_type=SinglefileData)
@@ -122,6 +129,8 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             geom_opt_cmdline["fmax"] = self.inputs.fmax.value
         if "steps" in self.inputs:
             geom_opt_cmdline["steps"] = self.inputs.steps.value
+        if "pressure" in self.inputs:
+            geom_opt_cmdline["pressure"] = self.inputs.pressure.value
 
         # Adding command line params for when we run janus
         # 'geomopt' is overwriting the placeholder "calculation" from the base.py file
