@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from aiida.engine import run_get_node
 from aiida.orm import load_code
 from aiida.plugins import CalculationFactory
@@ -18,8 +20,12 @@ structure = load_structure()
 
 # All the other paramenters we want them from the config file
 # We want to pass it as a AiiDA data type for the provenance
+
+
 config = JanusConfigfile(
-    "/home/federica/aiida-mlip/tests/calculations/configs/config_janus_md.yaml"
+    Path("~/aiida-mlip/tests/calculations/configs/config_janus_md.yml")
+    .expanduser()
+    .resolve()
 )
 
 # Define calculation to run
