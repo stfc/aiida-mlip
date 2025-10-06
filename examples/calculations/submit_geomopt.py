@@ -110,7 +110,10 @@ def geomopt(params: dict) -> None:
     "--steps", default=1000, type=int, help="Maximum number of optimisation steps."
 )
 @click.option(
-    "--pressure", default=5.0, type=float, help="Pressure to use for the calculation."
+    "--pressure",
+    default=0.0,
+    type=float,
+    help="Scalar pressure when optimizing cell geometry, in GPa.",
 )
 @click.option(
     "--minimize-kwargs",
