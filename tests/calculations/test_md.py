@@ -251,7 +251,7 @@ def test_example_md(example_path, janus_code):
         "run",
         example_file_path,
         f"{janus_code.label}@{janus_code.computer.label}",
-        "--md_dict_str",
+        "--md-dict-str",
         "{'steps': 10, 'traj-every': 1}",
     ]
     # Execute the command
