@@ -35,6 +35,9 @@ mace = [
 fpsample = [
     "fpsample<0.4,>=0.3.3",
 ]
+aiida-psuedo = [
+    "aiida-pseudo>=1.0.0; python_version<'3.13'",
+]
 
 
 
