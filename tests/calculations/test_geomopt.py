@@ -142,6 +142,8 @@ def test_example_opt(example_path, janus_code):
         "run",
         example_file_path,
         f"{janus_code.label}@{janus_code.computer.label}",
+        "--opt-cell-lengths",
+        "True",
     ]
 
     # Execute the command

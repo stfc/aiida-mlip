@@ -23,7 +23,7 @@ structure = load_structure()
 
 
 config = JanusConfigfile(
-    Path("~/aiida-mlip/tests/calculations/configs/config_janus_md.yml")
+    Path("../../../tests/calculations/configs/config_janus_md.yml")
     .expanduser()
     .resolve()
 )
