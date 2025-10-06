@@ -42,6 +42,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
     "sphinxcontrib.contentui",
+    "nbsphinx",
 ]
 
 # Add the numpydoc_show_inherited_class_members option
