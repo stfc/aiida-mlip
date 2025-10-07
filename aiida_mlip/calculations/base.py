@@ -8,7 +8,7 @@ from aiida.common import InputValidationError, datastructures
 import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
 import aiida.engine.processes
-from aiida.orm import Dict, Float, SinglefileData, Str, StructureData
+from aiida.orm import Dict, SinglefileData, Str, StructureData
 from ase.io import read, write
 
 from aiida_mlip.data.config import JanusConfigfile
@@ -188,13 +188,6 @@ class BaseJanus(CalcJob):  # numpydoc ignore=PR01
             valid_type=JanusConfigfile,
             required=False,
             help="Name of the log output file",
-        )
-
-        spec.input(
-            "pressure",
-            valid_type=Float,
-            required=False,
-            help="Scalar pressure when optimizing cell geometry, in GPa.",
         )
 
         spec.output("std_output", valid_type=SinglefileData)
