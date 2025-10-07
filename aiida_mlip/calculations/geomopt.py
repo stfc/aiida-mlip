@@ -86,7 +86,7 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             "pressure",
             valid_type=Float,
             required=False,
-            help="External pressure (float)",
+            help="Scalar pressure when optimizing cell geometry, in GPa.",
         )
 
         spec.inputs["metadata"]["options"]["parser_name"].default = "mlip.opt_parser"
