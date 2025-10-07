@@ -10,3 +10,4 @@ User guide
     data
     calculations
     training
+    notebooks/singlepoint
