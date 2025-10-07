@@ -65,6 +65,7 @@ The other inputs can be set up as AiiDA ``Str``. There is a default for every in
         "fmax": Float(0.1),
         "opt_cell_lengths": Bool(False),
         "opt_cell_fully": Bool(True),
+        "pressure": Float(0.0),
         "minimize_kwargs": Dict({"filter_kwargs": {"constant_volume": True}}),
         "metadata": {"options": {"resources": {"num_machines": 1}}},
         }
