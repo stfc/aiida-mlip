@@ -91,6 +91,7 @@ def test_run_geomopt(model_folder, janus_code):
         "opt_cell_fully": Bool(True),
         "fmax": Float(0.1),
         "steps": Int(1000),
+        "pressure": Float(0.0),
         "minimize_kwargs": Dict({"traj_kwargs": {"filename": "test-traj.xyz"}}),
     }
 
@@ -124,6 +125,7 @@ def test_cli_kwargs(model_folder, janus_code):
         "opt_cell_fully": Bool(True),
         "fmax": Float(0.1),
         "steps": Int(1000),
+        "pressure": Float(0.0),
         "minimize_kwargs": minimize_kwargs,
     }
 
