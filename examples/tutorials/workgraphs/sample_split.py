@@ -40,7 +40,14 @@ def write_samples(
         write(f_s, frames[i], write_info=True, append=True)
 
 
-def process_and_split_data(**inputs):
+def process_and_split_data(
+    config_types: str,
+    n_samples: int,
+    prefix: str,
+    scale: float,
+    append_mode: bool,
+    **trajectory_data,
+) -> dict:
     """
     Split a trajectory into training, validation, and test sets.
 
@@ -64,24 +71,18 @@ def process_and_split_data(**inputs):
         files : dict
             A dict instance with file paths.
     """
-    if isinstance(inputs["trajectory_data"], dict):
-        config_types = inputs["config_types"].value
-        n_samples = inputs["n_samples"].value
-        prefix = inputs["prefix"].value
-        scale = inputs["scale"].value
-        append_mode = inputs["append_mode"].value
-
-        a = []
-        for data in inputs["trajectory_data"].values():
+    if isinstance(trajectory_data, dict):
+        atoms = []
+        for data in trajectory_data.values():
             with data.open() as handle:
                 ase_atoms = read(handle, format="extxyz")
-            a.append(ase_atoms)
+            atoms.append(ase_atoms)
 
     else:
-        traj_path = Path(inputs["trajectory_data"])
+        traj_path = Path(trajectory_data)
         if not traj_path.exists():
             raise FileNotFoundError(f"Error: Trajectory file not found at {traj_path}")
-        a = read(traj_path, index=":")
+        atoms = read(traj_path, index=":")
 
     if prefix:
         prefix = prefix.rstrip("-") + "-"
@@ -97,9 +98,9 @@ def process_and_split_data(**inputs):
     print(f"create files: {train_file=}, {valid_file=} and {test_file=}")
 
     stats = {}
-    for i, f in enumerate(a):
-        system_name = f.info.get("system_name", "unknown_system")
-        config_type = f.info.get("config_type", "all")
+    for i, structs in enumerate(atoms):
+        system_name = structs.info.get("system_name", "unknown_system")
+        config_type = structs.info.get("config_type", "all")
         key = (config_type, system_name)
         stats.setdefault(key, [])
         stats[key].append(i)
@@ -119,15 +120,15 @@ def process_and_split_data(**inputs):
                 ns_train_target = int(0.8 * n)
                 ns_total_target = n
 
-            specs = set(a[indices[0]].get_chemical_symbols())
-            De = len(specs)
+            specs = set(atoms[indices[0]].get_chemical_symbols())
+            atoms_num = len(specs)
 
             desc_per_spec = [
-                [a[x].info[f"mace_mp_{s}_descriptor"] * scale for s in specs]
+                [atoms[x].info[f"mace_mp_{s}_descriptor"] * scale for s in specs]
                 for x in indices
             ]
 
-            ind_spec_train = sampling(desc_per_spec, De, ns_train_target)
+            ind_spec_train = sampling(desc_per_spec, atoms_num, ns_train_target)
             train_ind = extract(indices, ind_spec_train)
 
             ns_train_actual = len(train_ind)
@@ -153,10 +154,10 @@ def process_and_split_data(**inputs):
 
             if leftover_indices and nvt_target > 0:
                 desc_per_spec_vt = [
-                    [a[x].info[f"mace_mp_{s}_descriptor"] * scale for s in specs]
+                    [atoms[x].info[f"mace_mp_{s}_descriptor"] * scale for s in specs]
                     for x in leftover_indices
                 ]
-                vt_spec = sampling(desc_per_spec_vt, De, nvt_target)
+                vt_spec = sampling(desc_per_spec_vt, atoms_num, nvt_target)
                 vt_ind = extract(leftover_indices, vt_spec)
 
                 test_ind = vt_ind[0::2]
@@ -164,9 +165,9 @@ def process_and_split_data(**inputs):
             else:
                 test_ind, valid_ind = [], []
 
-            write_samples(a, train_ind, train_file)
-            write_samples(a, test_ind, test_file)
-            write_samples(a, valid_ind, valid_file)
+            write_samples(atoms, train_ind, train_file)
+            write_samples(atoms, test_ind, test_file)
+            write_samples(atoms, valid_ind, valid_file)
             return {
                 "train_file": str(Path(train_file).resolve()),
                 "test_file": str(Path(test_file).resolve()),
@@ -177,7 +178,7 @@ def process_and_split_data(**inputs):
             f"Config type '{run_type}' not in target list. \
                     Adding all {len(indices)} frames to training set."
         )
-        write_samples(a, indices, train_file)
+        write_samples(atoms, indices, train_file)
 
         return {
             "train_file": str(Path(train_file).resolve()),
