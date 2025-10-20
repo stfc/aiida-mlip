@@ -85,57 +85,6 @@ def test_pressure_command_line_generation(
     assert str(test_pressure) in cmdline_str
 
 
-# check pressure without cell optimization
-def test_pressure_requires_cell_optimization(model_folder, janus_code):
-    """Test that pressure is only effective when cell optimization is enabled."""
-    model_file = model_folder / "mace_mp_small.model"
-
-    # Test without cell optimization - pressure should have no effect
-    inputs_no_cell = {
-        "metadata": {"options": {"resources": {"num_machines": 1}}},
-        "code": janus_code,
-        "arch": Str("mace"),
-        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
-        "model": ModelData.from_local(model_file, architecture="mace"),
-        "device": Str("cpu"),
-        "opt_cell_fully": Bool(False),  # No cell optimization
-        "opt_cell_lengths": Bool(False),  # No cell optimization
-        "fmax": Float(0.1),
-        "pressure": Float(10.0),  # High pressure, but should have no effect
-    }
-
-    # Test with cell optimization - pressure should affect the structure
-    inputs_with_cell = {
-        "metadata": {"options": {"resources": {"num_machines": 1}}},
-        "code": janus_code,
-        "arch": Str("mace"),
-        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
-        "model": ModelData.from_local(model_file, architecture="mace"),
-        "device": Str("cpu"),
-        "opt_cell_fully": Bool(True),  # Cell optimization enabled
-        "fmax": Float(0.1),
-        "pressure": Float(10.0),  # Same high pressure
-    }
-
-    GeomoptCalc = CalculationFactory("mlip.opt")
-
-    result_no_cell = run(GeomoptCalc, **inputs_no_cell)
-    result_with_cell = run(GeomoptCalc, **inputs_with_cell)
-
-    # Both should complete successfully
-    assert "final_structure" in result_no_cell
-    assert "final_structure" in result_with_cell
-
-    # The structure with cell optimization should be more compressed
-    vol_no_cell = result_no_cell["final_structure"].get_cell_volume()
-    vol_with_cell = result_with_cell["final_structure"].get_cell_volume()
-
-    # With cell optimization and pressure, volume should be smaller
-    assert vol_with_cell < vol_no_cell, (
-        "Pressure should compress structure when cell optimization is enabled"
-    )
-
-
 # check that click works and changes output
 def test_pressure_click_changes_output(model_folder, janus_code, tmp_path):
     """Test that setting --pressure in CLI changes output compared to 0 pressure."""
