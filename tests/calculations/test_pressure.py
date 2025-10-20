@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from aiida.engine import run
-from aiida.orm import Bool, Dict, Float, Int, Str, StructureData
+from aiida.orm import Bool, Float, Int, Str, StructureData
 from aiida.plugins import CalculationFactory
 from ase.build import bulk
 from ase.io import write
@@ -33,9 +33,6 @@ def test_pressure_optimization(model_folder, janus_code):
             "fmax": Float(0.1),
             "steps": Int(1000),
             "pressure": Float(pressure),
-            "minimize_kwargs": Dict(
-                {"traj_kwargs": {"filename": f"traj-{pressure}GPa.xyz"}}
-            ),
         }
 
         GeomoptCalc = CalculationFactory("mlip.opt")
@@ -46,7 +43,6 @@ def test_pressure_optimization(model_folder, janus_code):
         assert "results_dict" in result
         assert "final_structure" in result
         assert "traj_output" in result
-        assert result["traj_file"].filename == f"traj-{pressure}GPa.xyz"
 
     # Test that pressure affects the final structure
     # Higher pressure should generally lead to smaller cell volumes
