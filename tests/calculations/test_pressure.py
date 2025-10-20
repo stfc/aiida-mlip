@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+import subprocess
+
 from aiida.engine import run
 from aiida.orm import Bool, Float, Int, Str, StructureData
 from aiida.plugins import CalculationFactory
 from ase.build import bulk
 from ase.io import write
-from click.testing import CliRunner
 
 from aiida_mlip.data.model import ModelData
 
@@ -85,66 +86,55 @@ def test_pressure_command_line_generation(
     assert str(test_pressure) in cmdline_str
 
 
-# check that click works and changes output
-def test_pressure_click_changes_output(model_folder, janus_code, tmp_path):
-    """Test that setting --pressure in CLI changes output compared to 0 pressure."""
+def test_pressure_verdi_run(example_path, janus_code, tmp_path):
+    """Test pressure option click."""
     # Create a temporary structure file
     structure_file = tmp_path / "test_structure.cif"
     nacl = bulk("NaCl", "rocksalt", 5.63)
     write(str(structure_file), nacl)
 
-    from examples.calculations.submit_geomopt import cli
-
-    runner = CliRunner()
+    example_file_path = example_path / "submit_geomopt.py"
 
     # Run with 0 pressure (baseline)
-    result_0_pressure = runner.invoke(
-        cli,
-        [
-            "janus@localhost",
-            "--struct",
-            str(structure_file),
-            "--model",
-            str(model_folder / "mace_mp_small.model"),
-            "--arch",
-            "mace_mp",
-            "--device",
-            "cpu",
-            "--opt_cell_fully",
-            "True",
-            "--pressure",
-            "0.0",
-            "--steps",
-            "100",
-        ],
-    )
+    command_0_pressure = [
+        "verdi",
+        "run",
+        example_file_path,
+        f"{janus_code.label}@{janus_code.computer.label}",
+        "--struct",
+        str(structure_file),
+        "--pressure",
+        "0.0",
+        "--opt_cell_fully",
+        "True",
+        "--steps",
+        "100",
+    ]
 
     # Run with 5 GPa pressure
-    result_5_pressure = runner.invoke(
-        cli,
-        [
-            "janus@localhost",
-            "--struct",
-            str(structure_file),
-            "--model",
-            str(model_folder / "mace_mp_small.model"),
-            "--arch",
-            "mace_mp",
-            "--device",
-            "cpu",
-            "--opt_cell_fully",
-            "True",
-            "--pressure",
-            "5.0",  # Apply pressure via CLI
-            "--steps",
-            "100",
-        ],
+    command_5_pressure = [
+        "verdi",
+        "run",
+        example_file_path,
+        f"{janus_code.label}@{janus_code.computer.label}",
+        "--struct",
+        str(structure_file),
+        "--pressure",
+        "5.0",
+        "--opt_cell_fully",
+        "True",
+        "--steps",
+        "100",
+    ]
+
+    # Execute both commands
+    result_0_pressure = subprocess.run(
+        command_0_pressure, capture_output=True, text=True, check=False
+    )
+    result_5_pressure = subprocess.run(
+        command_5_pressure, capture_output=True, text=True, check=False
     )
 
-    # Both should complete successfully
-    assert result_0_pressure.exit_code == 0, (
-        f"0 pressure CLI failed: {result_0_pressure.output}"
-    )
-    assert result_5_pressure.exit_code == 0, (
-        f"5 GPa CLI failed: {result_5_pressure.output}"
-    )
+    # Both should complete successfully (like test_example_opt)
+    assert result_0_pressure.returncode == 0
+    assert result_5_pressure.returncode == 0
