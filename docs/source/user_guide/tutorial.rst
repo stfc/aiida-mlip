@@ -173,6 +173,7 @@ The calculation can also be interacted with through verdi cli. Use ``verdi proce
     minimize_kwargs  1129  Dict
     opt_cell_lengths 1125  Bool
     xyz_output_name  1127  Str
+    pressure         1118  Float
 
     Outputs            PK  Type
     ---------------  ----  --------------
