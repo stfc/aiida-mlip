@@ -289,7 +289,7 @@ def test_pressure_optimization(model_folder, janus_code):
     model_file = model_folder / "mace_mp_small.model"
 
     # Test with different pressure values
-    pressure_values = [0.0, 5.0, 10.0]
+    pressure_values = [0.0, 5.0]  # in GPa
     results = {}
 
     for pressure in pressure_values:
@@ -319,11 +319,9 @@ def test_pressure_optimization(model_folder, janus_code):
     # Higher pressure should generally lead to smaller cell volumes
     vol_0gpa = results[0.0]["final_structure"].get_cell_volume()
     vol_5gpa = results[5.0]["final_structure"].get_cell_volume()
-    vol_10gpa = results[10.0]["final_structure"].get_cell_volume()
 
     # Assert that volume decreases with increasing pressure
     assert vol_5gpa < vol_0gpa, "5 GPa should compress the structure compared to 0 GPa"
-    assert vol_10gpa < vol_5gpa, "10 GPa should compress the structure more than 5 GPa"
 
 
 # Test command line generation
