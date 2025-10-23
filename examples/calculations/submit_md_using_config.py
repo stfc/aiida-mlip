@@ -23,9 +23,7 @@ structure = load_structure()
 
 
 config = JanusConfigfile(
-    Path("../../../tests/calculations/configs/config_janus_md.yml")
-    .expanduser()
-    .resolve()
+    Path("../../../tests/calculations/configs/config_janus_md.yml").resolve()
 )
 
 # Define calculation to run
