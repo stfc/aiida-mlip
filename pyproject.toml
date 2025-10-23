@@ -39,7 +39,7 @@ aiida-psuedo = [
     "aiida-pseudo<2.0.0,>=1.7.0",
 ]
 aiida-quantumespresso = [
-    "aiida-quantumespresso5.0.0,>=4.14.0",
+    "aiida-quantumespresso<5.0.0,>=4.14.0",
 ]
 
 [project.urls]
