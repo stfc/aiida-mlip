@@ -53,23 +53,23 @@ def process_and_split_data(
 
     Parameters
     ----------
-        trajectory_data : dict
-            A dict of structures as SinglefileData type.
-        config_types : list
-            List of configuration types to process.
-        n_samples : int
-            The target number of samples for each configuration type.
-        scale : float
-            Scaling factor for the MACE descriptors.
-        prefix : str
-            A prefix string for the output filenames.
-        append_mode : bool
-            If True, append to existing files. Otherwise, overwrite.
+    trajectory_data : dict
+        A dict of structures as SinglefileData type.
+    config_types : list
+        List of configuration types to process.
+    n_samples : int
+        The target number of samples for each configuration type.
+    scale : float
+        Scaling factor for the MACE descriptors.
+    prefix : str
+        A prefix string for the output filenames.
+    append_mode : bool
+        If True, append to existing files. Otherwise, overwrite.
 
     Returns
     -------
-        files : dict
-            A dict instance with file paths.
+    files : dict
+        A dict instance with file paths.
     """
     config_types = config_types.value
     n_samples = n_samples.value
