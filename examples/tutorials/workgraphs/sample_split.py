@@ -71,15 +71,21 @@ def process_and_split_data(
         files : dict
             A dict instance with file paths.
     """
-    if isinstance(trajectory_data, dict):
+    config_types = config_types.value
+    n_samples = n_samples.value
+    prefix = prefix.value
+    scale = scale.value
+    append_mode = append_mode.value
+
+    if isinstance(trajectory_data["trajectory_data"], dict):
         atoms = []
-        for data in trajectory_data.values():
+        for data in trajectory_data["trajectory_data"].values():
             with data.open() as handle:
                 ase_atoms = read(handle, format="extxyz")
             atoms.append(ase_atoms)
 
     else:
-        traj_path = Path(trajectory_data)
+        traj_path = Path(trajectory_data["trajectory_data"])
         if not traj_path.exists():
             raise FileNotFoundError(f"Error: Trajectory file not found at {traj_path}")
         atoms = read(traj_path, index=":")
