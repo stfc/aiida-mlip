@@ -38,6 +38,9 @@ fpsample = [
 aiida-psuedo = [
     "aiida-pseudo<2.0.0,>=1.7.0",
 ]
+aiida-quantumespresso = [
+    "aiida-quantumespresso5.0.0,>=4.14.0",
+]
 
 [project.urls]
 repository = "https://github.com/stfc/aiida-mlip/"
