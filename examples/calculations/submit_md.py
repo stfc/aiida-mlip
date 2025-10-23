@@ -90,7 +90,7 @@ def md(params: dict) -> None:
     "--ensemble", default="nve", type=str, help="Name of thermodynamic ensemble."
 )
 @click.option(
-    "--md_dict_str",
+    "--md-dict-str",
     default="{}",
     type=str,
     help="String containing a dictionary with other md parameters",
