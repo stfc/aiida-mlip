@@ -280,9 +280,6 @@ def test_run_config_traj(model_folder, janus_code, config_folder, tmp_path):
     assert result["traj_file"].filename == "test-traj.xyz"
 
 
-# Test that pressure affects the geometry optimization
-
-
 # Structure changes depending on pressure applied
 def test_pressure_optimization(model_folder, janus_code):
     """Test geometry optimization with external pressure applied."""
