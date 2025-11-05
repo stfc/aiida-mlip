@@ -248,3 +248,5 @@ def run_apidoc(_):
 
 def setup(app):
     app.connect("builder-inited", run_apidoc)
+
+nbsphinx_allow_errors = True
