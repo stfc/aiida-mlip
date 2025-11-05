@@ -177,3 +177,36 @@ def test_run_train(janus_code, config_folder):
     obtained_res = result["results_dict"].get_dict()
     assert "logs" in result
     assert obtained_res["loss"] == pytest.approx(0.062798671424389)
+
+
+def test_valid_parsing(janus_code, config_folder, fixture_sandbox):
+    """Test to check if fine tuning params are parsing correctly."""
+    model_file = config_folder / "test.model"
+    config_path = config_folder / "mlip_train.yml"
+    config = JanusConfigfile(file=config_path)
+
+    test_config_filepath = f"{fixture_sandbox.abspath}/test_config_file.yml"
+
+    # Create a yaml file which does not have a trailing white space
+    with open(test_config_filepath, "w", encoding="utf-8") as config_params:
+        config_params.write(config.get_content().rstrip())
+
+    test_config_file = JanusConfigfile(file=test_config_filepath)
+
+    inputs = {
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "fine_tune": Bool(True),
+        "code": janus_code,
+        "mlip_config": test_config_file,
+        "foundation_model": ModelData.from_local(
+            file=model_file, architecture="mace_mp"
+        ),
+    }
+
+    FinetuneCalc = CalculationFactory("mlip.train")
+    result = run(FinetuneCalc, **inputs)
+
+    assert test_config_file.get_content()[-1] != "\n"
+    assert fixture_sandbox.get_content_list() == ["test_config_file.yml"]
+    assert "results_dict" in result
+    assert "logs" in result
