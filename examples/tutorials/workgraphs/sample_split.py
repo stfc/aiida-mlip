@@ -47,7 +47,7 @@ def process_and_split_data(
     scale: float,
     append_mode: bool,
     **trajectory_data,
-) -> dict:
+) -> dict[str, Path]:
     """
     Split a trajectory into training, validation, and test sets.
 
