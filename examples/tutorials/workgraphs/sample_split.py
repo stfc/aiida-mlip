@@ -2,120 +2,113 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Sequence
 from pathlib import Path
+from typing import Any, SupportsIndex, TextIO, TypeVar
 
-from aiida.orm import Dict, Str
-from aiida_workgraph import task
 from ase.io import read, write
 from fpsample import fps_npdu_kdtree_sampling as sample
 import numpy as np
 
+T = TypeVar("T")
 
-def extract(data, inds):
+
+def extract(data: Sequence[T], inds: Iterable[SupportsIndex]) -> list[T]:
     """Extract elements from a list based on indices."""
     return [data[i] for i in inds]
 
 
-def sampling(data, dims, n_samples):
+def sampling(data: Sequence[T], dims: int, n_samples: int) -> set[T]:
     """Perform furthest point sampling on the given data."""
     n = len(data)
-    if n == 0:
+    if not n:
         return set()
     ldata = np.array(data)
     ldata.reshape(n, dims)
     # Ensure n_samples does not exceed the number of available data points
     actual_n_samples = min(n_samples, n)
-    if actual_n_samples == 0:
+    if not actual_n_samples:
         return set()
     return set(sample(ldata, n_samples=actual_n_samples, start_idx=0))
 
 
-def write_samples(frames, inds, f_s):
+def write_samples(
+    frames: Sequence[Any], inds: Iterable[SupportsIndex], f_s: TextIO
+) -> None:
     """Write selected frames to a file."""
     for i in inds:
         write(f_s, frames[i], write_info=True, append=True)
 
 
-@task.calcfunction()
 def process_and_split_data(
     config_types: str,
     n_samples: int,
     prefix: str,
     scale: float,
     append_mode: bool,
-    trajectory_path: str | None = None,
     **trajectory_data,
-) -> Dict:
+) -> dict[str, Path]:
     """
     Split a trajectory into training, validation, and test sets.
 
     Parameters
     ----------
-    config_types: str
+    trajectory_data : dict
+        A dict of structures as SinglefileData type.
+    config_types : list
         List of configuration types to process.
-    n_samples:
-        int The target number of samples for each configuration type.
-    scale: float
+    n_samples : int
+        The target number of samples for each configuration type.
+    scale : float
         Scaling factor for the MACE descriptors.
-    prefix str:
+    prefix : str
         A prefix string for the output filenames.
-    append_mode: bool
+    append_mode : bool
         If True, append to existing files. Otherwise, overwrite.
-    trajectory_path: str (Optional)
-        Path to trajectory
 
     Returns
     -------
-    aiida.orm.nodes.data.dict.Dict
-        An instance of a orm.Dict with file names and file paths
-
+    files : dict
+        A dict instance with file paths.
     """
-    if (trajectory_path is None) == (trajectory_data is None):
-        raise ValueError("Please specify the trajectory_path or trajectory_data.")
-
     config_types = config_types.value
     n_samples = n_samples.value
     prefix = prefix.value
     scale = scale.value
     append_mode = append_mode.value
 
-    if trajectory_path is None:
-        print("Using trajectory from data: trajectory_data")
-
+    if isinstance(trajectory_data["trajectory_data"], dict):
         atoms = []
-        for _, data in trajectory_data.items():
-            # Each trajectory_data item is a single structure
+        for data in trajectory_data["trajectory_data"].values():
             with data.open() as handle:
                 ase_atoms = read(handle, format="extxyz")
             atoms.append(ase_atoms)
 
     else:
-        print(f"Using trajectory from path: {trajectory_path}")
-        traj_path = Path(trajectory_path)
+        traj_path = Path(trajectory_data["trajectory_data"])
         if not traj_path.exists():
-            print(f"Error: Trajectory file not found at {traj_path}")
-            return None
+            raise FileNotFoundError(f"Error: Trajectory file not found at {traj_path}")
         atoms = read(traj_path, index=":")
 
-    if prefix and not prefix.endswith("-"):
-        prefix += "-"
+    if prefix:
+        prefix = prefix.rstrip("-") + "-"
 
     train_file = Path(f"{prefix}train.xyz")
     valid_file = Path(f"{prefix}valid.xyz")
     test_file = Path(f"{prefix}test.xyz")
 
     if not append_mode:
-        _ = [p.unlink(missing_ok=True) for p in [train_file, valid_file, test_file]]
+        for file in (train_file, valid_file, test_file):
+            file.unlink(missing_ok=True)
 
     print(f"create files: {train_file=}, {valid_file=} and {test_file=}")
 
     stats = {}
-    for i, struct in enumerate(atoms):
-        system_name = struct.info.get("system_name", "unknown_system")
-        config_type = struct.info.get("config_type", "all")
+    for i, structs in enumerate(atoms):
+        system_name = structs.info.get("system_name", "unknown_system")
+        config_type = structs.info.get("config_type", "all")
         key = (config_type, system_name)
-        if key not in stats:
-            stats[key] = []
+        stats.setdefault(key, [])
         stats[key].append(i)
 
     k = 0
@@ -134,15 +127,15 @@ def process_and_split_data(
                 ns_total_target = n
 
             specs = set(atoms[indices[0]].get_chemical_symbols())
-            dims = len(specs)
+            atoms_num = len(specs)
 
             desc_per_spec = [
                 [atoms[x].info[f"mace_mp_{s}_descriptor"] * scale for s in specs]
                 for x in indices
             ]
 
-            ind_spec_train = sampling(desc_per_spec, dims, ns_train_target)
-            train_ind = extract(indices, list(ind_spec_train))
+            ind_spec_train = sampling(desc_per_spec, atoms_num, ns_train_target)
+            train_ind = extract(indices, ind_spec_train)
 
             ns_train_actual = len(train_ind)
 
@@ -153,7 +146,7 @@ def process_and_split_data(
             ):
                 train_ind.append(indices[-1])
 
-            left_indices = list(set(indices) - set(train_ind))
+            leftover_indices = list(set(indices) - set(train_ind))
 
             nvt_target = ns_total_target - ns_train_actual
             if nvt_target < 0:
@@ -165,13 +158,13 @@ def process_and_split_data(
                     vt_target={nvt_target}"
             )
 
-            if left_indices and nvt_target > 0:
+            if leftover_indices and nvt_target > 0:
                 desc_per_spec_vt = [
                     [atoms[x].info[f"mace_mp_{s}_descriptor"] * scale for s in specs]
-                    for x in left_indices
+                    for x in leftover_indices
                 ]
-                vt_spec = sampling(desc_per_spec_vt, dims, nvt_target)
-                vt_ind = extract(left_indices, list(vt_spec))
+                vt_spec = sampling(desc_per_spec_vt, atoms_num, nvt_target)
+                vt_ind = extract(leftover_indices, vt_spec)
 
                 test_ind = vt_ind[0::2]
                 valid_ind = vt_ind[1::2]
@@ -181,13 +174,11 @@ def process_and_split_data(
             write_samples(atoms, train_ind, train_file)
             write_samples(atoms, test_ind, test_file)
             write_samples(atoms, valid_ind, valid_file)
-            return Dict(
-                {
-                    "train_file": str(Path(train_file).resolve()),
-                    "test_file": str(Path(test_file).resolve()),
-                    "valid_file": str(Path(valid_file).resolve()),
-                }
-            )
+            return {
+                "train_file": str(Path(train_file).resolve()),
+                "test_file": str(Path(test_file).resolve()),
+                "valid_file": str(Path(valid_file).resolve()),
+            }
 
         print(
             f"Config type '{run_type}' not in target list. \
@@ -195,10 +186,8 @@ def process_and_split_data(
         )
         write_samples(atoms, indices, train_file)
 
-        return Dict(
-            {
-                "train_file": str(Path(train_file).resolve()),
-            }
-        )
+        return {
+            "train_file": str(Path(train_file).resolve()),
+        }
 
-    return Str(f"Found {k} structures that were too similar during sampling.")
+    return f"Found {k} structures that were too similar during sampling."
