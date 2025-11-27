@@ -28,20 +28,24 @@ class EOSParser(BaseParser):
 
         if exit_code == ExitCode(0):
             
-            
-
             files_retrieved = self.retrieved.list_object_names()
             print("retrieved", files_retrieved)
             print("outputs_folder",self.node.get_remote_workdir())
             print("node", self.node.get_retrieve_list())
             print("option", self.node.get_options())
-            # with self.retrieved.open(default_output_file, "rb") as handle:
-            #     self.out("traj_file", SinglefileData(file=handle, filename=default_output_file))
 
-            default_output_folder = self.node.get_remote_workdir()
 
-            content = [x for x in Path(default_output_folder).iterdir() if x.is_dir()]
-            print(content)
+            default_output_folder = f"{self.node.get_remote_workdir()}/janus_results"
+
+
+            content = [x for x in Path(default_output_folder).iterdir()]
+            for file_path in content:
+                filename = str(file_path)[len(default_output_folder):]
+                print(filename)
+            
+            # for files in content:
+            #     if str(files k) == f"{default_output_folder}/aiida-generated.extxyz":
+            #         print(read(files, format="ext"))
 
             # self.out("xyz_output", )
     
