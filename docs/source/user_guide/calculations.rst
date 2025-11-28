@@ -201,4 +201,4 @@ They will be converted to AiiDA data types by the script itself.
 
 .. code-block:: python
 
-    verdi run submit_md.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --ensemble "nve" --md_dict_str "{'temp':300,'steps':4,'traj-every':3,'stats-every':1}"
+    verdi run submit_md.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --ensemble "nve" --md-dict-str "{'temp':300,'steps':4,'traj-every':3,'stats-every':1}"
