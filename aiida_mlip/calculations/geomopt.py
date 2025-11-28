@@ -82,6 +82,13 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             help="All other keyword arguments to pass to geometry optimizer",
         )
 
+        spec.input(
+            "pressure",
+            valid_type=Float,
+            required=False,
+            help="Scalar pressure when optimizing cell geometry, in GPa.",
+        )
+
         spec.inputs["metadata"]["options"]["parser_name"].default = "mlip.opt_parser"
 
         spec.output("traj_file", valid_type=SinglefileData)
@@ -114,14 +121,10 @@ class GeomOpt(Singlepoint):  # numpydoc ignore=PR01
             "minimize-kwargs": minimize_kwargs,
             "write-traj": True,
         }
-        if "opt_cell_fully" in self.inputs:
-            geom_opt_cmdline["opt-cell-fully"] = self.inputs.opt_cell_fully.value
-        if "opt_cell_lengths" in self.inputs:
-            geom_opt_cmdline["opt-cell-lengths"] = self.inputs.opt_cell_lengths.value
-        if "fmax" in self.inputs:
-            geom_opt_cmdline["fmax"] = self.inputs.fmax.value
-        if "steps" in self.inputs:
-            geom_opt_cmdline["steps"] = self.inputs.steps.value
+
+        for key in ("opt_cell_fully", "opt_cell_lengths", "fmax", "steps", "pressure"):
+            if key in self.inputs:
+                geom_opt_cmdline[key] = getattr(self.inputs, key).value
 
         # Adding command line params for when we run janus
         # 'geomopt' is overwriting the placeholder "calculation" from the base.py file
