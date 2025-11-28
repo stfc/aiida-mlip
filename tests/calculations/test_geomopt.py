@@ -372,7 +372,7 @@ def test_pressure_verdi_run(example_path, janus_code, tmp_path):
         str(structure_file),
         "--pressure",
         "5.0",
-        "--opt_cell_fully",
+        "--opt-cell-fully",
         "True",
     ]
     result_5_pressure = subprocess.run(
