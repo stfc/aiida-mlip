@@ -10,7 +10,7 @@ from aiida_mlip.helpers.converters import kwarg_to_param
 
 class EOS(BaseJanus):  # numpydoc ignore=PR01
 
-    XYZ_OUTPUT = "aiida-results.xyz"
+    # XYZ_OUTPUT = "aiida-results.xyz"
     DEFAULT_SUMMARY_FILE = "eos-summary.yml"
 
     @classmethod
@@ -61,5 +61,6 @@ class EOS(BaseJanus):  # numpydoc ignore=PR01
         ]
 
         calcinfo.retrieve_list.append("xyz_output")
+
         
         return calcinfo

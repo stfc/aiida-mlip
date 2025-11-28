@@ -40,8 +40,14 @@ class EOSParser(BaseParser):
 
             content = [x for x in Path(default_output_folder).iterdir()]
             for file_path in content:
-                filename = str(file_path)[len(default_output_folder):]
-                print(filename)
+                filename = str(file_path)[len(default_output_folder)+1:]
+                if filename == "aiida-generated.extxyz":
+                    print(filename)
+                    self.out("xyz_output", SinglefileData(file_path, filename="xyz_output"))
+                else:
+                    self.out(filename, SinglefileData(file_path))
+            
+            # self.out("xyz_output", structs)
             
             # for files in content:
             #     if str(files k) == f"{default_output_folder}/aiida-generated.extxyz":
