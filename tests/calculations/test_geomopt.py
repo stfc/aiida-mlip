@@ -144,6 +144,8 @@ def test_example_opt(example_path, janus_code):
         "run",
         example_file_path,
         f"{janus_code.label}@{janus_code.computer.label}",
+        "--opt-cell-lengths",
+        "True",
     ]
 
     # Execute the command
@@ -370,7 +372,7 @@ def test_pressure_verdi_run(example_path, janus_code, tmp_path):
         str(structure_file),
         "--pressure",
         "5.0",
-        "--opt_cell_fully",
+        "--opt-cell-fully",
         "True",
     ]
     result_5_pressure = subprocess.run(

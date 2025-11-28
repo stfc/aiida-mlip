@@ -95,13 +95,13 @@ def geomopt(params: dict) -> None:
 )
 @click.option("--fmax", default=0.1, type=float, help="Maximum force for convergence.")
 @click.option(
-    "--opt_cell_lengths",
+    "--opt-cell-lengths",
     default=False,
     type=bool,
     help="Optimise cell vectors, as well as atomic positions.",
 )
 @click.option(
-    "--opt_cell_fully",
+    "--opt-cell-fully",
     default=False,
     type=bool,
     help="Fully optimise the cell vectors, angles, and atomic positions.",
