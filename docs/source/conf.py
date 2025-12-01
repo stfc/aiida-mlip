@@ -42,6 +42,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
     "sphinxcontrib.contentui",
+    "nbsphinx",
 ]
 
 # Add the numpydoc_show_inherited_class_members option
@@ -247,3 +248,5 @@ def run_apidoc(_):
 
 def setup(app):
     app.connect("builder-inited", run_apidoc)
+
+nbsphinx_allow_errors = True
