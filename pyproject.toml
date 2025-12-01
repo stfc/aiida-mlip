@@ -6,8 +6,8 @@ authors = [
     { name = "Federica Zanca" },
     { name = "Elliott Kasoar" },
     { name = "Jacob Wilkins" },
-    { name = "Alin M. Elena" },
     { name = "Muhammad Mohsin" },
+    { name = "Alin M. Elena" },
 ]
 requires-python = ">=3.10"
 classifiers = [
