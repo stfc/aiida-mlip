@@ -72,7 +72,7 @@ master_doc = "index"
 # General information about the project.
 project = "aiida-mlip"
 copyright_first_year = "2024"
-copyright_owners = "Federica Zanca, Elliott Kasoar, Jacob Wilkins, Alin M. Elena"
+copyright_owners = "Federica Zanca, Elliott Kasoar, Jacob Wilkins, Muhammad Mohsin, Alin M. Elena"
 
 current_year = str(time.localtime().tm_year)
 copyright_year_string = (
