@@ -21,7 +21,7 @@ readme = "README.md"
 keywords = ["aiida", "plugin"]
 
 dependencies = [
-    "aiida-core<3,>=2.7",
+    "aiida-core==2.7.1",
     "ase<4.0,>=3.24",
     "voluptuous<1,>=0.15.2",
     "janus-core<0.9,>=0.8.3",
@@ -61,6 +61,8 @@ dev = [
 docs = [
     "furo<2025.0.0,>=2024.1.29",
     "markupsafe<2.1",
+    "nbsphinx<1.0.0,>=0.9.0",
+    "pandoc<3.0.0,>=2.0.0",
     "numpydoc<2.0.0,>=1.6.0",
     "sphinx<8.0.0,>=7.2.6",
     "sphinxcontrib-contentui<1.0.0,>=0.2.5",

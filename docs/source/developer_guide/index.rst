@@ -146,7 +146,7 @@ Building the documentation
 Packages in the ``docs`` dependency group install `Sphinx <https://www.sphinx-doc.org>`_
 and other Python packages required to build ``aiida-mlip``'s documentation.
 
-Individual individual documentation pages can be edited directly::
+Individual documentation pages can be edited directly::
 
         docs/source/index.rst
         docs/source/developer_guide/index.rst
