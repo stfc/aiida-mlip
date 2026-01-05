@@ -202,6 +202,22 @@ nitpick_ignore = [
     ("py:class", "QbFields"),
     ("py:class", "aiida_workgraph.workgraph.WorkGraph"),
     ("py:class", "AiidaLoggerType"),
+    # AiiDA internal classes not exposed in intersphinx
+    ("py:class", "aiida.engine.processes.calcjobs.calcjob.CalcJob"),
+    ("py:class", "aiida.common.folders.Folder"),
+    ("py:class", "aiida.engine.processes.process_spec.CalcJobProcessSpec"),
+    ("py:class", "aiida.common.datastructures.CalcInfo"),
+    ("py:class", "aiida.engine.processes.ports.PortNamespace"),
+    ("py:class", "aiida.orm.nodes.data.singlefile.SinglefileData"),
+    ("py:class", "aiida.orm.nodes.data.structure.StructureData"),
+    ("py:class", "aiida.orm.nodes.data.array.trajectory.TrajectoryData"),
+    ("py:class", "aiida.orm.nodes.process.process.ProcessNode"),
+    ("py:class", "aiida.parsers.parser.Parser"),
+    ("py:class", "aiida.engine.processes.exit_code.ExitCode"),
+    ("py:class", "aiida.engine.processes.workchains.workchain.WorkChain"),
+    ("py:class", "aiida.orm.nodes.data.str.Str"),
+    ("py:class", "aiida.orm.utils.managers.NodeLinksManager"),
+    ("py:class", "plumpy.utils.AttributesFrozendict"),
 ]
 
 
@@ -249,4 +265,4 @@ def run_apidoc(_):
 def setup(app):
     app.connect("builder-inited", run_apidoc)
 
-nbsphinx_allow_errors = True
+nbsphinx_allow_errors = False
