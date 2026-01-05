@@ -80,3 +80,6 @@ These are the available calculations
    * Train
 
 For more details on the calculations, please refer to the `calculations section <https://stfc.github.io/aiida-mlip/user_guide/calculations.html>`_.
+
+If you would like a refresher on how to use AiiDA in general, please refer to the `AiiDA user guide <https://aiida.readthedocs.io/projects/aiida-core/en/stable/user_guide/index.html>`_.
+An excellent introduction to Aiida Basics can be found in the `AiiDA Basics tutorial <https://aiida-tutorials.readthedocs.io/en/latest/sections/getting_started/basics.html>`_.

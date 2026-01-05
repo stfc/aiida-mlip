@@ -10,3 +10,7 @@ User guide
     data
     calculations
     training
+    notebooks/singlepoint
+    notebooks/descriptors
+    notebooks/geometry-optimisation
+    notebooks/high-throughput-screening
