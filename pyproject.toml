@@ -91,6 +91,7 @@ module-root = ""
 "mlip.md" = "aiida_mlip.calculations.md:MD"
 "mlip.train" = "aiida_mlip.calculations.train:Train"
 "mlip.descriptors" = "aiida_mlip.calculations.descriptors:Descriptors"
+"mlip.eos" = "aiida_mlip.calculations.eos:EOS"
 
 [project.entry-points."aiida.parsers"]
 "mlip.sp_parser" = "aiida_mlip.parsers.sp_parser:SPParser"
@@ -98,6 +99,7 @@ module-root = ""
 "mlip.md_parser" = "aiida_mlip.parsers.md_parser:MDParser"
 "mlip.train_parser" = "aiida_mlip.parsers.train_parser:TrainParser"
 "mlip.descriptors_parser" = "aiida_mlip.parsers.descriptors_parser:DescriptorsParser"
+"mlip.eos_parser" = "aiida_mlip.parsers.eos_parser:EOSParser"
 
 [tool.pytest.ini_options]
 # Configuration for [pytest](https://docs.pytest.org)
