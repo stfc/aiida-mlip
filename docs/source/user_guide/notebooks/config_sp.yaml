@@ -1,0 +1,5 @@
+arch: mace_mp
+calc-kwargs:
+    calc_kwargs:
+      dispersion: True
+properties: [energy]
