@@ -89,6 +89,7 @@ module-root = ""
 
 [project.entry-points."aiida.calculations"]
 "mlip.sp" = "aiida_mlip.calculations.singlepoint:Singlepoint"
+"mlip.ph" = "aiida_mlip.calculations.phonon:Phonons"
 "mlip.opt" = "aiida_mlip.calculations.geomopt:GeomOpt"
 "mlip.md" = "aiida_mlip.calculations.md:MD"
 "mlip.train" = "aiida_mlip.calculations.train:Train"
@@ -96,6 +97,7 @@ module-root = ""
 
 [project.entry-points."aiida.parsers"]
 "mlip.sp_parser" = "aiida_mlip.parsers.sp_parser:SPParser"
+"mlip.ph_parser" = "aiida_mlip.parsers.ph_parser:PhononParser"
 "mlip.opt_parser" = "aiida_mlip.parsers.opt_parser:GeomOptParser"
 "mlip.md_parser" = "aiida_mlip.parsers.md_parser:MDParser"
 "mlip.train_parser" = "aiida_mlip.parsers.train_parser:TrainParser"

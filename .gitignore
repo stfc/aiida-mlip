@@ -1,3 +1,5 @@
+.venv
+.venv/*
 *.lock
 *.pyc
 *.swo
