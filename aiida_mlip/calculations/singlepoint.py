@@ -72,7 +72,7 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
         )
         spec.output("xyz_output", valid_type=SinglefileData)
 
-        print("defining outputnode")
+        #print("defining outputnode")
         spec.default_output_node = "results_dict"
 
     def prepare_for_submission(

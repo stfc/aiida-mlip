@@ -10,11 +10,7 @@ from aiida.orm import Dict, SinglefileData
 from aiida.orm.nodes.process.process import ProcessNode
 from aiida.plugins import CalculationFactory
 
-import euphonic as eu
-import euphonic.util as util
-
-
-
+import yaml
 
 from aiida_mlip.helpers.converters import convert_numpy
 from aiida_mlip.parsers.base_parser import BaseParser
@@ -102,13 +98,13 @@ class PhononParser(BaseParser):
         with self.retrieved.open(xyz_output, "rb") as handle:
             self.out("xyz_output", SinglefileData(file=handle, filename=xyz_output))
 
-        #content = read(
-        #    Path(self.node.get_remote_workdir(), xyz_output), format="extxyz"
-        #)
-        content = eu.ForceConstants.from_phonopy(summary_name=Path(self.node.get_remote_workdir(), xyz_output))
-        print("Content read from file:", content)
-        results = convert_numpy(content.to_dict())
-        results_node = Dict(results)
+        content = None
+        with open(Path(self.node.get_remote_workdir(), xyz_output)) as f:
+            content = yaml.safe_load(f)
+        
+        #print("Content read from file:", content)
+        results_node = Dict(content)
+        
         self.out("results_dict", results_node)
 
         return ExitCode(0)
