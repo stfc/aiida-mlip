@@ -71,7 +71,7 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
         )
         spec.input(
             "minimize",
-            valid_type=Bool,
+            valid_type=Bool,   #these need to be aiida.orm types
             required=False,
             help="minimise unit cell prior to phonon calculation",
         )
@@ -108,7 +108,7 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
         calcinfo = super().prepare_for_submission(folder)
         codeinfo = calcinfo.codes_info[0]
 
-        print("inputs ", self.inputs)
+        #print("inputs ", self.inputs)
 
         # Adding command line params for when we run janus
         # singlepoint is overwriting the placeholder "calculation" from the base.py file
@@ -140,6 +140,6 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
 
         calcinfo.retrieve_list.append(xyz_filename)
 
-        print("codeinfo ", codeinfo)
+        #print("codeinfo ", codeinfo)
 
         return calcinfo
