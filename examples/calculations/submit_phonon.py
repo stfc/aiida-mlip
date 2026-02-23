@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import yaml
+import json
 
 from aiida.common import NotExistent
 from aiida.engine import run_get_node
@@ -71,17 +72,16 @@ def phonon(params: dict) -> None:
     with open('data.yml', 'w') as file:
         yaml.dump(result["results_dict"].get_dict(), file)
 
+    #or dump the phonopy data to a json file
+    filepath = "data.json"
+    with open(filepath, "w") as file:
+        json.dump(result["results_dict"].get_dict(), file, indent=4)  # (The indent is optional, but will make it more human readable)
+
+    #access the data such as the supercell matrix
     supercell_matrix = result['results_dict'].get_dict()['supercell_matrix']
-    print(f"\n\n\n cell vectors: {supercell_matrix}")
+    print(f"\n\n\n super cell matriz: {supercell_matrix}")
 
-    remote = load_node(result["remote_folder"].pk)
-    retrieved = load_node(result["retrieved"].pk)
-
-#   print("remote",remote)
-#   print("retrieved", retrieved)
-
-#   print("outputs", node.outputs)
-
+    
 
 # Arguments and options to give to the cli when running the script
 @click.command("cli")

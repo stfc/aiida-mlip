@@ -32,7 +32,9 @@ dependencies = [
 
 [project.optional-dependencies]
 mace = [
-    "janus-core[mace]"
+    "janus-core[mace]",
+    "torch",
+    "mace-torch"
 ]
 fpsample = [
     "fpsample<0.4,>=0.3.3",
