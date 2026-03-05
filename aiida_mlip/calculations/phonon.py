@@ -114,6 +114,8 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
         # singlepoint is overwriting the placeholder "calculation" from the base.py file
 
         # The inputs are saved in the node, but we want their value as a string
+
+        print("here are the inputs ", self.inputs)
         xyz_filename = (self.inputs.out).value
         supercell = (self.inputs.supercell).value
         aiida_prefix = "aiida"

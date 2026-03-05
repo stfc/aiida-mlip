@@ -23,7 +23,7 @@ readme = "README.md"
 keywords = ["aiida", "plugin"]
 
 dependencies = [
-    "aiida-core==2.7.1",
+    "aiida-core<3,>=2.7",
     "ase<4.0,>=3.24",
     "voluptuous<1,>=0.15.2",
     "janus-core<0.9,>=0.8.3",
@@ -32,9 +32,7 @@ dependencies = [
 
 [project.optional-dependencies]
 mace = [
-    "janus-core[mace]",
-    "torch",
-    "mace-torch"
+    "janus-core[mace]"
 ]
 fpsample = [
     "fpsample<0.4,>=0.3.3",
@@ -91,7 +89,7 @@ module-root = ""
 
 [project.entry-points."aiida.calculations"]
 "mlip.sp" = "aiida_mlip.calculations.singlepoint:Singlepoint"
-"mlip.ph" = "aiida_mlip.calculations.phonon:Phonons"
+"mlip.ph" = "aiida_mlip.calculations.phonon:Phonon"
 "mlip.opt" = "aiida_mlip.calculations.geomopt:GeomOpt"
 "mlip.md" = "aiida_mlip.calculations.md:MD"
 "mlip.train" = "aiida_mlip.calculations.train:Train"
