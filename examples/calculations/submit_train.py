@@ -14,13 +14,11 @@ from aiida_mlip.data.config import JanusConfigfile
 metadata = {"options": {"resources": {"num_machines": 1}}}
 code = load_code("janus@localhost")
 
+ROOT_DIR = Path(__file__).resolve().parents[2]
+
 # All the other parameters we want them from the config file
 # We want to pass it as a AiiDA data type for the provenance
-mlip_config = JanusConfigfile(
-    Path("~/aiida-mlip/tests/calculations/configs/mlip_train.yml")
-    .expanduser()
-    .resolve()
-)
+mlip_config = JanusConfigfile(ROOT_DIR / "tests/calculations/configs/mlip_train.yml")
 
 # Define calculation to run
 TrainCalc = CalculationFactory("mlip.train")
