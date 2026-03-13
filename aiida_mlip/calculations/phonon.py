@@ -76,6 +76,19 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
             help="minimise unit cell prior to phonon calculation",
         )
 
+        spec.input(
+            "no_hdf5",
+            valid_type=Bool,   #these need to be aiida.orm types
+            required=False,
+            help="if true then phonopy yaml will contain force constants",
+        )
+        spec.input(
+            "dos",
+            valid_type=Bool,   #these need to be aiida.orm types
+            required=False,
+            help="flag to calculate the denity of states",
+        )
+
         spec.inputs["metadata"]["options"]["parser_name"].default = "mlip.ph_parser"
 
         # Define outputs. The default is a dictionary with the content of the phonon file
@@ -85,6 +98,8 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
             help="The `results_dict` output node of the successful calculation.",
         )
         spec.output("xyz_output", valid_type=SinglefileData)
+        spec.output("force_constant", valid_type=SinglefileData)
+        spec.output('dos', valid_type=SinglefileData)
 
         spec.default_output_node = "results_dict"
 
@@ -115,14 +130,13 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
 
         # The inputs are saved in the node, but we want their value as a string
 
-        print("here are the inputs ", self.inputs)
+        #print("here are the inputs ", self.inputs)
         xyz_filename = (self.inputs.out).value
         supercell = (self.inputs.supercell).value
         aiida_prefix = "aiida"
         codeinfo.cmdline_params = [
             "phonons",
             *codeinfo.cmdline_params[1:],
-            "--no-hdf5", # this is needed to force janus-core to write out force constants in a yaml file
             "--file-prefix",
             aiida_prefix,
             "--supercell",
@@ -135,12 +149,24 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
         if minimize:
             codeinfo.cmdline_params += ["--minimize",]
 
+   
+        nohdf5 = (self.inputs.no_hdf5).value
+        
+        if nohdf5:
+            codeinfo.cmdline_params += ["--no-hdf5",] # this is needed to force janus-core to write out force constants in a yaml file
+
+        dos = (self.inputs.dos).value
+        if dos:
+            codeinfo.cmdline_params += ["--dos",]
+
         #properties left in just in case for further expansion
         if "properties" in self.inputs:
             properties = self.inputs.properties.value
             codeinfo.cmdline_params += ["--properties", properties]
 
         calcinfo.retrieve_list.append(xyz_filename)
+        calcinfo.retrieve_list.append("aiida-force_constants.hdf5")
+        calcinfo.retrieve_list.append("aiida-dos.dat")
 
         #print("codeinfo ", codeinfo)
 

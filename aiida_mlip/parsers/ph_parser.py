@@ -11,6 +11,10 @@ from aiida.orm.nodes.process.process import ProcessNode
 from aiida.plugins import CalculationFactory
 
 import yaml
+import h5py
+import os
+import numpy as np
+
 
 from aiida_mlip.helpers.converters import convert_numpy
 from aiida_mlip.parsers.base_parser import BaseParser
@@ -81,6 +85,8 @@ class PhononParser(BaseParser):
             return exit_code
 
         xyz_output = (self.node.inputs.out).value
+        nohdf5 = (self.node.inputs.no_hdf5).value
+        dos = (self.node.inputs.dos).value
 
         # Check that folder content is as expected
         files_retrieved = self.retrieved.list_object_names()
@@ -94,7 +100,7 @@ class PhononParser(BaseParser):
 
         # Add output file to the outputs
         self.logger.info(f"Parsing '{xyz_output}'")
-
+        
         with self.retrieved.open(xyz_output, "rb") as handle:
             self.out("xyz_output", SinglefileData(file=handle, filename=xyz_output))
 
@@ -104,7 +110,47 @@ class PhononParser(BaseParser):
         
         #print("Content read from file:", content)
         results_node = Dict(content)
-        
         self.out("results_dict", results_node)
 
+        #dos
+        if dos:
+            content = None
+            tmp_path = os.path.join(Path(self.node.get_remote_workdir(), "aiida-dos.dat"))
+            retrieved = self.retrieved
+
+            try:
+                filepath = retrieved.base.repository.get_object_content( "aiida-dos.dat", mode='rb')
+            except Exception:
+                print("exception in getting filepath")
+                return self.exit_codes.ERROR_MISSING_OUTPUT
+            
+            with open(tmp_path, 'wb') as handle:
+                handle.write(filepath)
+
+            results_node = SinglefileData(file=tmp_path)
+            self.out("dos", results_node)
+
+        if nohdf5 == False:
+            fc_output = "aiida-force_constants.hdf5"
+            retrieved = self.retrieved
+
+            try:
+                filepath = retrieved.base.repository.get_object_content(fc_output, mode='rb')
+            except Exception:
+                print("exception in getting filepath")
+                return self.exit_codes.ERROR_MISSING_OUTPUT
+
+        # Write temporary file
+           
+            tmp_path = os.path.join(Path(self.node.get_remote_workdir(), fc_output))
+            
+
+            with open(tmp_path, 'wb') as handle:
+                handle.write(filepath)
+
+                hdf5_node = SinglefileData(file=tmp_path)
+                
+            self.out('force_constant', hdf5_node)
+
+            
         return ExitCode(0)

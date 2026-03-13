@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+import os
 import ast
 import yaml
 import json
@@ -13,6 +15,11 @@ from aiida.plugins import CalculationFactory
 import click
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
+
+from aiida.engine import calcfunction
+import aiida.orm as orm
+import tempfile
+import os.path as path
 
 
 def phonon(params: dict) -> None:
@@ -53,20 +60,41 @@ def phonon(params: dict) -> None:
     else:
         inputs["minimize"] = False
 
+    nohdf5 = bool(params["no_hdf5"])
+    if nohdf5:
+        inputs["no_hdf5"] = True
+    else:
+        inputs["no_hdf5"] = False
+
+    dos = bool(params["dos"])
+    if dos:
+        inputs["dos"] = True
+    else:
+        inputs["dos"] = False
+
     # Only calc_kwargs add if set
     if params["calc_kwargs"]:
         inputs["calc_kwargs"] = Dict(params["calc_kwargs"])
 
-    # Run calculation
+    #############################################################
+    #  Run calculation
+    #############################################################
     result, node = run_get_node(PhononCalc, **inputs)
     print(f"\n\n Node of calculation: {node} \n\n")
     print(f"\n\n use verdi calcjob gotocomputer {node.pk} to create a shell in the work directory \n\n")
 
-
-    print(f"Results dictionary: \n\n")
+    #start processing the results
+    print(f"\n Results dictionary: \n")
     print(result.keys())
 
-    print(result["results_dict"].get_dict())
+    #print(result["results_dict"].get_dict())
+    print(f"\n remote folder {result['remote_folder']} {node.get_remote_workdir()} \n")
+    print(f"\n retrieved {result['retrieved']}  \n")
+    if nohdf5 == False:
+        print(f"\n force_constant {result['force_constant']} \n")
+
+    if dos:
+        print(f"\n density of states {result['dos']} \n")
 
     #dump the dictionary as a yaml file - for inspection / testing
     with open('data.yml', 'w') as file:
@@ -79,9 +107,18 @@ def phonon(params: dict) -> None:
 
     #access the data such as the supercell matrix
     supercell_matrix = result['results_dict'].get_dict()['supercell_matrix']
-    print(f"\n\n\n super cell matriz: {supercell_matrix}")
+    print(f"\n\n super cell matriz: {supercell_matrix}")
 
-    
+    #verify the hdf5 containing force constants
+    if nohdf5 == False:
+        import h5py
+        hdf5_path = os.path.join(Path(node.get_remote_workdir(), 'aiida-force_constants.hdf5'))
+
+        with h5py.File(hdf5_path, 'r') as f:
+            # List all top-level groups/datasets
+            print(f"\n Top-level keys :", list(f.keys()))
+
+
 
 # Arguments and options to give to the cli when running the script
 @click.command("cli")
@@ -114,12 +151,18 @@ def phonon(params: dict) -> None:
     "--minimize", is_flag=True, help="minimize the unit cell before calculating the force constants."
 )
 @click.option(
+    "--nohdf5", is_flag=True, help="sets flag to true so that force constants are written to yaml file."
+)
+@click.option(
+    "--dos", is_flag=True, help="calculates the density of states."
+)
+@click.option(
     "--calc-kwargs",
     default="{}",
     type=str,
     help="Keyword arguments to pass to calculator.",
 )
-def cli(codelabel, struct, model, arch, device, supercell, minimize, calc_kwargs) -> None:
+def cli(codelabel, struct, model, arch, device, supercell, minimize, nohdf5, dos, calc_kwargs) -> None:
     """Click interface."""
     calc_kwargs = ast.literal_eval(calc_kwargs)
 
@@ -143,7 +186,16 @@ def cli(codelabel, struct, model, arch, device, supercell, minimize, calc_kwargs
         params["minimize"] = True
     else:
         params["minimize"] = False
-    print("params ", params)
+    
+    if nohdf5:
+        params["no_hdf5"] = True
+    else:
+        params["no_hdf5"] = False
+
+    if dos:
+        params["dos"] = True
+    else:
+        params["dos"] = False
     
     # Submit single point
     phonon(params)

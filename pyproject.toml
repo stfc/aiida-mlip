@@ -89,7 +89,7 @@ module-root = ""
 
 [project.entry-points."aiida.calculations"]
 "mlip.sp" = "aiida_mlip.calculations.singlepoint:Singlepoint"
-"mlip.ph" = "aiida_mlip.calculations.phonon:Phonon"
+"mlip.ph" = "aiida_mlip.calculations.phonon:Phonons"
 "mlip.opt" = "aiida_mlip.calculations.geomopt:GeomOpt"
 "mlip.md" = "aiida_mlip.calculations.md:MD"
 "mlip.train" = "aiida_mlip.calculations.train:Train"
