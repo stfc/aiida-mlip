@@ -202,3 +202,54 @@ They will be converted to AiiDA data types by the script itself.
 .. code-block:: python
 
     verdi run submit_md.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --ensemble "nve" --md-dict-str "{'temp':300,'steps':4,'traj-every':3,'stats-every':1}"
+
+Phonon calculation
+------------------
+
+A ``Phonon`` calculation represents a ``Calcjob`` object within the Aiida framework.
+
+Usage
+^^^^^
+
+Phonon calculations are executed in a similar manner to the previous styles of calculation using either the ``run`` or ``submit`` Aiida commands.
+An example of how to execute a calculation is shown below:
+
+.. code-block:: python
+
+    inputs = {
+        "metadata": metadata,
+        "code": code,
+        "arch": Str,
+        "struct": structure,
+        "model": model,
+        "device": Str,
+        #optional inputs below
+        "supercell": Str
+        "minimize" : Bool,
+        "nohdf5" : Bool,
+        "dos" : Bool,
+        "bands" : Bool
+    }
+
+
+    PhononCalculation = CalculationFactory("mlip.ph")
+
+    # Run calculation
+    result, node = run_get_node(
+        PhononCalculation,
+        **inputs
+    )
+
+Submission
+^^^^^^^^^^
+
+To facilitate the submission process and prepare inputs as AiiDA data types, an example script is provided.
+This script can be used as is, submitted to verdi, and the parameters passed as strings to the CLI.
+They will be converted to AiiDA data types by the script itself.
+
+.. code-block:: python
+
+    #using defaults - just enough to get force constants
+    verdi run submit_phonon.py "janus@localhost" --structure "path/to/structure" --model "path/to/model"
+    #with some optional flags
+    verdi run submit_phonon.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --supercell "2 2 2" --dos --bands

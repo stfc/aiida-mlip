@@ -6,14 +6,14 @@ from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJobProcessSpec
 import aiida.engine.processes
-from aiida.orm import Dict, SinglefileData, Str, Bool
+from aiida.orm import Bool, Dict, Float, Int, SinglefileData, Str
 
 from aiida_mlip.calculations.base import BaseJanus
 
 
 class Phonons(BaseJanus):  # numpydoc ignore=PR01
     """
-    Calcjob implementation to run Phonon calculations using mlips and in particular the janus-core package. The routine has employed the singlepoint oarser as a template
+    Calcjob implementation to run Phonon calculations using the janus-core package.
 
     Attributes
     ----------
@@ -28,7 +28,7 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
         Check if the inputs are valid.
     prepare_for_submission(folder: Folder) -> CalcInfo:
         Create the input files for the `CalcJob`.
-    """
+    """  # noqa: D205
 
     XYZ_OUTPUT = "aiida-phonopy.yml"
     DEFAULT_SUMMARY_FILE = "phonon-summary.yml"
@@ -62,7 +62,6 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
             help="Properties to calculate",
         )
 
-        
         spec.input(
             "supercell",
             valid_type=Str,
@@ -70,28 +69,71 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
             help="the size of sippercells used in phonon calculation",
         )
         spec.input(
+            "nqpoints",
+            valid_type=Int,
+            required=False,
+            help="number of q points in band path",
+        )
+        spec.input(
+            "fmax",
+            valid_type=Float,
+            required=False,
+            help="fmax for geometry optimisation",
+        )
+        spec.input(
+            "displacement",
+            valid_type=Float,
+            required=False,
+            help="displacement for numerical derivatives",
+        )
+        spec.input(
             "minimize",
-            valid_type=Bool,   #these need to be aiida.orm types
+            valid_type=Bool,  # these need to be aiida.orm types
             required=False,
             help="minimise unit cell prior to phonon calculation",
         )
 
         spec.input(
             "no_hdf5",
-            valid_type=Bool,   #these need to be aiida.orm types
+            valid_type=Bool,
             required=False,
             help="if true then phonopy yaml will contain force constants",
         )
         spec.input(
             "dos",
-            valid_type=Bool,   #these need to be aiida.orm types
+            valid_type=Bool,
             required=False,
             help="flag to calculate the denity of states",
+        )
+        spec.input(
+            "pdos",
+            valid_type=Bool,
+            required=False,
+            help="flag to calculate the partial denity of states",
+        )
+        spec.input(
+            "bands",
+            valid_type=Bool,
+            required=False,
+            help="flag to calculate the phonon band structure",
+        )
+        spec.input(
+            "symmetrize",
+            valid_type=Bool,
+            required=False,
+            help="symmetrize force constants",
+        )
+        spec.input(
+            "qpoint_file",
+            valid_type=Str,
+            required=False,
+            help="the size of sippercells used in phonon calculation",
         )
 
         spec.inputs["metadata"]["options"]["parser_name"].default = "mlip.ph_parser"
 
-        # Define outputs. The default is a dictionary with the content of the phonon file
+        # Define outputs. The default is a dictionary with the content of the
+        # phonon file
         spec.output(
             "results_dict",
             valid_type=Dict,
@@ -99,7 +141,9 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
         )
         spec.output("xyz_output", valid_type=SinglefileData)
         spec.output("force_constant", valid_type=SinglefileData)
-        spec.output('dos', valid_type=SinglefileData)
+        spec.output("dos", valid_type=SinglefileData)
+        spec.output("pdos", valid_type=SinglefileData)
+        spec.output("band_structure", valid_type=SinglefileData)
 
         spec.default_output_node = "results_dict"
 
@@ -123,17 +167,21 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
         calcinfo = super().prepare_for_submission(folder)
         codeinfo = calcinfo.codes_info[0]
 
-        #print("inputs ", self.inputs)
+        # print("inputs ", self.inputs)
 
         # Adding command line params for when we run janus
         # singlepoint is overwriting the placeholder "calculation" from the base.py file
 
         # The inputs are saved in the node, but we want their value as a string
 
-        #print("here are the inputs ", self.inputs)
+        # print("here are the inputs ", self.inputs)
         xyz_filename = (self.inputs.out).value
         supercell = (self.inputs.supercell).value
+        fmax = (self.inputs.fmax).value
+        displacement = (self.inputs.displacement).value
+        nqpoints = (self.inputs.nqpoints).value
         aiida_prefix = "aiida"
+
         codeinfo.cmdline_params = [
             "phonons",
             *codeinfo.cmdline_params[1:],
@@ -141,25 +189,54 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
             aiida_prefix,
             "--supercell",
             supercell,
+            "--displacement",
+            displacement,
         ]
 
-        
         # option to minimize the unit cell before phonons
         minimize = (self.inputs.minimize).value
         if minimize:
-            codeinfo.cmdline_params += ["--minimize",]
+            codeinfo.cmdline_params += [
+                "--minimize",
+            ]
+            codeinfo.cmdline_params += [
+                "--fmax",
+                fmax,
+            ]
 
-   
         nohdf5 = (self.inputs.no_hdf5).value
-        
         if nohdf5:
-            codeinfo.cmdline_params += ["--no-hdf5",] # this is needed to force janus-core to write out force constants in a yaml file
+            # this is needed to force janus-core to write out force constants in yaml
+            codeinfo.cmdline_params += [
+                "--no-hdf5",
+            ]
 
         dos = (self.inputs.dos).value
         if dos:
-            codeinfo.cmdline_params += ["--dos",]
+            codeinfo.cmdline_params += [
+                "--dos",
+            ]
 
-        #properties left in just in case for further expansion
+        pdos = (self.inputs.pdos).value
+        if pdos:
+            codeinfo.cmdline_params += [
+                "--pdos",
+            ]
+
+        symmetrize = (self.inputs.symmetrize).value
+        if symmetrize:
+            codeinfo.cmdline_params += [
+                "--symmetrize",
+            ]
+
+        bands = (self.inputs.bands).value
+        if bands:
+            codeinfo.cmdline_params += [
+                "--bands",
+            ]
+            codeinfo.cmdline_params += ["--n-qpoints", nqpoints]
+
+        # properties left in just in case for further expansion
         if "properties" in self.inputs:
             properties = self.inputs.properties.value
             codeinfo.cmdline_params += ["--properties", properties]
@@ -167,7 +244,10 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
         calcinfo.retrieve_list.append(xyz_filename)
         calcinfo.retrieve_list.append("aiida-force_constants.hdf5")
         calcinfo.retrieve_list.append("aiida-dos.dat")
+        calcinfo.retrieve_list.append("aiida-pdos.dat")
+        calcinfo.retrieve_list.append("aiida-auto_bands.yml.xz")
+        # calcinfo.retrieve_list.append("aiida-bands.hdf5")
 
-        #print("codeinfo ", codeinfo)
+        # print("codeinfo ", codeinfo)
 
         return calcinfo

@@ -1,7 +1,8 @@
-"""Parsers provided by aiida_mlip. The parser is based on the sp_parser.py written by Ben Speake"""
+"""Parsers provided by aiida_mlip. The parser is based on sp_parser.py."""
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from aiida.common import exceptions
@@ -9,14 +10,8 @@ from aiida.engine import ExitCode
 from aiida.orm import Dict, SinglefileData
 from aiida.orm.nodes.process.process import ProcessNode
 from aiida.plugins import CalculationFactory
-
 import yaml
-import h5py
-import os
-import numpy as np
 
-
-from aiida_mlip.helpers.converters import convert_numpy
 from aiida_mlip.parsers.base_parser import BaseParser
 
 PhononCalc = CalculationFactory("mlip.ph")
@@ -87,6 +82,8 @@ class PhononParser(BaseParser):
         xyz_output = (self.node.inputs.out).value
         nohdf5 = (self.node.inputs.no_hdf5).value
         dos = (self.node.inputs.dos).value
+        pdos = (self.node.inputs.pdos).value
+        bands = (self.node.inputs.bands).value
 
         # Check that folder content is as expected
         files_retrieved = self.retrieved.list_object_names()
@@ -100,57 +97,104 @@ class PhononParser(BaseParser):
 
         # Add output file to the outputs
         self.logger.info(f"Parsing '{xyz_output}'")
-        
+
         with self.retrieved.open(xyz_output, "rb") as handle:
             self.out("xyz_output", SinglefileData(file=handle, filename=xyz_output))
 
         content = None
         with open(Path(self.node.get_remote_workdir(), xyz_output)) as f:
             content = yaml.safe_load(f)
-        
-        #print("Content read from file:", content)
+
+        # print("Content read from file:", content)
         results_node = Dict(content)
         self.out("results_dict", results_node)
 
-        #dos
+        # dos
         if dos:
             content = None
-            tmp_path = os.path.join(Path(self.node.get_remote_workdir(), "aiida-dos.dat"))
+            tmp_path = os.path.join(
+                Path(self.node.get_remote_workdir(), "aiida-dos.dat")
+            )
             retrieved = self.retrieved
 
             try:
-                filepath = retrieved.base.repository.get_object_content( "aiida-dos.dat", mode='rb')
+                filepath = retrieved.base.repository.get_object_content(
+                    "aiida-dos.dat", mode="rb"
+                )
             except Exception:
                 print("exception in getting filepath")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
-            
-            with open(tmp_path, 'wb') as handle:
+
+            with open(tmp_path, "wb") as handle:
                 handle.write(filepath)
 
             results_node = SinglefileData(file=tmp_path)
             self.out("dos", results_node)
 
-        if nohdf5 == False:
-            fc_output = "aiida-force_constants.hdf5"
+        if pdos:
+            content = None
+            tmp_path = os.path.join(
+                Path(self.node.get_remote_workdir(), "aiida-pdos.dat")
+            )
             retrieved = self.retrieved
 
             try:
-                filepath = retrieved.base.repository.get_object_content(fc_output, mode='rb')
+                filepath = retrieved.base.repository.get_object_content(
+                    "aiida-pdos.dat", mode="rb"
+                )
             except Exception:
                 print("exception in getting filepath")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
-        # Write temporary file
-           
-            tmp_path = os.path.join(Path(self.node.get_remote_workdir(), fc_output))
-            
+            with open(tmp_path, "wb") as handle:
+                handle.write(filepath)
 
-            with open(tmp_path, 'wb') as handle:
+            results_node = SinglefileData(file=tmp_path)
+            self.out("pdos", results_node)
+
+        if not nohdf5:
+            fc_output = "aiida-force_constants.hdf5"
+            retrieved = self.retrieved
+
+            try:
+                filepath = retrieved.base.repository.get_object_content(
+                    fc_output, mode="rb"
+                )
+            except Exception:
+                print("exception in getting force constant filepath")
+                return self.exit_codes.ERROR_MISSING_OUTPUT
+
+            tmp_path = os.path.join(Path(self.node.get_remote_workdir(), fc_output))
+
+            with open(tmp_path, "wb") as handle:
                 handle.write(filepath)
 
                 hdf5_node = SinglefileData(file=tmp_path)
-                
-            self.out('force_constant', hdf5_node)
 
-            
+            self.out("force_constant", hdf5_node)
+
+        # for band structure the required file is aiida-auto_bands.yml.xz
+        # this needs to be changed for hdf5
+        if bands:
+            # import lzma
+            bnds_output = "aiida-auto_bands.yml.xz"
+            retrieved = self.retrieved
+
+            try:
+                filepath = retrieved.base.repository.get_object_content(
+                    bnds_output, mode="rb"
+                )
+            except Exception:
+                print("exception in getting force constant filepath")
+                return self.exit_codes.ERROR_MISSING_OUTPUT
+
+            tmp_path = os.path.join(Path(self.node.get_remote_workdir(), bnds_output))
+
+            # with lzma.open(tmp_path, 'w') as handle:
+            #    handle.write(filepath)
+
+            bands_node = SinglefileData(file=tmp_path)
+
+            self.out("band_structure", bands_node)
+
         return ExitCode(0)
