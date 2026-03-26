@@ -19,12 +19,20 @@ To get all the latest changes, ``aiida-mlip`` can also be installed from GitHub:
 
     python3 -m pip install git+https://github.com/stfc/aiida-mlip.git
 
-By default, no machine learnt interatomic potentials (MLIPs) will be installed with ``aiida-mlip``.
-However, ``aiida-mlip`` currently provides an ``extra``, allowing MACE to be installed:
 
-.. code-block:: bash
+It is then necessary to install the ``janus-core`` package which will be the driver for ``aiida-mlip``.
 
-   python3 -m pip install aiida-mlip[mace]
+.. tip::
+
+   For best compatibility it is generally recommended to install ``janus-core`` in a separate environment
+   to avoid dependency conflicts. To do this do the following:
+
+   .. code-block:: bash
+
+      python3 -m venv janus
+      source janus/bin/activate
+      python3 -m pip install janus-core[mace]
+      deactivate
 
 For additional MLIPs, it is recommended that the ``extra`` dependencies provided by ``janus-core`` are used.
 For example, to install CHGNet and SevenNet, run:
@@ -43,7 +51,18 @@ Once ``aiida-mlip`` and the desired MLIP calculators are installed, run::
 Then, use ``verdi code setup`` with the ``janus`` input plugin
 to set up an AiiDA code for ``aiida-mlip``. The `aiida docs <https://aiida.readthedocs.io/projects/aiida-core/en/stable/howto/run_codes.html#how-to-create-a-code>`_ go over how to create a code.
 
+.. tip::
 
+   If installing in a virtual environment you will need to specify::
+
+     source janus/bin/activate
+
+   as the pre-execution script and::
+
+     deactivate
+
+   as the post execution script. This will ensure that the ``janus``
+   code will run in the virtual environment.
 
 .. note::
     Configuring a message broker like RabbitMQ is optional, but highly recommended to avoid errors and enable `full functionality <https://aiida.readthedocs.io/projects/aiida-core/en/stable/installation/guide_quick.html#quick-install-limitations>`_ of AiiDA.
