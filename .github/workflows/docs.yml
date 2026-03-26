@@ -23,6 +23,25 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:10
+        env:
+          POSTGRES_DB: test_aiida
+          POSTGRES_PASSWORD: ''
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      rabbitmq:
+        image: rabbitmq:latest
+        ports:
+          - 5672:5672
+
     steps:
       - uses: actions/checkout@v4
 
@@ -32,8 +51,27 @@ jobs:
           version: "0.6.14"
           python-version: "3.12"
 
+      - name: Install pandoc
+        uses: pandoc/actions/setup@v1
+
       - name: Install dependencies
-        run: uv sync
+        run: |
+          uv sync --group docs
+          uv venv janus
+          source janus/bin/activate
+          uv pip install "janus_core[mace]" matplotlib-inline
+          deactivate
+
+      - name: Setup verdi
+        run: |
+          uv run verdi presto --use-postgres
+          uv run verdi code create core.code.installed -n \
+             -Y localhost \
+             -X janus \
+             -L janus \
+             -P mlip.sp \
+             --prepend-text "source $(pwd)/janus/bin/activate" \
+             --append-text "deactivate"
 
       - name: Build docs
         run: uv run make html
