@@ -5,6 +5,7 @@ description = "Machine learning interatomic potentials AiiDA plugin"
 authors = [
     { name = "Federica Zanca" },
     { name = "Elliott Kasoar" },
+    { name = "Jessica Gould" },
     { name = "Jacob Wilkins" },
     { name = "Muhammad Mohsin" },
     { name = "Alin M. Elena" },
