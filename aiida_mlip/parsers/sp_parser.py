@@ -56,8 +56,6 @@ class SPParser(BaseParser):
         """
         super().__init__(node)
 
-        print("the output before exit", SinglepointCalc, node.process_class)
-
         if not issubclass(node.process_class, SinglepointCalc):
             raise exceptions.ParsingError("Can only parse `Singlepoint` calculations")
 

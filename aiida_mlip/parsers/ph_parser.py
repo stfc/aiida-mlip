@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 from aiida.common import exceptions
@@ -101,99 +100,83 @@ class PhononParser(BaseParser):
         with self.retrieved.open(xyz_output, "rb") as handle:
             self.out("xyz_output", SinglefileData(file=handle, filename=xyz_output))
 
-        content = None
         with open(Path(self.node.get_remote_workdir(), xyz_output)) as f:
             content = yaml.safe_load(f)
 
-        # print("Content read from file:", content)
         results_node = Dict(content)
         self.out("results_dict", results_node)
 
         # dos
         if dos:
-            content = None
-            tmp_path = os.path.join(
-                Path(self.node.get_remote_workdir(), "aiida-dos.dat")
-            )
-            retrieved = self.retrieved
+            dos_path = Path(self.node.get_remote_workdir()) / "aiida-dos.dat"
 
             try:
-                filepath = retrieved.base.repository.get_object_content(
+                filepath = self.retrieved.base.repository.get_object_content(
                     "aiida-dos.dat", mode="rb"
                 )
-            except Exception:
+            except FileNotFoundError:
                 print("exception in getting filepath")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
-            with open(tmp_path, "wb") as handle:
+            with open(dos_path, "wb") as handle:
                 handle.write(filepath)
 
-            results_node = SinglefileData(file=tmp_path)
+            results_node = SinglefileData(file=dos_path)
             self.out("dos", results_node)
 
         if pdos:
-            content = None
-            tmp_path = os.path.join(
-                Path(self.node.get_remote_workdir(), "aiida-pdos.dat")
-            )
-            retrieved = self.retrieved
+            pdos_path = Path(self.node.get_remote_workdir()) / "aiida-pdos.dat"
 
             try:
-                filepath = retrieved.base.repository.get_object_content(
+                filepath = self.retrieved.base.repository.get_object_content(
                     "aiida-pdos.dat", mode="rb"
                 )
-            except Exception:
+            except FileNotFoundError:
                 print("exception in getting filepath")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
-            with open(tmp_path, "wb") as handle:
+            with open(pdos_path, "wb") as handle:
                 handle.write(filepath)
 
-            results_node = SinglefileData(file=tmp_path)
+            results_node = SinglefileData(file=pdos_path)
             self.out("pdos", results_node)
 
         if not nohdf5:
             fc_output = "aiida-force_constants.hdf5"
-            retrieved = self.retrieved
 
             try:
-                filepath = retrieved.base.repository.get_object_content(
+                filepath = self.retrieved.base.repository.get_object_content(
                     fc_output, mode="rb"
                 )
-            except Exception:
+            except FileNotFoundError:
                 print("exception in getting force constant filepath")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
-            tmp_path = os.path.join(Path(self.node.get_remote_workdir(), fc_output))
+            hdf5_path = Path(self.node.get_remote_workdir()) / fc_output
 
-            with open(tmp_path, "wb") as handle:
+            with open(hdf5_path, "wb") as handle:
                 handle.write(filepath)
 
-                hdf5_node = SinglefileData(file=tmp_path)
+                hdf5_node = SinglefileData(file=hdf5_path)
 
             self.out("force_constant", hdf5_node)
 
         # for band structure the required file is aiida-auto_bands.yml.xz
         # this needs to be changed for hdf5
         if bands:
-            # import lzma
             bnds_output = "aiida-auto_bands.yml.xz"
-            retrieved = self.retrieved
 
             try:
-                filepath = retrieved.base.repository.get_object_content(
+                filepath = self.retrieved.base.repository.get_object_content(
                     bnds_output, mode="rb"
                 )
-            except Exception:
+            except FileNotFoundError:
                 print("exception in getting force constant filepath")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
-            tmp_path = os.path.join(Path(self.node.get_remote_workdir(), bnds_output))
+            bands_path = Path(self.node.get_remote_workdir()) / bnds_output
 
-            # with lzma.open(tmp_path, 'w') as handle:
-            #    handle.write(filepath)
-
-            bands_node = SinglefileData(file=tmp_path)
+            bands_node = SinglefileData(file=bands_path)
 
             self.out("band_structure", bands_node)
 

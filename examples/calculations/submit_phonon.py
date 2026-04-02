@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import ast
 import json
-import os
 from pathlib import Path
 
 from aiida.common import NotExistent
@@ -71,29 +70,27 @@ def phonon(params: dict) -> None:
     #  Run calculation
     #############################################################
     result, node = run_get_node(PhononCalc, **inputs)
-    print(f"\n Node of calculation: {node} \n")
-    print(
-        f"\n use verdi calcjob gotocomputer {node.pk} for a shell in the work directory"
-    )
+    print(f"Node of calculation: {node} ")
+    print(f"use verdi calcjob gotocomputer {node.pk} for a shell in the work directory")
 
     # start processing the results
-    print("\n Results dictionary: \n")
+    print("Results dictionary: ")
     print(result.keys())
 
     # print(result["results_dict"].get_dict())
-    print(f"\n remote folder {result['remote_folder']} {node.get_remote_workdir()} \n")
-    print(f"\n retrieved {result['retrieved']}  \n")
+    print(f"remote folder {result['remote_folder']} {node.get_remote_workdir()} ")
+    print(f"retrieved {result['retrieved']}  ")
     if not nohdf5:
-        print(f"\n force_constant {result['force_constant']} \n")
+        print(f"force_constant {result['force_constant']} ")
 
     if dos:
-        print(f"\n density of states {result['dos']} \n")
+        print(f"density of states {result['dos']} ")
 
     if pdos:
-        print(f"\n partial density of states {result['pdos']} \n")
+        print(f"partial density of states {result['pdos']} ")
 
     if bands:
-        print(f"\n partial density of states {result['band_structure']} \n")
+        print(f"partial density of states {result['band_structure']} ")
 
     # dump the dictionary as a yaml file - for inspection / testing
     with open("data.yml", "w") as file:
@@ -106,26 +103,23 @@ def phonon(params: dict) -> None:
 
     # access the data such as the supercell matrix
     supercell_matrix = result["results_dict"].get_dict()["supercell_matrix"]
-    print(f"\n\n super cell matriz: {supercell_matrix}")
+    print(f"super cell matriz: {supercell_matrix}")
 
     # verify the hdf5 containing force constants
     if not nohdf5:
         import h5py
 
-        hdf5_path = os.path.join(
-            Path(node.get_remote_workdir(), "aiida-force_constants.hdf5")
-        )
+        hdf5_path = Path(node.get_remote_workdir()) / "aiida-force_constants.hdf5"
 
         with h5py.File(hdf5_path, "r") as f:
             # List all top-level groups/datasets
-            print("\n Force constant top-level keys :", list(f.keys()))
+            print("Force constant top-level keys :", list(f.keys()))
 
     if bands:
         import lzma
 
-        bands_path = os.path.join(
-            Path(node.get_remote_workdir(), "aiida-auto_bands.yml.xz")
-        )
+        bands_path = Path(node.get_remote_workdir()) / "aiida-auto_bands.yml.xz"
+
         # this will load the data
         with lzma.open(bands_path, "rb") as f:
             data = yaml.safe_load(f)
@@ -174,7 +168,7 @@ def phonon(params: dict) -> None:
 @click.option(
     "--nohdf5",
     is_flag=True,
-    help="sets flag to true so that force constants are written to yaml file.",
+    help="write force constants to phonopy yaml, rather than separate HDF5 file.",
 )
 @click.option("--dos", is_flag=True, help="calculates the density of states.")
 @click.option("--pdos", is_flag=True, help="calculates the partial density of states.")

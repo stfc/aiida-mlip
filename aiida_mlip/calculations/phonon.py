@@ -11,7 +11,7 @@ from aiida.orm import Bool, Dict, Float, Int, SinglefileData, Str
 from aiida_mlip.calculations.base import BaseJanus
 
 
-class Phonons(BaseJanus):  # numpydoc ignore=PR01
+class Phonons(BaseJanus):
     """
     Calcjob implementation to run Phonon calculations using the janus-core package.
 
@@ -28,7 +28,7 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
         Check if the inputs are valid.
     prepare_for_submission(folder: Folder) -> CalcInfo:
         Create the input files for the `CalcJob`.
-    """  # noqa: D205
+    """
 
     XYZ_OUTPUT = "aiida-phonopy.yml"
     DEFAULT_SUMMARY_FILE = "phonon-summary.yml"
@@ -66,7 +66,7 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
             "supercell",
             valid_type=Str,
             required=False,
-            help="the size of sippercells used in phonon calculation",
+            help="the size of supercells used in phonon calculation",
         )
         spec.input(
             "nqpoints",
@@ -88,7 +88,7 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
         )
         spec.input(
             "minimize",
-            valid_type=Bool,  # these need to be aiida.orm types
+            valid_type=Bool,
             required=False,
             help="minimise unit cell prior to phonon calculation",
         )
@@ -97,25 +97,25 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
             "no_hdf5",
             valid_type=Bool,
             required=False,
-            help="if true then phonopy yaml will contain force constants",
+            help="write force constants to phonopy yaml, rather than separate HDF5.",
         )
         spec.input(
             "dos",
             valid_type=Bool,
             required=False,
-            help="flag to calculate the denity of states",
+            help="calculate the denity of states",
         )
         spec.input(
             "pdos",
             valid_type=Bool,
             required=False,
-            help="flag to calculate the partial denity of states",
+            help="calculate the partial denity of states",
         )
         spec.input(
             "bands",
             valid_type=Bool,
             required=False,
-            help="flag to calculate the phonon band structure",
+            help="calculate the phonon band structure",
         )
         spec.input(
             "symmetrize",
@@ -127,7 +127,7 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
             "qpoint_file",
             valid_type=Str,
             required=False,
-            help="the size of sippercells used in phonon calculation",
+            help="the file for q-points in phonon calculation",
         )
 
         spec.inputs["metadata"]["options"]["parser_name"].default = "mlip.ph_parser"
@@ -167,15 +167,10 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
         calcinfo = super().prepare_for_submission(folder)
         codeinfo = calcinfo.codes_info[0]
 
-        # print("inputs ", self.inputs)
-
-        # Adding command line params for when we run janus
-        # singlepoint is overwriting the placeholder "calculation" from the base.py file
-
-        # The inputs are saved in the node, but we want their value as a string
-
-        # print("here are the inputs ", self.inputs)
+        # filename when recovering the outputs.
         xyz_filename = (self.inputs.out).value
+
+        # Gather node inputs for use with janus CLI
         supercell = (self.inputs.supercell).value
         fmax = (self.inputs.fmax).value
         displacement = (self.inputs.displacement).value
@@ -206,7 +201,7 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
 
         nohdf5 = (self.inputs.no_hdf5).value
         if nohdf5:
-            # this is needed to force janus-core to write out force constants in yaml
+            # force janus-core to write out force constants in yaml
             codeinfo.cmdline_params += [
                 "--no-hdf5",
             ]
@@ -247,7 +242,5 @@ class Phonons(BaseJanus):  # numpydoc ignore=PR01
         calcinfo.retrieve_list.append("aiida-pdos.dat")
         calcinfo.retrieve_list.append("aiida-auto_bands.yml.xz")
         # calcinfo.retrieve_list.append("aiida-bands.hdf5")
-
-        # print("codeinfo ", codeinfo)
 
         return calcinfo
