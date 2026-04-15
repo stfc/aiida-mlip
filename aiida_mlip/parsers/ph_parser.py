@@ -97,7 +97,9 @@ class PhononParser(BaseParser):
         self.logger.info(f"Parsing '{phonon_output}'")
 
         with self.retrieved.open(phonon_output, "rb") as handle:
-            self.out("phonon_output", SinglefileData(file=handle, filename=phonon_output))
+            self.out(
+                "phonon_output", SinglefileData(file=handle, filename=phonon_output)
+            )
 
         remote_workdir = self.node.get_remote_workdir()
         with Path(remote_workdir, phonon_output).open() as f:
@@ -140,7 +142,6 @@ class PhononParser(BaseParser):
             self.out("pdos", results_node)
 
         if not nohdf5:
-
             try:
                 filedata = self.retrieved.base.repository.get_object_content(
                     "aiida-force_constants.hdf5", mode="rb"

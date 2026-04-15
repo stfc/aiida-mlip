@@ -11,13 +11,13 @@ from aiida.engine import run_get_node
 from aiida.orm import Dict, Float, Str, load_code
 from aiida.plugins import CalculationFactory
 import click
-import yaml
 import h5py
+import yaml
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
 
-def phonon(params: dict[str, Any]) -> None:
+def phonon(params: dict[str, any]) -> None:
     """
     Prepare inputs and run a phonon calculation.
 
@@ -103,7 +103,6 @@ def phonon(params: dict[str, Any]) -> None:
 
     # verify the hdf5 containing force constants
     if not nohdf5:
-
         hdf5_path = Path(node.get_remote_workdir()) / "aiida-force_constants.hdf5"
 
         with h5py.File(hdf5_path, "r") as f:

@@ -199,9 +199,34 @@ class Phonons(BaseJanus):
                 fmax,
             ]
 
-        for param in ("no_hdf5", "dos", "pdos", "symmetrize"):
-            if getattr(self.inputs, param).value:
-                codeinfo.cmdline_params += "--" + param.replace("_", "-")
+        # for param in ("no_hdf5", "dos", "pdos", "symmetrize"):
+        #    if getattr(self.inputs, param).value:
+        #        codeinfo.cmdline_params += "--" + param.replace("_", "-")
+
+        nohdf5 = (self.inputs.no_hdf5).value
+        if nohdf5:
+            # force janus-core to write out force constants in yaml
+            codeinfo.cmdline_params += [
+                "--no-hdf5",
+            ]
+
+        dos = (self.inputs.dos).value
+        if dos:
+            codeinfo.cmdline_params += [
+                "--dos",
+            ]
+
+        pdos = (self.inputs.pdos).value
+        if pdos:
+            codeinfo.cmdline_params += [
+                "--pdos",
+            ]
+
+        symmetrize = (self.inputs.symmetrize).value
+        if symmetrize:
+            codeinfo.cmdline_params += [
+                "--symmetrize",
+            ]
 
         bands = (self.inputs.bands).value
         if bands:
@@ -209,19 +234,21 @@ class Phonons(BaseJanus):
                 "--bands",
             ]
             codeinfo.cmdline_params += ["--n-qpoints", nqpoints]
-        
+
         # properties left in just in case for further expansion
         if "properties" in self.inputs:
             properties = self.inputs.properties.value
             codeinfo.cmdline_params += ["--properties", properties]
 
-        calcinfo.retrieve_list.extend([
-            phonon_filename,
-            "aiida-force_constants.hdf5",
-            "aiida-dos.dat",
-            "aiida-pdos.dat",
-            "aiida-auto_bands.yml.xz",
-            # "aiida-bands.hdf5",
-        ])
+        calcinfo.retrieve_list.extend(
+            [
+                phonon_filename,
+                "aiida-force_constants.hdf5",
+                "aiida-dos.dat",
+                "aiida-pdos.dat",
+                "aiida-auto_bands.yml.xz",
+                # "aiida-bands.hdf5",
+            ]
+        )
 
         return calcinfo

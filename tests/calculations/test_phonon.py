@@ -7,11 +7,11 @@ from aiida.engine import run
 from aiida.orm import Bool, Float, Int, Str, StructureData
 from aiida.plugins import CalculationFactory
 from ase.build import bulk
+import numpy as np
 import pytest
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
-import numpy as np
 
 
 def test_phonon(fixture_sandbox, generate_calc_job, janus_code, model_folder):
@@ -173,7 +173,7 @@ def test_run_ph(model_folder, janus_code):
     result = run(PhononCalc, **inputs)
 
     assert "results_dict" in result
-    assert "xyz_output" in result
+    assert "phonon_output" in result
 
     lattice_vectors = result["results_dict"].get_dict()["primitive_cell"]["lattice"]
     supercell_matrix = result["results_dict"].get_dict()["supercell_matrix"]
@@ -211,7 +211,7 @@ def test_run_supercell(model_folder, janus_code):
     result = run(PhononCalc, **inputs)
 
     assert "results_dict" in result
-    assert "xyz_output" in result
+    assert "phonon_output" in result
 
     lattice_vectors = result["results_dict"].get_dict()["primitive_cell"]["lattice"]
     supercell_matrix = result["results_dict"].get_dict()["supercell_matrix"]
@@ -249,7 +249,7 @@ def test_run_minimize(model_folder, janus_code):
     result = run(PhononCalc, **inputs)
 
     assert "results_dict" in result
-    assert "xyz_output" in result
+    assert "phonon_output" in result
 
     lattice_vectors = result["results_dict"].get_dict()["primitive_cell"]["lattice"]
     supercell_matrix = result["results_dict"].get_dict()["supercell_matrix"]
