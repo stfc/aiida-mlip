@@ -56,7 +56,6 @@ class PhononParser(BaseParser):
         super().__init__(node)
 
         if not issubclass(node.process_class, PhononCalc):
-            print(PhononCalc, node.process_class)
             raise exceptions.ParsingError("Can only parse `PhononCalc` calculations")
 
     def parse(self, **kwargs) -> int:
@@ -78,7 +77,7 @@ class PhononParser(BaseParser):
         if exit_code != ExitCode(0):
             return exit_code
 
-        xyz_output = (self.node.inputs.out).value
+        phonon_output = (self.node.inputs.out).value
         nohdf5 = (self.node.inputs.no_hdf5).value
         dos = (self.node.inputs.dos).value
         pdos = (self.node.inputs.pdos).value
@@ -87,7 +86,7 @@ class PhononParser(BaseParser):
         # Check that folder content is as expected
         files_retrieved = self.retrieved.list_object_names()
 
-        files_expected = {xyz_output}
+        files_expected = {phonon_output}
         if not files_expected.issubset(files_retrieved):
             self.logger.error(
                 f"Found files '{files_retrieved}', expected to find '{files_expected}'"
@@ -95,12 +94,13 @@ class PhononParser(BaseParser):
             return self.exit_codes.ERROR_MISSING_OUTPUT_FILES
 
         # Add output file to the outputs
-        self.logger.info(f"Parsing '{xyz_output}'")
+        self.logger.info(f"Parsing '{phonon_output}'")
 
-        with self.retrieved.open(xyz_output, "rb") as handle:
-            self.out("xyz_output", SinglefileData(file=handle, filename=xyz_output))
+        with self.retrieved.open(phonon_output, "rb") as handle:
+            self.out("phonon_output", SinglefileData(file=handle, filename=phonon_output))
 
-        with open(Path(self.node.get_remote_workdir(), xyz_output)) as f:
+        remote_workdir = self.node.get_remote_workdir()
+        with Path(remote_workdir, phonon_output).open() as f:
             content = yaml.safe_load(f)
 
         results_node = Dict(content)
@@ -108,58 +108,53 @@ class PhononParser(BaseParser):
 
         # dos
         if dos:
-            dos_path = Path(self.node.get_remote_workdir()) / "aiida-dos.dat"
+            dos_path = Path(remote_workdir) / "aiida-dos.dat"
 
             try:
-                filepath = self.retrieved.base.repository.get_object_content(
+                filedata = self.retrieved.base.repository.get_object_content(
                     "aiida-dos.dat", mode="rb"
                 )
             except FileNotFoundError:
-                print("exception in getting filepath")
+                print("exception in filepath for the density of states")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
-            with open(dos_path, "wb") as handle:
-                handle.write(filepath)
+            dos_path.write_bytes(filedata)
 
             results_node = SinglefileData(file=dos_path)
             self.out("dos", results_node)
 
         if pdos:
-            pdos_path = Path(self.node.get_remote_workdir()) / "aiida-pdos.dat"
+            pdos_path = Path(remote_workdir) / "aiida-pdos.dat"
 
             try:
-                filepath = self.retrieved.base.repository.get_object_content(
+                filedata = self.retrieved.base.repository.get_object_content(
                     "aiida-pdos.dat", mode="rb"
                 )
             except FileNotFoundError:
-                print("exception in getting filepath")
+                print("exception in filepath for the partial density of states")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
-            with open(pdos_path, "wb") as handle:
-                handle.write(filepath)
+            pdos_path.write_bytes(filedata)
 
             results_node = SinglefileData(file=pdos_path)
             self.out("pdos", results_node)
 
         if not nohdf5:
-            fc_output = "aiida-force_constants.hdf5"
 
             try:
-                filepath = self.retrieved.base.repository.get_object_content(
-                    fc_output, mode="rb"
+                filedata = self.retrieved.base.repository.get_object_content(
+                    "aiida-force_constants.hdf5", mode="rb"
                 )
             except FileNotFoundError:
                 print("exception in getting force constant filepath")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
-            hdf5_path = Path(self.node.get_remote_workdir()) / fc_output
+            hdf5_path = Path(remote_workdir) / "aiida-force_constants.hdf5"
 
-            with open(hdf5_path, "wb") as handle:
-                handle.write(filepath)
+            hdf5_path.write_bytes(filedata)
+            hdf5_node = SinglefileData(file=hdf5_path)
 
-                hdf5_node = SinglefileData(file=hdf5_path)
-
-            self.out("force_constant", hdf5_node)
+            self.out("force_constants", hdf5_node)
 
         # for band structure the required file is aiida-auto_bands.yml.xz
         # this needs to be changed for hdf5
@@ -167,14 +162,14 @@ class PhononParser(BaseParser):
             bnds_output = "aiida-auto_bands.yml.xz"
 
             try:
-                filepath = self.retrieved.base.repository.get_object_content(
+                filedata = self.retrieved.base.repository.get_object_content(
                     bnds_output, mode="rb"
                 )
             except FileNotFoundError:
                 print("exception in getting force constant filepath")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
-            bands_path = Path(self.node.get_remote_workdir()) / bnds_output
+            bands_path = Path(remote_workdir) / bnds_output
 
             bands_node = SinglefileData(file=bands_path)
 

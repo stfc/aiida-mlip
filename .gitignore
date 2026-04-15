@@ -1,6 +1,4 @@
 .venv
-.venv/
-.vscode/
 *.lock
 *.pyc
 *.swo

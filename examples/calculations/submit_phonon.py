@@ -12,11 +12,12 @@ from aiida.orm import Dict, Float, Str, load_code
 from aiida.plugins import CalculationFactory
 import click
 import yaml
+import h5py
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
 
-def phonon(params: dict) -> None:
+def phonon(params: dict[str, Any]) -> None:
     """
     Prepare inputs and run a phonon calculation.
 
@@ -52,19 +53,14 @@ def phonon(params: dict) -> None:
     }
 
     inputs["minimize"] = params["minimize"]
-    nohdf5 = params["no_hdf5"]
-    inputs["no_hdf5"] = params["no_hdf5"]
-    dos = params["dos"]
-    inputs["dos"] = params["dos"]
-    inputs["pdos"] = params["pdos"]
-    pdos = params["pdos"]
-    inputs["bands"] = params["bands"]
-    bands = params["bands"]
+    nohdf5 = inputs["no_hdf5"] = params["no_hdf5"]
+    dos = inputs["dos"] = params["dos"]
+    pdos = inputs["pdos"] = params["pdos"]
+    bands = inputs["bands"] = params["bands"]
     inputs["symmetrize"] = params["symmetrize"]
 
     # Only calc_kwargs add if set
-    if params["calc_kwargs"]:
-        inputs["calc_kwargs"] = Dict(params["calc_kwargs"])
+    inputs["calc_kwargs"] = Dict(params.get("calc_kwargs", {}))
 
     #############################################################
     #  Run calculation
@@ -81,7 +77,7 @@ def phonon(params: dict) -> None:
     print(f"remote folder {result['remote_folder']} {node.get_remote_workdir()} ")
     print(f"retrieved {result['retrieved']}  ")
     if not nohdf5:
-        print(f"force_constant {result['force_constant']} ")
+        print(f"force_constants {result['force_constants']} ")
 
     if dos:
         print(f"density of states {result['dos']} ")
@@ -103,11 +99,10 @@ def phonon(params: dict) -> None:
 
     # access the data such as the supercell matrix
     supercell_matrix = result["results_dict"].get_dict()["supercell_matrix"]
-    print(f"super cell matriz: {supercell_matrix}")
+    print(f"supercell matriz: {supercell_matrix}")
 
     # verify the hdf5 containing force constants
     if not nohdf5:
-        import h5py
 
         hdf5_path = Path(node.get_remote_workdir()) / "aiida-force_constants.hdf5"
 

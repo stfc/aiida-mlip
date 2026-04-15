@@ -11,6 +11,7 @@ import pytest
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
+import numpy as np
 
 
 def test_phonon(fixture_sandbox, generate_calc_job, janus_code, model_folder):
@@ -179,7 +180,8 @@ def test_run_ph(model_folder, janus_code):
     fc = result["results_dict"].get_dict()["force_constants"]["elements"]
 
     assert lattice_vectors[0][1] == pytest.approx(2.815, rel=1.0e-4, abs=1.0e-4)
-    assert supercell_matrix[0][0] == pytest.approx(2)
+    assert (np.diag(lattice_vectors) == 0.0).all()
+    assert (np.diag(supercell_matrix) == 2).all()
     assert fc[0][0][0] == pytest.approx(2.1912727829831, rel=1.0e-4, abs=1.0e-4)
 
 
@@ -216,7 +218,8 @@ def test_run_supercell(model_folder, janus_code):
     fc = result["results_dict"].get_dict()["force_constants"]["elements"]
 
     assert lattice_vectors[0][1] == pytest.approx(2.815, rel=1.0e-4, abs=1.0e-4)
-    assert supercell_matrix[0][0] == pytest.approx(3)
+    assert (np.diag(lattice_vectors) == 0.0).all()
+    assert (np.diag(supercell_matrix) == 3).all()
     assert fc[0][0][0] == pytest.approx(2.2240705622516, rel=1.0e-4, abs=1.0e-4)
 
 
@@ -253,7 +256,8 @@ def test_run_minimize(model_folder, janus_code):
     fc = result["results_dict"].get_dict()["force_constants"]["elements"]
 
     assert lattice_vectors[0][1] == pytest.approx(2.843884, rel=1.0e-4, abs=1.0e-4)
-    assert supercell_matrix[0][0] == pytest.approx(2)
+    assert (np.diag(lattice_vectors) == 0.0).all()
+    assert (np.diag(supercell_matrix) == 2).all()
     assert fc[0][0][0] == pytest.approx(1.9563971755818, rel=1.0e-4, abs=1.0e-4)
 
 
