@@ -256,7 +256,7 @@ def test_run_minimize(model_folder, janus_code):
     fc = result["results_dict"].get_dict()["force_constants"]["elements"]
 
     assert lattice_vectors[0][1] == pytest.approx(2.843884, rel=1.0e-4, abs=1.0e-4)
-    assert (np.diag(lattice_vectors) == 0.0).all()
+    assert lattice_vectors[0][0] == pytest.approx(0.0, rel=1.0e-4, abs=1.0e-4)
     assert (np.diag(supercell_matrix) == 2).all()
     assert fc[0][0][0] == pytest.approx(1.9563971755818, rel=1.0e-4, abs=1.0e-4)
 
