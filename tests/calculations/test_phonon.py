@@ -230,8 +230,6 @@ def test_output_files(fixture_sandbox, generate_calc_job, janus_code, model_fold
         "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
         "supercell": Str("2 2 2"),
-        "minimize": Bool(False),
-        "fmax": Float(0.1),
         "displacement": Float(0.01),
         "dos": Bool(True),
         "pdos": Bool(True),
