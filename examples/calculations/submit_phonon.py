@@ -48,11 +48,9 @@ def phonon(params: dict[str, any]) -> None:
         "device": Str(params["device"]),
         "supercell": params["supercell"],
         "nqpoints": params["nqpoints"],
-        "fmax": params["fmax"],
         "displacement": Float(params["displacement"]),
     }
 
-    inputs["minimize"] = params["minimize"]
     nohdf5 = inputs["no_hdf5"] = params["no_hdf5"]
     dos = inputs["dos"] = params["dos"]
     pdos = inputs["pdos"] = params["pdos"]
@@ -155,11 +153,6 @@ def phonon(params: dict[str, any]) -> None:
     help="The size of supercell matrix to calculate phonons e.g. 2 2 2.",
 )
 @click.option(
-    "--minimize",
-    is_flag=True,
-    help="minimize the unit cell before calculating the force constants.",
-)
-@click.option(
     "--nohdf5",
     is_flag=True,
     help="write force constants to phonopy yaml, rather than separate HDF5 file.",
@@ -174,9 +167,6 @@ def phonon(params: dict[str, any]) -> None:
     help="Number of q-points to sample along generated path, including end points.",
 )
 @click.option("--symmetrize", is_flag=True, help="Symmetrize force constants")
-@click.option(
-    "--fmax", default=0.1, type=float, help="The max force for geometry optimisation."
-)
 @click.option(
     "--displacement",
     default=0.01,
@@ -199,14 +189,12 @@ def cli(
     arch,
     device,
     supercell,
-    minimize,
     nohdf5,
     dos,
     pdos,
     bands,
     n_qpoints,
     symmetrize,
-    fmax,
     displacement,
     qpoint_file,
     calc_kwargs,
@@ -228,15 +216,9 @@ def cli(
         "device": device,
         "supercell": supercell,
         "nqpoints": n_qpoints,
-        "fmax": fmax,
         "displacement": displacement,
         "calc_kwargs": calc_kwargs,
     }
-
-    if minimize:
-        params["minimize"] = True
-    else:
-        params["minimize"] = False
 
     if nohdf5:
         params["no_hdf5"] = True

@@ -75,24 +75,11 @@ class Phonons(BaseJanus):
             help="Number of q points in band path",
         )
         spec.input(
-            "fmax",
-            valid_type=Float,
-            required=False,
-            help="Max force for geometry optimisation",
-        )
-        spec.input(
             "displacement",
             valid_type=Float,
             required=False,
             help="Displacement for numerical derivatives",
         )
-        spec.input(
-            "minimize",
-            valid_type=Bool,
-            required=False,
-            help="Minimise unit cell prior to phonon calculation",
-        )
-
         spec.input(
             "no_hdf5",
             valid_type=Bool,
@@ -172,7 +159,6 @@ class Phonons(BaseJanus):
 
         # Gather node inputs for use with janus CLI
         supercell = (self.inputs.supercell).value
-        fmax = (self.inputs.fmax).value
         displacement = (self.inputs.displacement).value
         nqpoints = (self.inputs.nqpoints).value
         aiida_prefix = "aiida"
@@ -187,17 +173,6 @@ class Phonons(BaseJanus):
             "--displacement",
             displacement,
         ]
-
-        # option to minimize the unit cell before phonons
-        minimize = (self.inputs.minimize).value
-        if minimize:
-            codeinfo.cmdline_params += [
-                "--minimize",
-            ]
-            codeinfo.cmdline_params += [
-                "--fmax",
-                fmax,
-            ]
 
         # for param in ("no_hdf5", "dos", "pdos", "symmetrize"):
         #    if getattr(self.inputs, param).value:
