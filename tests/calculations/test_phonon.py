@@ -217,7 +217,6 @@ def test_run_supercell(model_folder, janus_code):
     assert fc[0][0][0] == pytest.approx(2.2240705622516, rel=1.0e-4, abs=1.0e-4)
 
 
-
 def test_output_files(fixture_sandbox, generate_calc_job, janus_code, model_folder):
     """Est setting log and summary output files."""
     entry_point_name = "mlip.ph"
