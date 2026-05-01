@@ -102,7 +102,7 @@ class PhononParser(BaseParser):
             )
 
         remote_workdir = self.node.get_remote_workdir()
-        with Path(remote_workdir, phonon_output).open() as f:
+        with Path(remote_workdir, phonon_output).open(encoding="utf-8") as f:
             content = yaml.safe_load(f)
 
         results_node = Dict(content)
@@ -117,7 +117,7 @@ class PhononParser(BaseParser):
                     "aiida-dos.dat", mode="rb"
                 )
             except FileNotFoundError:
-                print("exception in filepath for the density of states")
+                self.logger.error(f"exception in filepath for the density of states")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
             dos_path.write_bytes(filedata)
@@ -133,7 +133,7 @@ class PhononParser(BaseParser):
                     "aiida-pdos.dat", mode="rb"
                 )
             except FileNotFoundError:
-                print("exception in filepath for the partial density of states")
+                self.logger.info(f"exception in filepath for the partial density of states")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
             pdos_path.write_bytes(filedata)
@@ -147,7 +147,7 @@ class PhononParser(BaseParser):
                     "aiida-force_constants.hdf5", mode="rb"
                 )
             except FileNotFoundError:
-                print("exception in getting force constant filepath")
+                self.logger.info(f"exception in getting force constant filepath")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
             hdf5_path = Path(remote_workdir) / "aiida-force_constants.hdf5"
@@ -167,7 +167,7 @@ class PhononParser(BaseParser):
                     bnds_output, mode="rb"
                 )
             except FileNotFoundError:
-                print("exception in getting force constant filepath")
+                self.logger.info(f"exception in getting force constant filepath")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
             bands_path = Path(remote_workdir) / bnds_output

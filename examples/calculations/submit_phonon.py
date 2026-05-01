@@ -97,7 +97,7 @@ def phonon(params: dict[str, any]) -> None:
 
     # access the data such as the supercell matrix
     supercell_matrix = result["results_dict"].get_dict()["supercell_matrix"]
-    print(f"supercell matriz: {supercell_matrix}")
+    print(f"supercell matrix: {supercell_matrix}")
 
     # verify the hdf5 containing force constants
     if not nohdf5:
