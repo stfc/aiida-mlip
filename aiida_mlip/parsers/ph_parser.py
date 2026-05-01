@@ -101,8 +101,9 @@ class PhononParser(BaseParser):
                 "phonon_output", SinglefileData(file=handle, filename=phonon_output)
             )
 
-        remote_workdir = self.node.get_remote_workdir()
-        with Path(remote_workdir, phonon_output).open(encoding="utf-8") as f:
+        remote_workdir = Path(self.node.get_remote_workdir())
+        phonon_path = remote_workdir / phonon_output
+        with open(phonon_path, encoding="utf-8") as f:
             content = yaml.safe_load(f)
 
         results_node = Dict(content)
@@ -110,7 +111,7 @@ class PhononParser(BaseParser):
 
         # dos
         if dos:
-            dos_path = Path(remote_workdir) / "aiida-dos.dat"
+            dos_path = remote_workdir / "aiida-dos.dat"
 
             try:
                 filedata = self.retrieved.base.repository.get_object_content(
@@ -126,7 +127,7 @@ class PhononParser(BaseParser):
             self.out("dos", results_node)
 
         if pdos:
-            pdos_path = Path(remote_workdir) / "aiida-pdos.dat"
+            pdos_path = remote_workdir / "aiida-pdos.dat"
 
             try:
                 filedata = self.retrieved.base.repository.get_object_content(
@@ -152,7 +153,7 @@ class PhononParser(BaseParser):
                 self.logger.info("exception in getting force constant filepath")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
-            hdf5_path = Path(remote_workdir) / "aiida-force_constants.hdf5"
+            hdf5_path = remote_workdir / "aiida-force_constants.hdf5"
 
             hdf5_path.write_bytes(filedata)
             hdf5_node = SinglefileData(file=hdf5_path)
@@ -172,7 +173,7 @@ class PhononParser(BaseParser):
                 self.logger.info("exception in getting force constant filepath")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
-            bands_path = Path(remote_workdir) / bnds_output
+            bands_path = remote_workdir / bnds_output
 
             bands_node = SinglefileData(file=bands_path)
 
