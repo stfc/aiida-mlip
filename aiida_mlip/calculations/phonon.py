@@ -174,10 +174,6 @@ class Phonons(BaseJanus):
             displacement,
         ]
 
-        # for param in ("no_hdf5", "dos", "pdos", "symmetrize"):
-        #    if getattr(self.inputs, param).value:
-        #        codeinfo.cmdline_params += "--" + param.replace("_", "-")
-
         nohdf5 = (self.inputs.no_hdf5).value
         if nohdf5:
             # force janus-core to write out force constants in yaml
