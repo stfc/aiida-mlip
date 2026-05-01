@@ -117,7 +117,7 @@ class PhononParser(BaseParser):
                     "aiida-dos.dat", mode="rb"
                 )
             except FileNotFoundError:
-                self.logger.error(f"exception in filepath for the density of states")
+                self.logger.error("exception in filepath for the density of states")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
             dos_path.write_bytes(filedata)
@@ -133,7 +133,9 @@ class PhononParser(BaseParser):
                     "aiida-pdos.dat", mode="rb"
                 )
             except FileNotFoundError:
-                self.logger.info(f"exception in filepath for the partial density of states")
+                self.logger.info(
+                    "exception in filepath for the partial density of states"
+                )
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
             pdos_path.write_bytes(filedata)
@@ -147,7 +149,7 @@ class PhononParser(BaseParser):
                     "aiida-force_constants.hdf5", mode="rb"
                 )
             except FileNotFoundError:
-                self.logger.info(f"exception in getting force constant filepath")
+                self.logger.info("exception in getting force constant filepath")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
             hdf5_path = Path(remote_workdir) / "aiida-force_constants.hdf5"
@@ -167,7 +169,7 @@ class PhononParser(BaseParser):
                     bnds_output, mode="rb"
                 )
             except FileNotFoundError:
-                self.logger.info(f"exception in getting force constant filepath")
+                self.logger.info("exception in getting force constant filepath")
                 return self.exit_codes.ERROR_MISSING_OUTPUT
 
             bands_path = Path(remote_workdir) / bnds_output
