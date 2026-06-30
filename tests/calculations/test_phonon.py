@@ -182,7 +182,7 @@ def test_run_ph(model_folder, janus_code):
 
 
 def test_run_supercell(model_folder, janus_code):
-    """Test running singlepoint calculation."""
+    """Test setting supercell for phonon calculation."""
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
