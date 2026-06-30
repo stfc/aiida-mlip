@@ -218,7 +218,7 @@ def test_run_supercell(model_folder, janus_code):
 
 
 def test_output_files(fixture_sandbox, generate_calc_job, janus_code, model_folder):
-    """Est setting log and summary output files."""
+    """Test setting log and summary output files."""
     entry_point_name = "mlip.ph"
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
