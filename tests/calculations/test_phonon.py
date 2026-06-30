@@ -84,7 +84,7 @@ def test_phonon(fixture_sandbox, generate_calc_job, janus_code, model_folder):
 
 
 def test_ph_nostruct(fixture_sandbox, generate_calc_job, model_folder, janus_code):
-    """Test singlepoint calculation with error input."""
+    """Test invalid phonon calculation with missing structure."""
     entry_point_name = "mlip.ph"
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
