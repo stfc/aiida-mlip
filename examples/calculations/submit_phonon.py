@@ -248,7 +248,7 @@ def cli(
     if len(qpoint_file) > 0:
         params["qpoint_file"] = qpoint_file
 
-    # Submit single point
+    # Submit phonon calculation
     phonon(params)
 
 
