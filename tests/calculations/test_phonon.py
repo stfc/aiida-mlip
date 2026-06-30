@@ -114,7 +114,7 @@ def test_ph_nomodel(fixture_sandbox, generate_calc_job, config_folder, janus_cod
 
 
 def test_ph_noarch(fixture_sandbox, generate_calc_job, config_folder, janus_code):
-    """Test singlepoint calculation with missing architecture."""
+    """Test invalid phonon calculation with missing architecture."""
     entry_point_name = "mlip.ph"
 
     inputs = {
