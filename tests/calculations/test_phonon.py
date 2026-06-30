@@ -99,7 +99,7 @@ def test_ph_nostruct(fixture_sandbox, generate_calc_job, model_folder, janus_cod
 
 
 def test_ph_nomodel(fixture_sandbox, generate_calc_job, config_folder, janus_code):
-    """Test singlepoint calculation with missing model."""
+    """Test invalid phonon calculation with missing model."""
     entry_point_name = "mlip.ph"
 
     inputs = {
