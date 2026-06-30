@@ -41,12 +41,12 @@ class PhononParser(BaseParser):
     Raises
     ------
     exceptions.ParsingError
-        If the ProcessNode being passed was not produced by a SinglepointCalc.
+        If the ProcessNode being passed was not produced by a PhononCalc.
     """
 
     def __init__(self, node: ProcessNode):
         """
-        Check that the ProcessNode being passed was produced by a `Singlepoint`.
+        Check that the ProcessNode being passed was produced by a `PhononCalc`.
 
         Parameters
         ----------
