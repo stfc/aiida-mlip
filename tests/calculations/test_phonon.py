@@ -146,7 +146,7 @@ def test_two_arch(fixture_sandbox, generate_calc_job, model_folder, janus_code):
 
 
 def test_run_ph(model_folder, janus_code):
-    """Test running singlepoint calculation."""
+    """Test running phonon calculation."""
     model_file = model_folder / "mace_mp_small.model"
     inputs = {
         "metadata": {"options": {"resources": {"num_machines": 1}}},
