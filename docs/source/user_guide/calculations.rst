@@ -225,7 +225,7 @@ An example of how to execute a calculation is shown below:
         "device": Str,
         #optional inputs below
         "supercell": Str
-        "nohdf5" : Bool,
+        "no_hdf5" : Bool,
         "dos" : Bool,
         "bands" : Bool
     }
