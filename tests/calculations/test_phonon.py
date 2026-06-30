@@ -129,7 +129,7 @@ def test_ph_noarch(fixture_sandbox, generate_calc_job, config_folder, janus_code
 
 
 def test_two_arch(fixture_sandbox, generate_calc_job, model_folder, janus_code):
-    """Test singlepoint calculation with two defined architectures."""
+    """Test invalid phonon calculation with two defined architectures."""
     entry_point_name = "mlip.ph"
     model_file = model_folder / "mace_mp_small.model"
 
