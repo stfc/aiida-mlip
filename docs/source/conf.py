@@ -10,6 +10,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+from importlib import metadata
 import os
 import sys
 import time
@@ -72,7 +73,7 @@ master_doc = "index"
 # General information about the project.
 project = "aiida-mlip"
 copyright_first_year = "2024"
-copyright_owners = "Federica Zanca, Elliott Kasoar, Jacob Wilkins, Alin M. Elena"
+copyright_owners = metadata.metadata("aiida-mlip")["author"]
 
 current_year = str(time.localtime().tm_year)
 copyright_year_string = (

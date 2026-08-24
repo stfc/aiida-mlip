@@ -5,12 +5,17 @@ type: software
 authors:
   - family-names: Zanca
     given-names: Federica
+  - family-names: Gould
+    given-names: Jessica
+    orcid: "https://orcid.org/0009-0009-3570-1820"
   - family-names: Kasoar
     given-names: Elliott
     orcid: "https://orcid.org/0009-0005-2015-9478"
+  - family-names: Mohsin
+    given-names: Muhammad
   - family-names: Wilkins
     given-names: Jacob
-    orcid: https://orcid.org/0009-0004-9147-3475
+    orcid: "https://orcid.org/0009-0004-9147-3475"
   - family-names: Elena
     given-names: Alin
     orcid: "https://orcid.org/0000-0002-7013-6670"
