@@ -56,13 +56,6 @@ class Phonons(BaseJanus):
         )
 
         spec.input(
-            "properties",
-            valid_type=Str,
-            required=False,
-            help="Properties to calculate",
-        )
-
-        spec.input(
             "supercell",
             valid_type=Str,
             required=False,
@@ -205,11 +198,6 @@ class Phonons(BaseJanus):
                 "--bands",
             ]
             codeinfo.cmdline_params += ["--n-qpoints", nqpoints]
-
-        # properties left in just in case for further expansion
-        if "properties" in self.inputs:
-            properties = self.inputs.properties.value
-            codeinfo.cmdline_params += ["--properties", properties]
 
         calcinfo.retrieve_list.extend(
             [
