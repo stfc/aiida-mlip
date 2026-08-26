@@ -6,7 +6,7 @@ from aiida.common import datastructures
 import aiida.common.folders
 from aiida.engine import CalcJobProcessSpec
 import aiida.engine.processes
-from aiida.orm import Dict, SinglefileData, Str
+from aiida.orm import Dict, List, SinglefileData, Str
 
 from aiida_mlip.calculations.base import BaseJanus
 
@@ -57,7 +57,7 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
 
         spec.input(
             "properties",
-            valid_type=Str,
+            valid_type=List,
             required=False,
             help="Properties to calculate",
         )
@@ -108,8 +108,10 @@ class Singlepoint(BaseJanus):  # numpydoc ignore=PR01
         ]
 
         if "properties" in self.inputs:
-            properties = self.inputs.properties.value
-            codeinfo.cmdline_params += ["--properties", properties]
+            properties: list[str] = self.inputs.properties.value
+            codeinfo.cmdline_params.extend(
+                p for prop in properties for p in ["--properties", prop]
+            )
 
         calcinfo.retrieve_list.append(xyz_filename)
 
