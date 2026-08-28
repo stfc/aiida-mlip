@@ -153,7 +153,7 @@ class Phonons(BaseJanus):
         # Gather node inputs for use with janus CLI
         supercell = (self.inputs.supercell).value
         displacement = (self.inputs.displacement).value
-        nqpoints = (self.inputs.nqpoints).value
+        n_qpoints = (self.inputs.n_qpoints).value
         aiida_prefix = "aiida"
 
         codeinfo.cmdline_params = [
@@ -197,7 +197,7 @@ class Phonons(BaseJanus):
             codeinfo.cmdline_params += [
                 "--bands",
             ]
-            codeinfo.cmdline_params += ["--n-qpoints", nqpoints]
+            codeinfo.cmdline_params += ["--n-qpoints", n_qpoints]
 
         calcinfo.retrieve_list.extend(
             [
