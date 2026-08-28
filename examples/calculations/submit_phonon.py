@@ -51,12 +51,9 @@ def phonon(params: dict[str, any]) -> None:
         "displacement": Float(params["displacement"]),
     }
 
-    nohdf5 = inputs["no_hdf5"] = params["no_hdf5"]
-    dos = inputs["dos"] = params["dos"]
-    pdos = inputs["pdos"] = params["pdos"]
-    bands = inputs["bands"] = params["bands"]
-    inputs["symmetrize"] = params["symmetrize"]
-
+    for key in "minimize", "no_hdf5", "dos":
+        inputs[key] = bool(params[key])
+    
     # Only calc_kwargs add if set
     inputs["calc_kwargs"] = Dict(params.get("calc_kwargs", {}))
 
