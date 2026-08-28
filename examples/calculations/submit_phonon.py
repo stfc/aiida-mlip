@@ -150,7 +150,7 @@ def phonon(params: dict[str, any]) -> None:
     help="The size of supercell matrix to calculate phonons e.g. 2 2 2.",
 )
 @click.option(
-    "--nohdf5",
+    "--no-hdf5",
     is_flag=True,
     help="write force constants to phonopy yaml, rather than separate HDF5 file.",
 )
@@ -186,7 +186,7 @@ def cli(
     arch,
     device,
     supercell,
-    nohdf5,
+    no_hdf5,
     dos,
     pdos,
     bands,
