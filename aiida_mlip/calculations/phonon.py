@@ -62,7 +62,7 @@ class Phonons(BaseJanus):
             help="The size of supercells used in phonon calculation",
         )
         spec.input(
-            "nqpoints",
+            "n_qpoints",
             valid_type=Int,
             required=False,
             help="Number of q points in band path",
