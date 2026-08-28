@@ -13,6 +13,7 @@ from aiida.plugins import CalculationFactory
 import click
 import h5py
 import yaml
+import lzma
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
@@ -105,8 +106,7 @@ def phonon(params: dict[str, any]) -> None:
             print("Force constant top-level keys :", list(f.keys()))
 
     if bands:
-        import lzma
-
+        
         bands_path = Path(node.get_remote_workdir()) / "aiida-auto_bands.yml.xz"
 
         # this will load the data
