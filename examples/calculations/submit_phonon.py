@@ -217,34 +217,17 @@ def cli(
         "calc_kwargs": calc_kwargs,
     }
 
-    if nohdf5:
-        params["no_hdf5"] = True
-    else:
-        params["no_hdf5"] = False
-
-    if dos:
-        params["dos"] = True
-    else:
-        params["dos"] = False
-
-    if pdos:
-        params["pdos"] = True
-    else:
-        params["pdos"] = False
-
+    for param in ("no_hdf5", "dos", "pdos", "symmetrize"):
+        if val := getattr(self.inputs, param).value:
+            codeinfo.cmdline_params.append("--" + val.replace("_", "-"))
+        
+    bands = (self.inputs.bands).value
     if bands:
-        params["bands"] = True
-    else:
-        params["bands"] = False
-
-    if symmetrize:
-        params["symmetrize"] = True
-    else:
-        params["symmetrize"] = False
-
-    if len(qpoint_file) > 0:
-        params["qpoint_file"] = qpoint_file
-
+        codeinfo.cmdline_params += [
+            "--bands",
+        ]
+        codeinfo.cmdline_params += ["--n-qpoints", nqpoints]
+    
     # Submit phonon calculation
     phonon(params)
 
