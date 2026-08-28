@@ -27,7 +27,7 @@ def test_phonon(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "device": Str("cpu"),
         "supercell": Str("2 2 2"),
         "displacement": Float(0.01),
-        "n-qpoints": Int(51),
+        "n_qpoints": Int(51),
         "dos": Bool(False),
         "pdos": Bool(False),
         "bands": Bool(False),
@@ -157,7 +157,7 @@ def test_run_ph(model_folder, janus_code):
         "device": Str("cpu"),
         "supercell": Str("2 2 2"),
         "displacement": Float(0.01),
-        "n-qpoints": Int(51),
+        "n_qpoints": Int(51),
         "dos": Bool(False),
         "pdos": Bool(False),
         "bands": Bool(False),
@@ -193,7 +193,7 @@ def test_run_supercell(model_folder, janus_code):
         "device": Str("cpu"),
         "supercell": Str("3 3 3"),
         "displacement": Float(0.01),
-        "n-qpoints": Int(51),
+        "n_qpoints": Int(51),
         "dos": Bool(False),
         "pdos": Bool(False),
         "bands": Bool(False),
@@ -235,7 +235,7 @@ def test_output_files(fixture_sandbox, generate_calc_job, janus_code, model_fold
         "bands": Bool(True),
         "no_hdf5": Bool(False),
         "symmetrize": Bool(False),
-        "nqpoints": Int(51),
+        "n_qpoints": Int(51),
     }
 
     calc_info = generate_calc_job(fixture_sandbox, entry_point_name, inputs)
