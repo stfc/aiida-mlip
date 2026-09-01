@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import json
+import lzma
 from pathlib import Path
 
 from aiida.common import NotExistent
@@ -13,7 +14,6 @@ from aiida.plugins import CalculationFactory
 import click
 import h5py
 import yaml
-import lzma
 
 from aiida_mlip.helpers.help_load import load_model, load_structure
 
@@ -48,13 +48,13 @@ def phonon(params: dict[str, any]) -> None:
         "model": model,
         "device": Str(params["device"]),
         "supercell": params["supercell"],
-        "nqpoints": params["nqpoints"],
+        "n_qpoints": params["n_qpoints"],
         "displacement": Float(params["displacement"]),
     }
 
-    for key in "no_hdf5", "pdos", "dos":
+    for key in "no_hdf5", "pdos", "dos", "bands", "symmetrize":
         inputs[key] = bool(params[key])
-    
+
     # Only calc_kwargs add if set
     inputs["calc_kwargs"] = Dict(params.get("calc_kwargs", {}))
 
@@ -72,7 +72,13 @@ def phonon(params: dict[str, any]) -> None:
     # print(result["results_dict"].get_dict())
     print(f"remote folder {result['remote_folder']} {node.get_remote_workdir()} ")
     print(f"retrieved {result['retrieved']}  ")
-    if not nohdf5:
+
+    no_hdf5 = params["no_hdf5"]
+    dos = params["dos"]
+    pdos = params["pdos"]
+    bands = params["bands"]
+
+    if not no_hdf5:
         print(f"force_constants {result['force_constants']} ")
 
     if dos:
@@ -98,7 +104,7 @@ def phonon(params: dict[str, any]) -> None:
     print(f"supercell matrix: {supercell_matrix}")
 
     # verify the hdf5 containing force constants
-    if not nohdf5:
+    if not no_hdf5:
         hdf5_path = Path(node.get_remote_workdir()) / "aiida-force_constants.hdf5"
 
         with h5py.File(hdf5_path, "r") as f:
@@ -106,7 +112,6 @@ def phonon(params: dict[str, any]) -> None:
             print("Force constant top-level keys :", list(f.keys()))
 
     if bands:
-        
         bands_path = Path(node.get_remote_workdir()) / "aiida-auto_bands.yml.xz"
 
         # this will load the data
@@ -212,22 +217,17 @@ def cli(
         "arch": arch,
         "device": device,
         "supercell": supercell,
-        "nqpoints": n_qpoints,
+        "n_qpoints": n_qpoints,
         "displacement": displacement,
         "calc_kwargs": calc_kwargs,
+        "no_hdf5": no_hdf5,
+        "dos": dos,
+        "pdos": pdos,
+        "bands": bands,
+        "symmetrize": symmetrize,
+        "qpoint_file": qpoint_file,
     }
 
-    for param in ("no_hdf5", "dos", "pdos", "symmetrize"):
-        if val := getattr(self.inputs, param).value:
-            codeinfo.cmdline_params.append("--" + val.replace("_", "-"))
-        
-    bands = (self.inputs.bands).value
-    if bands:
-        codeinfo.cmdline_params += [
-            "--bands",
-        ]
-        codeinfo.cmdline_params += ["--n-qpoints", nqpoints]
-    
     # Submit phonon calculation
     phonon(params)
 
