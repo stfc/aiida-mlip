@@ -161,7 +161,7 @@ class PhononParser(BaseParser):
             self.out("force_constants", hdf5_node)
 
         # for band structure the required file is aiida-auto_bands.yml.xz
-        # this needs to be changed for hdf5
+        # this needs to be changed for hdf5 once janus-core is updated
         if bands:
             bnds_output = "aiida-auto_bands.yml.xz"
 
