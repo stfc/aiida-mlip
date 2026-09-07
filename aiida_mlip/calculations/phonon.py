@@ -206,7 +206,6 @@ class Phonons(BaseJanus):
                 "aiida-dos.dat",
                 "aiida-pdos.dat",
                 "aiida-auto_bands.yml.xz",
-                # "aiida-bands.hdf5",
             ]
         )
 
