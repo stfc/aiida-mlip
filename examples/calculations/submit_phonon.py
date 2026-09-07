@@ -88,7 +88,7 @@ def phonon(params: dict[str, any]) -> None:
         print(f"partial density of states {result['pdos']} ")
 
     if bands:
-        print(f"partial density of states {result['band_structure']} ")
+        print(f"band structure {result['band_structure']} ")
 
     # dump the dictionary as a yaml file - for inspection / testing
     with open("data.yml", "w") as file:
