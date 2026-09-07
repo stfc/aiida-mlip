@@ -103,7 +103,7 @@ class PhononParser(BaseParser):
 
         remote_workdir = Path(self.node.get_remote_workdir())
         phonon_path = remote_workdir / phonon_output
-        with open(phonon_path, encoding="utf-8") as f:
+        with phonon_path.open() as f:
             content = yaml.safe_load(f)
 
         results_node = Dict(content)
