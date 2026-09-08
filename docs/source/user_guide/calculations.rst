@@ -249,6 +249,6 @@ They will be converted to AiiDA data types by the script itself.
 .. code-block:: python
 
     #using defaults - just enough to get force constants
-    verdi run submit_phonon.py "janus@localhost" --structure "path/to/structure" --model "path/to/model"
+    verdi run submit_phonon.py "janus@localhost" --struct "path/to/structure" --model "path/to/model"
     #with some optional flags
-    verdi run submit_phonon.py "janus@localhost" --structure "path/to/structure" --model "path/to/model" --supercell "2 2 2" --dos --bands
+    verdi run submit_phonon.py "janus@localhost" --struct "path/to/structure" --model "path/to/model" --supercell "2 2 2" --dos --bands
