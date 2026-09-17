@@ -6,10 +6,11 @@ import subprocess
 
 from aiida.common import InputValidationError, datastructures
 from aiida.engine import run
-from aiida.orm import Dict, Str, StructureData
+from aiida.orm import Dict, List, Str, StructureData
 from aiida.plugins import CalculationFactory
 from ase.build import bulk
 from ase.io import write
+import numpy as np
 import pytest
 
 from aiida_mlip.data.config import JanusConfigfile
@@ -149,6 +150,79 @@ def test_run_sp(model_folder, janus_code):
     assert "xyz_output" in result
     assert obtained_res["info"]["mace_energy"] == pytest.approx(-6.7575203839729)
     assert obtained_res["info"]["mace_stress"][0] == pytest.approx(-0.005816546985101)
+
+
+def test_run_sp_properties(
+    fixture_sandbox, generate_calc_job, model_folder, janus_code
+):
+    """Test running singlepoint calculation with specified properties."""
+    model_file = model_folder / "mace_mp_small.model"
+    inputs = {
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "code": janus_code,
+        "arch": Str("mace"),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "model": ModelData.from_local(model_file, architecture="mace"),
+        "device": Str("cpu"),
+        "properties": List(["energy", "hessian", "forces"]),
+    }
+
+    cmdline_params = [
+        "singlepoint",
+        "--arch",
+        "mace",
+        "--model",
+        "mlff.model",
+        "--struct",
+        "aiida.xyz",
+        "--device",
+        "cpu",
+        "--log",
+        "aiida.log",
+        "--summary",
+        "singlepoint-summary.yml",
+        "--out",
+        "aiida-results.xyz",
+        "--properties",
+        "energy",
+        "--properties",
+        "hessian",
+        "--properties",
+        "forces",
+    ]
+    entry_point_name = "mlip.sp"
+
+    calc_info = generate_calc_job(fixture_sandbox, entry_point_name, inputs)
+    assert sorted(calc_info.codes_info[0].cmdline_params) == sorted(cmdline_params)
+
+    SinglepointCalc = CalculationFactory(entry_point_name)
+    result = run(SinglepointCalc, **inputs)
+
+    assert "results_dict" in result
+    obtained_res = result["results_dict"].get_dict()
+    assert "xyz_output" in result
+
+    # mace_stress would be in obtained_res["info"] if requested
+    assert "mace_stress" not in obtained_res
+    assert "mace_stress" not in obtained_res["info"]
+
+    assert "mace_forces" in obtained_res
+    assert "mace_energy" in obtained_res["info"]
+    assert "mace_hessian" in obtained_res["info"]
+
+    assert obtained_res["info"]["mace_energy"] == pytest.approx(-6.7575203839729)
+    np.testing.assert_allclose(
+        obtained_res["info"]["mace_hessian"],
+        [
+            [[1.6544188146878, 0.0, 0.0], [-1.6544188146878, 0.0, 0.0]],
+            [[0.0, 1.6544188146878, 0.0], [0.0, -1.6544188146878, 0.0]],
+            [[0.0, 0.0, 1.6544188146878], [0.0, 0.0, -1.6544188146878]],
+            [[-1.6544188146878, 0.0, 0.0], [1.6544188146878, 0.0, 0.0]],
+            [[0.0, -1.6544188146878, 0.0], [0.0, 1.6544188146878, 0.0]],
+            [[0.0, 0.0, -1.6544188146878], [0.0, 0.0, 1.6544188146878]],
+        ],
+        atol=1e-6,
+    )
 
 
 def test_run_config(model_folder, janus_code, config_folder, tmp_path):
