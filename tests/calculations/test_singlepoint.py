@@ -164,7 +164,7 @@ def test_run_sp_properties(
         "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
         "model": ModelData.from_local(model_file, architecture="mace"),
         "device": Str("cpu"),
-        "properties": List(["energy", "hessian"]),
+        "properties": List(["energy", "hessian", "forces"]),
     }
 
     cmdline_params = [
@@ -187,6 +187,8 @@ def test_run_sp_properties(
         "energy",
         "--properties",
         "hessian",
+        "--properties",
+        "forces",
     ]
     entry_point_name = "mlip.sp"
 
@@ -199,10 +201,18 @@ def test_run_sp_properties(
     assert "results_dict" in result
     obtained_res = result["results_dict"].get_dict()
     assert "xyz_output" in result
+
+    # mace_stress would be in obtained_res["info"] if requested
+    assert "mace_stress" not in obtained_res
     assert "mace_stress" not in obtained_res["info"]
-    assert "mace_forces" not in obtained_res["info"]
+
+    assert "mace_forces" in obtained_res
+    assert "mace_energy" in obtained_res["info"]
+    assert "mace_hessian" in obtained_res["info"]
+
     assert obtained_res["info"]["mace_energy"] == pytest.approx(-6.7575203839729)
-    assert np.testing.assert_allclose(obtained_res["info"]["mace_hessian"],
+    np.testing.assert_allclose(
+        obtained_res["info"]["mace_hessian"],
         [
             [[1.6544188146878, 0.0, 0.0], [-1.6544188146878, 0.0, 0.0]],
             [[0.0, 1.6544188146878, 0.0], [0.0, -1.6544188146878, 0.0]],
@@ -210,7 +220,8 @@ def test_run_sp_properties(
             [[-1.6544188146878, 0.0, 0.0], [1.6544188146878, 0.0, 0.0]],
             [[0.0, -1.6544188146878, 0.0], [0.0, 1.6544188146878, 0.0]],
             [[0.0, 0.0, -1.6544188146878], [0.0, 0.0, 1.6544188146878]],
-        ], atol=1e-6
+        ],
+        atol=1e-6,
     )
 
 
