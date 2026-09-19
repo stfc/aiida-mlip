@@ -147,4 +147,3 @@ jobs:
           tags: |
             ghcr.io/stfc/aiida-mlip:arm64-${{ github.sha }}
             ghcr.io/stfc/aiida-mlip:arm64-latest
-
