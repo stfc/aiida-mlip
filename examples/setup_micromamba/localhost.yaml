@@ -1,0 +1,12 @@
+label: localhost
+description: Localhost execution computer
+hostname: localhost
+transport: core.local
+scheduler: core.direct
+shebang: '#!/bin/bash'
+work_dir: /tmp/aiida_janus_work
+mpirun_command: ''
+mpiprocs_per_machine: 1
+use_double_quotes: false
+prepend_text: ''
+append_text: ''

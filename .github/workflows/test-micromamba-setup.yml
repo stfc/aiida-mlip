@@ -1,0 +1,41 @@
+name: test-micromamba-setup
+
+on:
+  push:
+    branches: [main, docker]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
+        include:
+          - python-version: "3.15"
+            experimental: true
+
+    continue-on-error: ${{ matrix.experimental || false }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Micromamba
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-name: aiida-janus
+          create-args: >-
+            python=${{ matrix.python-version }}
+            postgresql
+            rabbitmq-server
+          init-shell: bash
+          cache-environment: false
+
+      - name: Run Micromamba Setup and Calculation Test
+        shell: bash -el {0}
+        run: |
+          bash examples/setup_micromamba/run_setup_and_test.sh --cleanup
