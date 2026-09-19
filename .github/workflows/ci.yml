@@ -40,14 +40,20 @@ jobs:
           version: "0.6.14"
           python-version: ${{ matrix.python-version }}
 
+
       - name: Install dependencies
         run: |
           uv sync --all-extras
+          uv venv janus
+          source janus/bin/activate
+          uv pip install "janus_core[mace]<0.9,>=0.8.3" matplotlib-inline
+          deactivate
 
       - name: Run test suite
         env:
           # show timings of tests
           PYTEST_ADDOPTS: "--durations=0"
+          JANUS_PATH: "janus"
         run: uv run pytest --cov aiida_mlip --cov-append .
 
       - name: Report coverage to Coveralls
