@@ -2,21 +2,18 @@ name: ci
 
 on: [push, pull_request]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
 
   tests:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
-      fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
         aiida-version: ["stable"]
-        include:
-          - python-version: "3.15"
-            experimental: true
-
-    continue-on-error: ${{ matrix.experimental || false }}
 
     services:
       postgres:
@@ -38,17 +35,21 @@ jobs:
           - 5672:5672
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           version: "0.6.14"
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
-          uv sync --all-extras
+          if [ "${{ matrix.python-version }}" = "3.11" ] || [ "${{ matrix.python-version }}" = "3.12" ]; then
+            uv sync --all-extras
+          else
+            uv sync --extra mace
+          fi
 
       - name: Run test suite
         env:
@@ -77,10 +78,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           version: "0.6.14"
           python-version: "3.12"
@@ -96,10 +97,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v7
         with:
           version: "0.6.14"
           python-version: "3.12"

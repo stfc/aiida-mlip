@@ -6,26 +6,23 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   test-setup:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     strategy:
-      fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
-        include:
-          - python-version: "3.15"
-            experimental: true
-
-    continue-on-error: ${{ matrix.experimental || false }}
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Micromamba
-        uses: mamba-org/setup-micromamba@v2
+        uses: mamba-org/setup-micromamba@v3
         with:
           environment-name: aiida-janus
           create-args: >-

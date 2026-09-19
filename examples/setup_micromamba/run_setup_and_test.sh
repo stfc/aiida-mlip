@@ -104,26 +104,31 @@ mkdir -p "${AIIDA_REPO}" "${AIIDA_WORK_DIR}"
 
 if ! verdi profile show "${PROFILE_NAME}" >/dev/null 2>&1; then
     echo "Creating profile '${PROFILE_NAME}'..."
-    verdi profile setup core.psql_dos \
-        --profile-name "${PROFILE_NAME}" \
-        --set-as-default \
-        --non-interactive \
-        --database-hostname localhost \
-        --database-port 5432 \
-        --database-name "${DB_NAME}" \
-        --database-username "${DB_USER}" \
-        --database-password "${DB_PASS}" \
-        --use-rabbitmq \
-        --broker-protocol amqp \
-        --broker-host localhost \
-        --broker-port 5672 \
-        --broker-username guest \
-        --broker-password guest \
-        --email "user@localhost" \
-        --first-name "Janus" \
-        --last-name "User" \
-        --institution "STFC" \
-        --repository-uri "file://${AIIDA_REPO}"
+    TMP_CONFIG="${SCRIPT_DIR}/.profile_setup.yaml"
+    cat << EOF > "${TMP_CONFIG}"
+non_interactive: true
+profile: ${PROFILE_NAME}
+email: user@localhost
+first_name: Janus
+last_name: User
+institution: STFC
+database_engine: core.psql_dos
+database_hostname: localhost
+database_port: 5432
+database_name: ${DB_NAME}
+database_username: ${DB_USER}
+database_password: ${DB_PASS}
+use_rabbitmq: true
+broker_protocol: amqp
+broker_host: localhost
+broker_port: 5672
+broker_username: guest
+broker_password: guest
+broker_virtual_host: ""
+repository_uri: file://${AIIDA_REPO}
+EOF
+    verdi profile setup core.psql_dos --config "${TMP_CONFIG}"
+    rm -f "${TMP_CONFIG}"
 fi
 
 verdi profile setdefault "${PROFILE_NAME}" >/dev/null 2>&1 || true
