@@ -135,7 +135,7 @@ exclude = [
 ]
 
 [tool.ruff]
-extend-exclude = ["conf.py", "*.ipynb"]
+extend-exclude = ["conf.py", "*.ipynb", "containers/assets/tutorials/*.py"]
 target-version = "py310"
 
 [tool.ruff.lint]

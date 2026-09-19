@@ -12,7 +12,7 @@ TUTORIALS_DIR="${TUTORIALS_DIR:-/app/tutorials}"
 # ── 1. Start background services if running as root ──────────────────────────
 if [ "$(id -u)" = "0" ]; then
     echo "=== Initializing services as root ==="
-    
+
     # PostgreSQL startup
     if [ -x "/etc/init.d/postgresql" ]; then
         if ! service postgresql status >/dev/null 2>&1; then

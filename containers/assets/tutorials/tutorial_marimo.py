@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import marimo
 
 __generated_with = "0.24.2"
@@ -68,8 +70,8 @@ def __(mo):
 
 @app.cell
 def __(mo):
-    from ase.build import bulk
     from aiida.orm import StructureData
+    from ase.build import bulk
 
     element_selector = mo.ui.dropdown(
         options=["NaCl", "Si", "Cu", "Fe", "Al"],
@@ -136,11 +138,13 @@ def __(mo):
 @app.cell
 def __(arch_dropdown, janus_code, mo, run_button, structure_node):
     from aiida.engine import run_get_node
-    from aiida.plugins import CalculationFactory
     from aiida.orm import Dict, Str
+    from aiida.plugins import CalculationFactory
 
     if not run_button.value:
-        res_output = mo.md("*Click the button above to run the singlepoint calculation using `aiida-mlip`.*")
+        res_output = mo.md(
+            "*Click the button above to run the singlepoint calculation using `aiida-mlip`.*"
+        )
     else:
         with mo.status.spinner("Running singlepoint calculation via AiiDA..."):
             Singlepoint = CalculationFactory("mlip.sp")
@@ -151,10 +155,8 @@ def __(arch_dropdown, janus_code, mo, run_button, structure_node):
                 "device": Str("cpu"),
                 "precision": Str("float64"),
                 "metadata": {
-                    "options": {
-                        "resources": {"num_machines": 1, "tot_num_mpiprocs": 1}
-                    }
-                }
+                    "options": {"resources": {"num_machines": 1, "tot_num_mpiprocs": 1}}
+                },
             }
             try:
                 results, node = run_get_node(Singlepoint, **inputs)
@@ -166,7 +168,7 @@ def __(arch_dropdown, janus_code, mo, run_button, structure_node):
                     - **Exit status**: `{node.exit_status}`
                     - **Results dict**:
                     ```json
-                    {results['results_dict'].get_dict()}
+                    {results["results_dict"].get_dict()}
                     ```
                     """
                 )
