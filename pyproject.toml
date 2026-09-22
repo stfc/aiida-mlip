@@ -26,7 +26,7 @@ dependencies = [
     "aiida-core~=2.7.4",
     "ase<4.0,>=3.24",
     "voluptuous<1,>=0.15.2",
-    "janus-core<0.9,>=0.8.3",
+    "janus-core<0.10.0,>=0.9.7",
     "aiida-workgraph<0.8, >=0.7.6",
 ]
 
@@ -135,7 +135,7 @@ exclude = [
 ]
 
 [tool.ruff]
-extend-exclude = ["conf.py", "*.ipynb"]
+extend-exclude = ["conf.py", "*.ipynb", "containers/assets/tutorials/*.py"]
 target-version = "py310"
 
 [tool.ruff.lint]
