@@ -5,6 +5,7 @@
 [![License][license-badge]][license-link]
 [![DOI][doi-badge]][doi-link]
 [![Ask DeepWiki][deepwiki-badge]][deepwiki-link]
+![Janus Version](https://img.shields.io/badge/janus--core%20version-0.9.8--0.10-blue)
 
 # aiida-mlip
 ![logo][logo]
