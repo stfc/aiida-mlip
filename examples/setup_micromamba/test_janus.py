@@ -46,14 +46,7 @@ def run_test_calculation(
     model = ModelData.from_local(model_file, architecture=arch)
 
     inputs = {
-        "metadata": {
-            "options": {
-                "resources": {
-                    "num_machines": 1,
-                    "num_mpiprocs_per_machine": 1,
-                }
-            }
-        },
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
         "code": code,
         "struct": structure,
         "arch": Str(arch),
