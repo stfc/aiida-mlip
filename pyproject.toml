@@ -137,7 +137,6 @@ exclude = [
 
 [tool.ruff]
 extend-exclude = ["conf.py", "*.ipynb"]
-target-version = "py312"
 
 [tool.ruff.lint]
 # Ignore complexity, non-lowercase
