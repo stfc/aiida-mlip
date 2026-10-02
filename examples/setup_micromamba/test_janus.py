@@ -39,6 +39,11 @@ def run_test_calculation(code, arch: str = "mace_mp", device: str = "cpu") -> No
 
 @click.command("cli")
 @click.option(
+    "--profile",
+    default=None,
+    help="AiiDA profile to load",
+)
+@click.option(
     "--codelabel",
     default="janus@localhost",
     show_default=True,
@@ -56,8 +61,12 @@ def run_test_calculation(code, arch: str = "mace_mp", device: str = "cpu") -> No
     show_default=True,
     help="Device to run on (cpu, cuda)",
 )
-def cli(codelabel: str, arch: str, device: str) -> None:
+def cli(codelabel: str, arch: str, device: str, profile: str | None = None) -> None:
     """CLI interface for testing janus execution."""
+    from aiida import load_profile
+
+    load_profile(profile)
+
     try:
         code = load_code(codelabel)
     except NotExistent as exc:
