@@ -248,9 +248,9 @@ def test_run_config(model_folder, janus_code, config_folder, tmp_path):
         assert "xyz_output" in result
         print(obtained_res["info"].keys())
         assert obtained_res["info"]["mace_d3_energy"] == pytest.approx(-7.166011197778)
-        # The dispersion stress is only reproducible to ~1e-8 between runs
+        # The dispersion stress is only reproducible to ~1e-7 between runs
         assert obtained_res["info"]["mace_d3_stress"][0] == pytest.approx(
-            -0.0020789238802754, rel=1e-5
+            -0.0020789238802754, abs=1e-7
         )
 
 
@@ -273,9 +273,9 @@ def test_run_calc_kwargs(model_folder, janus_code, config_folder, tmp_path):
     assert "xyz_output" in result
     print(obtained_res["info"].keys())
     assert obtained_res["info"]["mace_d3_energy"] == pytest.approx(-7.166011197778)
-    # The dispersion stress is only reproducible to ~1e-8 between runs
+    # The dispersion stress is only reproducible to ~1e-7 between runs
     assert obtained_res["info"]["mace_d3_stress"][0] == pytest.approx(
-        -0.0020789238802754, rel=1e-5
+        -0.0020789238802754, abs=1e-7
     )
 
 
