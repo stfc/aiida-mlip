@@ -34,6 +34,10 @@ It is then necessary to install the ``janus-core`` package which will be the dri
       python3 -m pip install janus-core[mace]
       deactivate
 
+   It's important to double check that your version of ``janus-core`` is
+   compatible with ``aiida-mlip`` to get consistent functionality. For compatible
+   versions, check the version list in the readme.
+
 For additional MLIPs, it is recommended that the ``extra`` dependencies provided by ``janus-core`` are used.
 For example, to install CHGNet and SevenNet, run:
 
