@@ -75,23 +75,37 @@ if ! verdi profile show "$AIIDA_PROFILE_NAME" >/dev/null 2>&1; then
         --database-name "$AIIDA_DB_NAME" \
         --database-username "$AIIDA_DB_USER" \
         --database-password "$AIIDA_DB_PASS" \
-        --use-rabbitmq \
-        --broker-protocol amqp \
-        --broker-host "$AIIDA_BROKER_HOST" \
-        --broker-port "$AIIDA_BROKER_PORT" \
-        --broker-username "$AIIDA_BROKER_USER" \
-        --broker-password "$AIIDA_BROKER_PASS" \
+        --broker core.rabbitmq \
         --email "$AIIDA_USER_EMAIL" \
         --first-name "$AIIDA_USER_FIRST_NAME" \
         --last-name "$AIIDA_USER_LAST_NAME" \
         --institution "$AIIDA_USER_INSTITUTION" \
         --repository-uri "file://${AIIDA_REPO_DIR}"
+
+    verdi -p "$AIIDA_PROFILE_NAME" profile configure-broker core.rabbitmq \
+        --non-interactive \
+        --force \
+        --broker-protocol amqp \
+        --broker-host "$AIIDA_BROKER_HOST" \
+        --broker-port "$AIIDA_BROKER_PORT" \
+        --broker-username "$AIIDA_BROKER_USER" \
+        --broker-password "$AIIDA_BROKER_PASS" \
+        --broker-virtual-host "" 2>/dev/null || \
+    verdi -p "$AIIDA_PROFILE_NAME" profile configure-rabbitmq \
+        --non-interactive \
+        --force \
+        --broker-protocol amqp \
+        --broker-host "$AIIDA_BROKER_HOST" \
+        --broker-port "$AIIDA_BROKER_PORT" \
+        --broker-username "$AIIDA_BROKER_USER" \
+        --broker-password "$AIIDA_BROKER_PASS" \
+        --broker-virtual-host "" 2>/dev/null || true
     echo "✓ Profile '$AIIDA_PROFILE_NAME' successfully created."
 else
     echo "✓ Profile '$AIIDA_PROFILE_NAME' already exists."
 fi
 
-verdi profile setdefault "$AIIDA_PROFILE_NAME" >/dev/null 2>&1 || true
+verdi profile set-default "$AIIDA_PROFILE_NAME" >/dev/null 2>&1 || verdi profile setdefault "$AIIDA_PROFILE_NAME" >/dev/null 2>&1 || true
 
 # ── 4. Set up localhost computer ────────────────────────────────────────────
 if ! verdi computer show localhost >/dev/null 2>&1; then

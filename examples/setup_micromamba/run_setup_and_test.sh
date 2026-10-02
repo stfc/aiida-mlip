@@ -118,21 +118,15 @@ database_port: 5432
 database_name: ${DB_NAME}
 database_username: ${DB_USER}
 database_password: ${DB_PASS}
-use_rabbitmq: true
-broker_protocol: amqp
-broker_host: localhost
-broker_port: 5672
-broker_username: guest
-broker_password: guest
-broker_virtual_host: ""
+broker: core.rabbitmq
 repository_uri: file://${AIIDA_REPO}
 EOF
     verdi profile setup core.psql_dos --config "${TMP_CONFIG}"
     rm -f "${TMP_CONFIG}"
 fi
 
-verdi profile setdefault "${PROFILE_NAME}" >/dev/null 2>&1 || true
-verdi profile configure-rabbitmq || true
+verdi profile set-default "${PROFILE_NAME}" >/dev/null 2>&1 || verdi profile setdefault "${PROFILE_NAME}" >/dev/null 2>&1 || true
+verdi profile configure-broker core.rabbitmq --non-interactive 2>/dev/null || verdi profile configure-rabbitmq 2>/dev/null || true
 
 if ! verdi daemon status 2>/dev/null | grep -q "Daemon is running"; then
     echo "Starting AiiDA daemon..."

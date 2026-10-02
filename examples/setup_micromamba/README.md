@@ -83,8 +83,8 @@ A template profile configuration is available in `profile.yaml`:
 
 ```bash
 verdi profile setup core.psql_dos --config examples/setup_micromamba/profile.yaml
-verdi profile setdefault janus_local
-verdi profile configure-rabbitmq
+verdi profile set-default janus_local
+verdi profile configure-broker core.rabbitmq --non-interactive 2>/dev/null || verdi profile configure-rabbitmq 2>/dev/null || true
 verdi daemon start
 verdi status
 ```
