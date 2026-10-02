@@ -26,14 +26,13 @@ dependencies = [
     "aiida-core~=2.8",
     "ase<4.0,>=3.24",
     "voluptuous<1,>=0.15.2",
-    "janus-core<0.10,>=0.9.7",
+    "janus-core<0.10,>=0.9.8",
     "aiida-workgraph<0.10,>=0.9.0",
 ]
 
 [project.optional-dependencies]
 mace = [
     "janus-core[mace]",
-    "graph-longrange",
 ]
 fpsample = [
     "fpsample<2,>=1.0.2",
@@ -179,6 +178,3 @@ default-groups = [
     "docs",
     "pre-commit",
 ]
-
-[tool.uv.sources]
-graph-longrange = { git = "https://github.com/WillBaldwin0/graph_electrostatics", tag = "v0.4.0" }
