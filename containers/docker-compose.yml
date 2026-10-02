@@ -1,0 +1,31 @@
+services:
+  aiida-mlip:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile
+    image: aiida-mlip:latest
+    container_name: aiida-mlip-marimo
+    restart: unless-stopped
+    ports:
+      - "8842:8842"
+      - "5000:5000"
+    environment:
+      - PORT=8842
+      - HOST=0.0.0.0
+      - AIIDA_PROFILE_NAME=default
+      - AUTO_SETUP_AIIDA=true
+    volumes:
+      - aiida_home:/home/aiida
+      - tutorials_data:/app/tutorials
+    healthcheck:
+      test: ["CMD-SHELL", "su - aiida -c 'verdi status' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  aiida_home:
+    name: aiida_mlip_home
+  tutorials_data:
+    name: aiida_mlip_tutorials

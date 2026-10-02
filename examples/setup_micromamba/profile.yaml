@@ -1,0 +1,14 @@
+non_interactive: true
+profile: janus_local
+email: user@localhost
+first_name: Janus
+last_name: User
+institution: STFC
+database_engine: core.psql_dos
+database_hostname: localhost
+database_port: 5432
+database_name: aiida_janus_db
+database_username: aiida_janus
+database_password: aiida_janus_password
+broker: core.rabbitmq
+repository_uri: file:///tmp/aiida_janus_repo
