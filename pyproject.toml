@@ -10,7 +10,7 @@ authors = [
     { name = "Jacob Wilkins" },
     { name = "Alin M. Elena" },
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
     "Programming Language :: Python",
     "Intended Audience :: Science/Research",
@@ -23,19 +23,19 @@ readme = "README.md"
 keywords = ["aiida", "plugin"]
 
 dependencies = [
-    "aiida-core~=2.7.4",
+    "aiida-core~=2.8",
     "ase<4.0,>=3.24",
     "voluptuous<1,>=0.15.2",
-    "janus-core<0.9,>=0.8.3",
-    "aiida-workgraph<0.8, >=0.7.6",
+    "janus-core<0.10,>=0.9.8",
+    "aiida-workgraph<0.10,>=0.9.0",
 ]
 
 [project.optional-dependencies]
 mace = [
-    "janus-core[mace]"
+    "janus-core[mace]",
 ]
 fpsample = [
-    "fpsample<0.4,>=0.3.3",
+    "fpsample<2,>=1.0.2",
 ]
 aiida-psuedo = [
     "aiida-pseudo<2.0.0,>=1.7.0",
@@ -136,7 +136,6 @@ exclude = [
 
 [tool.ruff]
 extend-exclude = ["conf.py", "*.ipynb"]
-target-version = "py310"
 
 [tool.ruff.lint]
 # Ignore complexity, non-lowercase

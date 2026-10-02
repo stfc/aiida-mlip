@@ -8,7 +8,7 @@ from aiida.orm import load_code
 from aiida.plugins import CalculationFactory
 
 from aiida_mlip.data.model import ModelData
-from aiida_mlip.workflows.ht_workgraph import get_ht_workgraph
+from aiida_mlip.workflows.ht_workgraph import build_ht_calc
 
 SinglepointCalc = CalculationFactory("mlip.sp")
 
@@ -21,12 +21,13 @@ inputs = {
     "code": load_code("janus@localhost"),
 }
 
-wg = get_ht_workgraph(
+wg = build_ht_calc(
     calc=SinglepointCalc,
     folder=Path("./tests/workflows/structures/"),
     calc_inputs=inputs,
     final_struct_key="xyz_output",
-    max_number_jobs=10,
 )
+
+wg.max_number_jobs = 10
 
 wg.submit()

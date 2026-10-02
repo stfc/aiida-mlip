@@ -44,6 +44,16 @@ aiida\_mlip.calculations.md module
    :undoc-members:
    :show-inheritance:
 
+aiida\_mlip.calculations.phonon module
+--------------------------------------
+
+.. automodule:: aiida_mlip.calculations.phonon
+   :members:
+   :special-members:
+   :private-members:
+   :undoc-members:
+   :show-inheritance:
+
 aiida\_mlip.calculations.singlepoint module
 -------------------------------------------
 
