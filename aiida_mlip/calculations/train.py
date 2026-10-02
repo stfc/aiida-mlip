@@ -9,7 +9,7 @@ from aiida.common import InputValidationError, datastructures
 import aiida.common.folders
 from aiida.engine import CalcJob, CalcJobProcessSpec
 import aiida.engine.processes
-from aiida.orm import Bool, Dict, FolderData, SinglefileData
+from aiida.orm import Bool, Dict, FolderData, SinglefileData, Str
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
@@ -61,6 +61,23 @@ def validate_inputs(
                 "Undefined Model to fine-tune in inputs or config file"
             )
 
+    if "arch" in port_namespace:
+        model_arch = getattr(inputs.get("foundation_model"), "architecture", None)
+        # `arch` is a positional argument of `janus train`, so it must be determined
+        if "arch" not in inputs and model_arch is None:
+            raise InputValidationError(
+                "'arch' must be specified in inputs or ModelData"
+            )
+        if (
+            "arch" in inputs
+            and model_arch is not None
+            and inputs["arch"].value != model_arch
+        ):
+            raise InputValidationError(
+                "'arch' in ModelData and in inputs must be the same, "
+                f"but they are {model_arch} and {inputs['arch'].value}"
+            )
+
 
 class Train(CalcJob):  # numpydoc ignore=PR01
     """
@@ -101,6 +118,14 @@ class Train(CalcJob):  # numpydoc ignore=PR01
             valid_type=JanusConfigfile,
             required=True,
             help="Config file with parameters for training",
+        )
+
+        spec.input(
+            "arch",
+            valid_type=Str,
+            required=False,
+            help="MLIP architecture to train. Inferred from `foundation_model` if "
+            "not set.",
         )
 
         spec.input(
@@ -195,10 +220,16 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         cmd_line = {
             "mlip-config": config_copy,
             "fine-tune": bool(self.inputs.fine_tune),
+            # janus writes to ./janus_results by default, but the parser resolves the
+            # output directories relative to the remote working directory
+            "file-prefix": ".",
         }
 
+        # `arch` is a positional argument of `janus train`, so it cannot be passed
+        # through `kwarg_to_param`
         codeinfo.cmdline_params = [
             "train",
+            self._get_arch(),
             *kwarg_to_param(cmd_line),
         ]
 
@@ -226,3 +257,16 @@ class Train(CalcJob):  # numpydoc ignore=PR01
         ]
 
         return calcinfo
+
+    def _get_arch(self) -> str:
+        """
+        Find the architecture to train, from the inputs or the model to fine-tune.
+
+        Returns
+        -------
+        str
+            The MLIP architecture to pass to `janus train`.
+        """
+        if "arch" in self.inputs:
+            return str(self.inputs.arch.value)
+        return str(self.inputs.foundation_model.architecture)

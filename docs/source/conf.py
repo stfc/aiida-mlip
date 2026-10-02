@@ -16,6 +16,8 @@ import sys
 import time
 
 from aiida import load_profile
+from aiida.common.lang import classproperty
+from aiida.orm.nodes.node import Node
 from aiida.storage.sqlite_temp import SqliteTempBackend
 
 import aiida_mlip
@@ -25,6 +27,32 @@ import aiida_mlip
 # Load AiiDA profile
 temp_profile = SqliteTempBackend.create_profile("temp-profile")
 load_profile(temp_profile, allow_switch=True)
+
+
+def _optional_schema(attribute):
+    """
+    Build a classproperty that hides an unsupported pydantic creation schema.
+
+    aiida-core >= 2.9 exposes `Node.CliModel` and `Node.ConstructorModel` as
+    classproperties that raise `UnsupportedSchemaError` when the node type does not
+    support that creation route. numpydoc inspects classes with
+    `inspect.getmembers`, which only swallows `AttributeError`, so the exception
+    propagates and aborts the docs build. Raising `AttributeError` instead makes
+    `getmembers` skip the attribute, as it does for any other absent member.
+    """
+
+    @classproperty
+    def _schema(cls):  # noqa: N805
+        model = getattr(cls, attribute)
+        if model is None:
+            raise AttributeError(attribute.lstrip("_"))
+        return model
+
+    return _schema
+
+
+Node.CliModel = _optional_schema("_CliModel")
+Node.ConstructorModel = _optional_schema("_ConstructorModel")
 
 # -- General configuration ------------------------------------------------
 

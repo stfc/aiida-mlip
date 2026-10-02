@@ -163,7 +163,11 @@ class TrainParser(Parser):
         compiled_model_output : Path
             Path to the compiled model output file.
         """
-        architecture = "mace_mp"
+        if "arch" in self.node.inputs:
+            architecture = self.node.inputs.arch.value
+        else:
+            architecture = self.node.inputs.foundation_model.architecture
+
         model = ModelData.from_local(model_output, architecture=architecture)
         compiled_model = ModelData.from_local(
             compiled_model_output, architecture=architecture
