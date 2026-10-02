@@ -147,6 +147,7 @@ if ! verdi computer show localhost >/dev/null 2>&1; then
         --scheduler core.direct \
         --work-dir "${AIIDA_WORK_DIR}" \
         --mpirun-command "" \
+        --mpiprocs-per-machine 1 \
         --non-interactive
     verdi computer configure core.local localhost --non-interactive --safe-interval 0
 else
