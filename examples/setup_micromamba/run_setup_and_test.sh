@@ -176,7 +176,12 @@ verdi code show janus@localhost
 echo "=========================================================="
 echo " 7. Executing Test Calculation"
 echo "=========================================================="
-python3 "${SCRIPT_DIR}/test_janus.py" --profile "${PROFILE_NAME}" --codelabel janus@localhost --arch mace_mp --device cpu
+python3 "${SCRIPT_DIR}/test_janus.py" \
+    --profile "${PROFILE_NAME}" \
+    --codelabel janus@localhost \
+    --arch mace_mp \
+    --model "${REPO_DIR}/tests/data/input_files/mace/mace_mp_small.model" \
+    --device cpu
 
 verdi process list -a
 
