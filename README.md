@@ -4,6 +4,7 @@
 [![PyPI version][pypi-badge]][pypi-link]
 [![License][license-badge]][license-link]
 [![DOI][doi-badge]][doi-link]
+[![Ask DeepWiki][deepwiki-badge]][deepwiki-link]
 
 # aiida-mlip
 ![logo][logo]
@@ -145,3 +146,5 @@ Contributors to this project were funded by
 [doi-link]: https://zenodo.org/badge/latestdoi/750834002
 [doi-badge]: https://zenodo.org/badge/750834002.svg
 [logo]: https://raw.githubusercontent.com/stfc/aiida-mlip/main/docs/source/images/aiida-mlip-100.png
+[deepwiki-link]: https://deepwiki.com/stfc/aiida-mlip
+[deepwiki-badge]: https://deepwiki.com/badge.svg
