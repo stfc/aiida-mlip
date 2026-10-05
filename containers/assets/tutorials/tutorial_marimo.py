@@ -83,13 +83,13 @@ def __(mo):
 
 @app.cell
 def __(StructureData, bulk, element_selector, mo):
-    material = element_selector.value
-    if material == "NaCl":
-        atoms = bulk("NaCl", crystalstructure="rocksalt", a=5.64)
-    elif material == "Si":
-        atoms = bulk("Si", crystalstructure="diamond", a=5.43)
-    else:
-        atoms = bulk(material, a=3.6)
+    match element_selector.value:
+        case "NaCl":
+            atoms = bulk("NaCl", crystalstructure="rocksalt", a=5.64)
+        case "Si":
+            atoms = bulk("Si", crystalstructure="diamond", a=5.43)
+        case _:
+            atoms = bulk(material, a=3.6)
 
     structure_node = StructureData(ase=atoms)
 
@@ -144,7 +144,8 @@ def __(arch_dropdown, janus_code, mo, run_button, structure_node):
         res_output = mo.md(
             "*Click the button above to run the singlepoint calculation using `aiida-mlip`.*"
         )
-    else:
+        return
+    [unindent below]
         with mo.status.spinner("Running singlepoint calculation via AiiDA..."):
             Singlepoint = CalculationFactory("mlip.sp")
             inputs = {

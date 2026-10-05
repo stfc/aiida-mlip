@@ -29,7 +29,7 @@ if [ -z "$JANUS_EXE" ]; then
     if command -v janus >/dev/null 2>&1; then
         JANUS_EXE="$(command -v janus)"
     else
-        JANUS_EXE="$(python3 -c 'import shutil, sys, os; exe = shutil.which("janus") or os.path.join(os.path.dirname(sys.executable), "janus"); print(exe if os.path.isfile(exe) else "")')"
+        JANUS_EXE="$(python3 -c 'import shutil, sys, os; exe = shutil.which("janus", path=os.path.dirname(sys.executable)); print(exe if os.path.isfile(exe) else "")')"
     fi
 fi
 
