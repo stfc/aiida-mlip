@@ -135,7 +135,7 @@ exclude = [
 ]
 
 [tool.ruff]
-extend-exclude = ["conf.py", "*.ipynb", "containers/assets/tutorials/*.py"]
+extend-exclude = ["conf.py", "*.ipynb" ]
 
 
 [tool.ruff.lint]

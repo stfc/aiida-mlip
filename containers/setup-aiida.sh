@@ -25,7 +25,6 @@ AIIDA_WORK_DIR="${AIIDA_WORK_DIR:-/home/${USER_NAME}/aiida_run}"
 echo "=== Configuring AiiDA environment for aiida-mlip ==="
 
 # ── 1. Locate the janus executable ──────────────────────────────────────────
-JANUS_EXE="${JANUS_EXE:-}"
 if [ -z "$JANUS_EXE" ]; then
     if command -v janus >/dev/null 2>&1; then
         JANUS_EXE="$(command -v janus)"

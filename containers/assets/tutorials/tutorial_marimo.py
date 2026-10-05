@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-import marimo
+import marimo as mo
 
 __generated_with = "0.24.2"
-app = marimo.App(width="medium")
+app = mo.App(width="medium")
 
 
 @app.cell
 def __():
-    import marimo as mo
 
     mo.md(
         r"""

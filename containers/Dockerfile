@@ -12,7 +12,7 @@ FROM python:3.12-slim
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-LABEL maintainer="STFC <support@stfc.ac.uk>"
+LABEL maintainer="Alin Elena <alin-marin.elena@stfc.ac.uk>"
 LABEL description="Container environment for aiida-mlip with automated AiiDA profile and Marimo interface"
 
 ARG UID=1000
