@@ -59,13 +59,14 @@ RUN useradd -m -u ${UID} -g ${GID} -s /bin/bash ${CONTAINER_USER} && \
 
 WORKDIR /app
 
-# 3. Install JupyterLab and interactive scientific visualization packages
+# 3. Install JupyterLab, Jupyter AI, and interactive scientific visualization packages
 RUN if [ "$JUPYTERLAB_VERSION" = "latest" ] || [ -z "$JUPYTERLAB_VERSION" ]; then \
         uv pip install --no-cache-dir "jupyterlab"; \
     else \
         uv pip install --no-cache-dir "jupyterlab==${JUPYTERLAB_VERSION}"; \
     fi && \
     uv pip install --no-cache-dir \
+        jupyter-ai \
         ipykernel \
         ipywidgets \
         jupyterlab-widgets \

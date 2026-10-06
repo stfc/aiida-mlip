@@ -14,7 +14,7 @@ Self-contained Docker/Podman containers providing interactive **[Marimo](https:/
   - Automatically starts and monitors the AiiDA background daemon (`verdi daemon start`).
 - **Interactive Notebook Interfaces**:
   - **Marimo** (`Dockerfile.marimo`): Web-based reactive notebooks running at `http://localhost:8842`. Includes interactive tutorials demonstrating single-point calculations, geometry optimization, phonons, and WorkGraphs.
-  - **JupyterLab** (`Dockerfile.jupyterlab`): Classic JupyterLab environment running at `http://localhost:8888/lab`. Fully integrated with `ipykernel` and AiiDA's native greenback event loop portal. Includes sample Jupyter notebooks.
+  - **JupyterLab** (`Dockerfile.jupyterlab` / `Dockerfile.jupyter`): Classic JupyterLab environment running at `http://localhost:8888/lab`. Fully integrated with `ipykernel`, the `jupyter-ai` extension for AI-assisted workflows, and AiiDA's native greenback event loop portal. Includes sample Jupyter notebooks.
 - **Universal Engine Support**:
   - Works seamlessly with both **Docker** and **Podman** (including rootless Podman).
   - Supports NVIDIA GPU passthrough for hardware acceleration.
