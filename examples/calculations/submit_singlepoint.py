@@ -36,7 +36,9 @@ def singlepoint(params: dict) -> None:
 
     # Define inputs
     inputs = {
-        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "metadata": {
+            "options": {"resources": {"num_machines": 1, "tot_num_mpiprocs": 1}}
+        },
         "code": params["code"],
         "arch": Str(params["arch"]),
         "struct": structure,

@@ -1,4 +1,4 @@
-name: ghcr-marimo
+name: ghcr-jupyterlab
 
 on:
   push:
@@ -75,11 +75,12 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./containers/Dockerfile.marimo
+          file: ./containers/Dockerfile.jupyterlab
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ghcr.io/stfc/aiida-mlip:amd64-${{ github.sha }}
-            ghcr.io/stfc/aiida-mlip:amd64-latest
+            ghcr.io/stfc/aiida-mlip:jupyterlab-amd64-${{ github.sha }}
+            ghcr.io/stfc/aiida-mlip:jupyterlab-amd64-latest
+            ghcr.io/stfc/aiida-mlip:jupyterlab-latest
 
   build-arm64:
     runs-on: ubuntu-24.04-arm
@@ -145,8 +146,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./containers/Dockerfile.marimo
+          file: ./containers/Dockerfile.jupyterlab
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ghcr.io/stfc/aiida-mlip:arm64-${{ github.sha }}
-            ghcr.io/stfc/aiida-mlip:arm64-latest
+            ghcr.io/stfc/aiida-mlip:jupyterlab-arm64-${{ github.sha }}
+            ghcr.io/stfc/aiida-mlip:jupyterlab-arm64-latest

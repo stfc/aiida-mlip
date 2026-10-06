@@ -1,6 +1,6 @@
-# aiida-mlip Container Environment
+# aiida-mlip Container Environments
 
-A self-contained Docker/Podman container providing an interactive **[Marimo](https://marimo.io/)** environment for running machine learning interatomic potentials (MLIPs) with **[AiiDA](https://www.aiida.net/)** and **[janus-core](https://github.com/stfc/janus-core)**.
+Self-contained Docker/Podman containers providing interactive **[Marimo](https://marimo.io/)** and **[JupyterLab](https://jupyter.org/)** environments for running machine learning interatomic potentials (MLIPs) with **[AiiDA](https://www.aiida.net/)** and **[janus-core](https://github.com/stfc/janus-core)**.
 
 ---
 
@@ -12,9 +12,9 @@ A self-contained Docker/Podman container providing an interactive **[Marimo](htt
   - Configures the `localhost` computer (`core.local` / `core.direct`).
   - Registers `janus@localhost` (`janus-core`) and `python3@localhost` installed codes.
   - Automatically starts and monitors the AiiDA background daemon (`verdi daemon start`).
-- **Interactive Marimo Interface**:
-  - Web-based reactive notebooks running at `http://localhost:8842`.
-  - Includes interactive tutorials demonstrating single-point calculations, geometry optimization, phonons, and WorkGraphs.
+- **Interactive Notebook Interfaces**:
+  - **Marimo** (`Dockerfile.marimo`): Web-based reactive notebooks running at `http://localhost:8842`. Includes interactive tutorials demonstrating single-point calculations, geometry optimization, phonons, and WorkGraphs.
+  - **JupyterLab** (`Dockerfile.jupyterlab`): Classic JupyterLab environment running at `http://localhost:8888/lab`. Fully integrated with `ipykernel` and AiiDA's native greenback event loop portal. Includes sample Jupyter notebooks.
 - **Universal Engine Support**:
   - Works seamlessly with both **Docker** and **Podman** (including rootless Podman).
   - Supports NVIDIA GPU passthrough for hardware acceleration.
@@ -23,42 +23,79 @@ A self-contained Docker/Podman container providing an interactive **[Marimo](htt
 
 ## Quick Start
 
-### 1. Build the Image
+### 1. Build the Images
 
 Using the build helper script (defaults to `podman`):
+
 ```bash
-./containers/build.sh
+# Build Marimo image (default)
+./containers/build.sh --marimo
+
+# Build JupyterLab image
+./containers/build.sh --jupyterlab
+
+# Build both images
+./containers/build.sh --all
 ```
-Or directly with Podman:
+
+Or directly with Podman / Docker:
+
 ```bash
-podman build -f containers/Dockerfile -t aiida-mlip:latest .
+# Build Marimo
+podman build -f containers/Dockerfile.marimo -t aiida-mlip:latest .
+
+# Build JupyterLab
+podman build -f containers/Dockerfile.jupyterlab -t aiida-mlip-jupyterlab:latest .
 ```
 
 ### 2. Launch the Container
 
-Using the startup helper script (defaults to `podman`):
+Using the startup helper script:
+
 ```bash
-./containers/startup.sh
+# Launch Marimo on port 8842
+./containers/startup.sh --marimo
+
+# Launch JupyterLab on port 8888
+./containers/startup.sh --jupyterlab
 ```
 
-Or directly with Podman:
+Or directly with Podman / Docker:
+
 ```bash
-podman run -it --rm -p 8842:8842 aiida-mlip:latest
+# Marimo
+podman run -it --rm -p 8842:8842 -p 5000:5000 aiida-mlip:latest
+
+# JupyterLab
+podman run -it --rm -p 8888:8888 -p 5000:5000 aiida-mlip-jupyterlab:latest
 ```
 
-Or using Podman Compose:
+### 3. Using Docker Compose / Podman Compose
+
+To run both services (or select one):
+
 ```bash
 cd containers
+
+# Launch both Marimo (port 8842) and JupyterLab (port 8888)
 podman compose up -d
+
+# Or launch only JupyterLab
+podman compose up -d jupyterlab
+
+# Or launch only Marimo
+podman compose up -d marimo
 ```
 
-### 3. Open Marimo
+### 4. Access the Interfaces
 
-Open your browser and navigate to:
-```
-http://localhost:8842
-```
-Select `tutorial_marimo.py` to start interacting with `aiida-mlip`!
+- **Marimo**: Navigate to `http://localhost:8842`
+  - Select `tutorial_marimo.py` to start the interactive reactive tutorial.
+- **JupyterLab**: Navigate to `http://localhost:8888/lab`
+  - Open `/app/notebooks` for tutorial notebooks with interactive AiiDA execution.
+- **AiiDA REST API**:
+  - Marimo container: `http://localhost:5000`
+  - JupyterLab container (via compose): `http://localhost:5001` (or `5000` if standalone)
 
 ---
 
@@ -68,31 +105,37 @@ The `./containers/startup.sh` script provides several useful options:
 
 | Option | Description | Default |
 |---|---|---|
-| `--image <name>` | Container image to run | `aiida-mlip:latest` |
+| `--marimo` | Launch the Marimo container | default |
+| `--jupyterlab, --jupyter` | Launch the JupyterLab container | |
+| `--image <name>` | Container image to run | `aiida-mlip:latest` (Marimo) or `aiida-mlip-jupyterlab:latest` (JupyterLab) |
 | `--engine <engine>` | Container engine (`podman`, `docker`) | `podman` |
-| `--port <port>` | Host port for the Marimo notebook server | `8842` |
+| `--port <port>` | Host port for the web interface | `8842` (Marimo), `8888` (JupyterLab) |
 | `--restapi-port <port>` | Host port for the AiiDA REST API (`0` to disable) | `5000` |
-| `--bind <path>` | Host directory to mount at `/app/tutorials` for persistence | (none) |
+| `--bind <path>` | Host directory to mount for persistence (`/app/tutorials` for Marimo, `/app/notebooks` for JupyterLab) | (none) |
 | `--gpu` | Enable NVIDIA GPU acceleration | disabled |
-| `--name <name>` | Container name | `aiida-mlip-marimo` |
+| `--name <name>` | Container name | `aiida-mlip-marimo` or `aiida-mlip-jupyterlab` |
 | `-d, --detach` | Run container in background | interactive |
 | `-h, --help` | Show command usage and options | |
 
 ### Examples
 
-**Persist your work to a local folder:**
+**Persist your notebooks/tutorials to a local folder:**
 ```bash
-./containers/startup.sh --bind ~/my_mlip_projects
+# For JupyterLab
+./containers/startup.sh --jupyterlab --bind ~/my_notebooks
+
+# For Marimo
+./containers/startup.sh --marimo --bind ~/my_mlip_projects
 ```
 
 **Run with NVIDIA GPU passthrough:**
 ```bash
-./containers/startup.sh --gpu
+./containers/startup.sh --jupyterlab --gpu
 ```
 
 **Run in the background on custom port:**
 ```bash
-./containers/startup.sh --port 9000 -d
+./containers/startup.sh --jupyterlab --port 9000 -d
 ```
 
 ---
@@ -103,16 +146,18 @@ You can execute `verdi` commands inside the running container at any time:
 
 ```bash
 # Check status of AiiDA services and daemon
+podman exec -it aiida-mlip-jupyterlab su - aiida -c "verdi status"
+# or
 podman exec -it aiida-mlip-marimo su - aiida -c "verdi status"
 
 # List running or completed calculations
-podman exec -it aiida-mlip-marimo su - aiida -c "verdi process list -a"
+podman exec -it aiida-mlip-jupyterlab su - aiida -c "verdi process list -a"
 
 # Open an interactive IPython AiiDA shell
-podman exec -it aiida-mlip-marimo su - aiida -c "verdi shell"
+podman exec -it aiida-mlip-jupyterlab su - aiida -c "verdi shell"
 
 # Inspect calculation node
-podman exec -it aiida-mlip-marimo su - aiida -c "verdi node show <PK>"
+podman exec -it aiida-mlip-jupyterlab su - aiida -c "verdi node show <PK>"
 ```
 
 ---

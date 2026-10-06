@@ -21,6 +21,7 @@ AIIDA_USER_LAST_NAME="${AIIDA_USER_LAST_NAME:-User}"
 AIIDA_USER_INSTITUTION="${AIIDA_USER_INSTITUTION:-STFC}"
 AIIDA_REPO_DIR="${AIIDA_REPO_DIR:-/home/${USER_NAME}/.aiida/repository}"
 AIIDA_WORK_DIR="${AIIDA_WORK_DIR:-/home/${USER_NAME}/aiida_run}"
+JANUS_EXE="${JANUS_EXE:-}"
 
 echo "=== Configuring AiiDA environment for aiida-mlip ==="
 
