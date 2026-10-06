@@ -1,0 +1,9 @@
+label: janus
+description: janus-core MLIP calculator
+default_calc_job_plugin: mlip.sp
+filepath_executable: /opt/micromamba/envs/aiida-janus/bin/janus
+computer: localhost
+use_double_quotes: false
+with_mpi: false
+prepend_text: ''
+append_text: ''
