@@ -49,8 +49,10 @@ def validate_inputs(
             if key not in config_file:
                 raise InputValidationError(f"Mandatory key {key} not in config file")
             # Check if the keys actually correspond to a path
-            if not ((Path(config_file.as_dictionary[key])).resolve()).exists():
-                raise InputValidationError(f"Path given for {key} does not exist")
+            if not (pth := (Path(config_file.as_dictionary[key])).resolve()).exists():
+                raise InputValidationError(
+                    f"Path given ({pth}) for {key} does not exist"
+                )
         # Check if fine-tuning is enabled and validate accordingly
         if (
             inputs["fine_tune"]
