@@ -1,0 +1,63 @@
+services:
+  # Marimo interactive notebook service (http://localhost:8842)
+  marimo:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile.marimo
+    image: aiida-mlip-marimo:latest
+    container_name: aiida-mlip-marimo
+    restart: unless-stopped
+    ports:
+      - "8842:8842"
+      - "5000:5000"
+    environment:
+      - PORT=8842
+      - HOST=0.0.0.0
+      - AIIDA_PROFILE_NAME=default
+      - AUTO_SETUP_AIIDA=true
+    volumes:
+      - aiida_home_marimo:/home/aiida
+      - tutorials_data_marimo:/app/tutorials
+    healthcheck:
+      test: ["CMD-SHELL", "su - aiida -c 'verdi status' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # JupyterLab interactive notebook service (http://localhost:8888/lab)
+  jupyterlab:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile.jupyterlab
+    image: aiida-mlip-jupyterlab:latest
+    container_name: aiida-mlip-jupyterlab
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+      - "5001:5000"
+    environment:
+      - PORT=8888
+      - HOST=0.0.0.0
+      - AIIDA_PROFILE_NAME=default
+      - AUTO_SETUP_AIIDA=true
+      - NOTEBOOKS_DIR=/app/notebooks
+    volumes:
+      - aiida_home_jupyterlab:/home/aiida
+      - notebooks_data_jupyterlab:/app/notebooks
+    healthcheck:
+      test: ["CMD-SHELL", "su - aiida -c 'verdi status' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  aiida_home_marimo:
+    name: aiida_mlip_home_marimo
+  tutorials_data_marimo:
+    name: aiida_mlip_tutorials_marimo
+  aiida_home_jupyterlab:
+    name: aiida_mlip_home_jupyterlab
+  notebooks_data_jupyterlab:
+    name: aiida_mlip_notebooks_jupyterlab

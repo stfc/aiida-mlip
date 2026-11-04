@@ -135,7 +135,8 @@ exclude = [
 ]
 
 [tool.ruff]
-extend-exclude = ["conf.py", "*.ipynb"]
+extend-exclude = ["conf.py", "*.ipynb","*containers/assets/tutorials/*_marimo.py" ]
+
 
 [tool.ruff.lint]
 # Ignore complexity, non-lowercase

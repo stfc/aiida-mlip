@@ -17,3 +17,6 @@ build/
 dist/
 pip-wheel-metadata/
 .tox/
+.aiida_repo/
+.aiida_work/
+.pg_data/
