@@ -283,7 +283,7 @@ def test_output_files(fixture_sandbox, generate_calc_job, janus_code, model_fold
     assert sorted(fixture_sandbox.get_content_list()) == sorted(
         ["aiida.xyz", "mlff.model"]
     )
-    
+
     assert isinstance(calc_info, datastructures.CalcInfo)
     assert isinstance(calc_info.codes_info[0], datastructures.CodeInfo)
     calc_str = map(str, calc_info.codes_info[0].cmdline_params)
