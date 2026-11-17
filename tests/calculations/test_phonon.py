@@ -212,15 +212,10 @@ def test_run_ph_bands(model_folder, janus_code):
 
     bands_path = Path(node.get_remote_workdir()) / "aiida-auto_bands.hdf5"
 
-    # this will load the data
-    expected_keys = [
-        "coordinates",
-        "distance",
-        "eigenvector",
-    ]
     with h5py.File(bands_path, "r") as f:
         keys = list(f.keys())
         assert "coordinates" in keys
+
 
 def test_run_supercell(model_folder, janus_code):
     """Test setting supercell for phonon calculation."""
