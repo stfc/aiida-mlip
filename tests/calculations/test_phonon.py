@@ -267,7 +267,7 @@ def test_output_files(fixture_sandbox, generate_calc_job, janus_code, model_fold
         "dos": Bool(True),
         "pdos": Bool(True),
         "bands": Bool(True),
-        "no_hdf5": Bool(False),
+        "no_hdf5": Bool(True),
         "symmetrize": Bool(False),
         "n_qpoints": Int(51),
     }
@@ -297,7 +297,7 @@ def test_output_files(fixture_sandbox, generate_calc_job, janus_code, model_fold
         "--bands",
         "--dos",
         "--pdos",
-        "--no-hdf5"
+        "no-hdf5",
         "--n-qpoints",
         "51",
     ]
