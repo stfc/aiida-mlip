@@ -86,8 +86,24 @@ def phonon(params: dict[str, any]) -> None:
     if pdos:
         print(f"partial density of states {result['pdos']} ")
 
+    # bands can have both yml and hdf5 outputs depending on no-hdf5 flag
     if bands:
-        print(f"band structure {result['band_structure']} ")
+        if not no_hdf5:
+            print(f"band structure from hdf5 {result['band_structure']} ")
+            # q-point coordinates are stored in the "path" dataset with shape
+            # (nsegments, npoints, 3); print the first one
+            with result["band_structure"].open(mode="rb") as handle:
+                with h5py.File(handle, "r") as f:
+                    first_coordinates = f["path"][0][0]
+            print(f"first band structure coordinates: {first_coordinates}")
+        else:
+            print(f"band structure from yml {result['band_structure']} ")
+            # phonopy band YAML lists each q-point under "phonon" with its
+            # "q-position"; print the first one
+            with result["band_structure"].open(mode="r") as handle:
+                band_yaml = yaml.safe_load(handle)
+            first_coordinates = band_yaml["phonon"][0]["q-position"]
+            print(f"first band structure coordinates: {first_coordinates}")
 
     # dump the dictionary as a yaml file - for inspection / testing
     with open("data.yml", "w") as file:
@@ -109,13 +125,6 @@ def phonon(params: dict[str, any]) -> None:
         with h5py.File(hdf5_path, "r") as f:
             # List all top-level groups/datasets
             print("Force constant top-level keys :", list(f.keys()))
-
-    if bands:
-        bands_path = Path(node.get_remote_workdir()) / "aiida-auto_bands.hdf5"
-
-        # this will load the data
-        with h5py.File(bands_path, "r") as f:
-            print("Bands top-level keys :", list(f.keys()))
 
 
 # Arguments and options to give to the cli when running the script

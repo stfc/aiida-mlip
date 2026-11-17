@@ -161,20 +161,36 @@ class PhononParser(BaseParser):
             self.out("force_constants", hdf5_node)
 
         if bands:
-            try:
-                filedata = self.retrieved.base.repository.get_object_content(
-                    "aiida-auto_bands.hdf5", mode="rb"
-                )
-            except FileNotFoundError:
-                self.logger.info("exception in getting band structure filepath")
+            if nohdf5:
+                try:
+                    filedata = self.retrieved.base.repository.get_object_content(
+                        "aiida-auto_bands.yml", mode="rb"
+                    )
+                except FileNotFoundError:
+                    self.logger.info("exception in getting band structure filepath")
+                    return self.exit_codes.ERROR_MISSING_OUTPUT
 
-                return self.exit_codes.ERROR_MISSING_OUTPUT
+                yml_path = remote_workdir / "aiida-auto_bands.yml"
 
-            hdf5_path = remote_workdir / "aiida-auto_bands.hdf5"
+                yml_path.write_bytes(filedata)
+                yml_node = SinglefileData(file=yml_path)
 
-            hdf5_path.write_bytes(filedata)
-            hdf5_node = SinglefileData(file=hdf5_path)
+                self.out("band_structure", yml_node)
+            else:
+                try:
+                    filedata = self.retrieved.base.repository.get_object_content(
+                        "aiida-auto_bands.hdf5", mode="rb"
+                    )
+                except FileNotFoundError:
+                    self.logger.info("exception in getting band structure filepath")
 
-            self.out("band_structure", hdf5_node)
+                    return self.exit_codes.ERROR_MISSING_OUTPUT
+
+                hdf5_path = remote_workdir / "aiida-auto_bands.hdf5"
+
+                hdf5_path.write_bytes(filedata)
+                hdf5_node = SinglefileData(file=hdf5_path)
+
+                self.out("band_structure", hdf5_node)
 
         return ExitCode(0)

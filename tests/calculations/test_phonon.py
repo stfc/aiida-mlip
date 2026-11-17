@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 from aiida.common import InputValidationError, datastructures
 from aiida.engine import run, run_get_node
 from aiida.orm import Bool, Float, Int, Str, StructureData
@@ -200,7 +198,7 @@ def test_run_ph_bands(model_folder, janus_code):
         "dos": Bool(False),
         "pdos": Bool(False),
         "bands": Bool(True),
-        "no_hdf5": Bool(True),
+        "no_hdf5": Bool(False),
         "symmetrize": Bool(False),
     }
 
@@ -210,11 +208,11 @@ def test_run_ph_bands(model_folder, janus_code):
     assert "results_dict" in result
     assert "phonon_output" in result
 
-    bands_path = Path(node.get_remote_workdir()) / "aiida-auto_bands.hdf5"
+    with result["band_structure"].open(mode="rb") as handle:
+        with h5py.File(handle, "r") as f:
+            first_coordinates = f["path"][0][0]
 
-    with h5py.File(bands_path, "r") as f:
-        keys = list(f.keys())
-        assert "coordinates" in keys
+    np.testing.assert_allclose(first_coordinates, [0.0, 0.0, 0.0])
 
 
 def test_run_supercell(model_folder, janus_code):
