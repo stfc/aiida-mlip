@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from aiida.common import InputValidationError, datastructures
 from aiida.engine import run
 from aiida.orm import Bool, Float, Int, Str, StructureData
 from aiida.plugins import CalculationFactory
 from ase.build import bulk
+import h5py
 import numpy as np
 import pytest
 
@@ -179,6 +182,56 @@ def test_run_ph(model_folder, janus_code):
     assert (np.diag(lattice_vectors) == 0.0).all()
     assert (np.diag(supercell_matrix) == 2).all()
     assert fc[0][0][0] == pytest.approx(2.1912727829831, rel=1.0e-4, abs=1.0e-4)
+
+
+def test_run_ph_bands(model_folder, janus_code):
+    """Test running phonon calculation."""
+    model_file = model_folder / "mace_mp_small.model"
+    inputs = {
+        "metadata": {"options": {"resources": {"num_machines": 1}}},
+        "code": janus_code,
+        "arch": Str("mace"),
+        "struct": StructureData(ase=bulk("NaCl", "rocksalt", 5.63)),
+        "model": ModelData.from_local(model_file, architecture="mace"),
+        "device": Str("cpu"),
+        "supercell": Str("2 2 2"),
+        "displacement": Float(0.01),
+        "n_qpoints": Int(51),
+        "dos": Bool(False),
+        "pdos": Bool(False),
+        "bands": Bool(True),
+        "no_hdf5": Bool(True),
+        "symmetrize": Bool(False),
+    }
+
+    PhononCalc = CalculationFactory("mlip.ph")
+    result, node = run(PhononCalc, **inputs)
+
+    assert "results_dict" in result
+    assert "phonon_output" in result
+
+    bands_path = Path(node.get_remote_workdir()) / "aiida-auto_bands.hdf5"
+
+    # this will load the data
+    expected_keys = [
+        "coordinates",
+        "distance",
+        "eigenvector",
+        "frequency",
+        "group_velocity",
+        "label",
+        "lattice",
+        "masses",
+        "natom",
+        "nqpoint",
+        "numbers",
+        "path",
+        "reciprocal_lattice",
+        "segment_nqpoint",
+        "symbols",
+    ]
+    with h5py.File(bands_path, "r") as f:
+        assert all(key in f.keys() for key in expected_keys)
 
 
 def test_run_supercell(model_folder, janus_code):
