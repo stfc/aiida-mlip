@@ -69,7 +69,7 @@ def test_phonon(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "aiida-force_constants.hdf5",
         "aiida-dos.dat",
         "aiida-pdos.dat",
-        "aiida-auto_bands.hdf5",
+        "aiida-auto_bands.yml",
     ]
 
     # Check the attributes of the returned `CalcInfo`
@@ -310,7 +310,7 @@ def test_output_files(fixture_sandbox, generate_calc_job, janus_code, model_fold
         "aiida-force_constants.hdf5",
         "aiida-dos.dat",
         "aiida-pdos.dat",
-        "aiida-auto_bands.hdf5",
+        "aiida-auto_bands.yml",
     ]
 
     # Check the attributes of the returned `CalcInfo`
