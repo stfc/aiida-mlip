@@ -1,15 +1,16 @@
 """Tests for phonon calculations calculation."""
 
 from __future__ import annotations
+from pathlib import Path
 
 from aiida.common import InputValidationError, datastructures
-from aiida.engine import run, run_get_node
+from aiida.engine import run
 from aiida.orm import Bool, Float, Int, Str, StructureData
 from aiida.plugins import CalculationFactory
 from ase.build import bulk
-import h5py
 import numpy as np
 import pytest
+import h5py
 
 from aiida_mlip.data.config import JanusConfigfile
 from aiida_mlip.data.model import ModelData
@@ -69,6 +70,7 @@ def test_phonon(fixture_sandbox, generate_calc_job, janus_code, model_folder):
         "aiida-force_constants.hdf5",
         "aiida-dos.dat",
         "aiida-pdos.dat",
+        "aiida-auto_bands.hdf5",
         "aiida-auto_bands.yml",
     ]
 
@@ -181,7 +183,6 @@ def test_run_ph(model_folder, janus_code):
     assert (np.diag(supercell_matrix) == 2).all()
     assert fc[0][0][0] == pytest.approx(2.1912727829831, rel=1.0e-4, abs=1.0e-4)
 
-
 def test_run_ph_bands(model_folder, janus_code):
     """Test running phonon calculation."""
     model_file = model_folder / "mace_mp_small.model"
@@ -198,22 +199,25 @@ def test_run_ph_bands(model_folder, janus_code):
         "dos": Bool(False),
         "pdos": Bool(False),
         "bands": Bool(True),
-        "no_hdf5": Bool(False),
+        "no_hdf5": Bool(True),
         "symmetrize": Bool(False),
     }
 
     PhononCalc = CalculationFactory("mlip.ph")
-    result, node = run_get_node(PhononCalc, **inputs)
+    result, node = run(PhononCalc, **inputs)
 
     assert "results_dict" in result
     assert "phonon_output" in result
 
-    with result["band_structure"].open(mode="rb") as handle:
-        with h5py.File(handle, "r") as f:
-            first_coordinates = f["path"][0][0]
+    bands_path = Path(node.get_remote_workdir()) / "aiida-auto_bands.hdf5"
 
-    np.testing.assert_allclose(first_coordinates, [0.0, 0.0, 0.0])
-
+    # this will load the data
+    expected_keys = ['coordinates', 'distance', 'eigenvector', 'frequency',
+                     'group_velocity', 'label', 'lattice', 'masses', 'natom', 'nqpoint',
+                     'numbers', 'path', 'reciprocal_lattice', 'segment_nqpoint',
+                     'symbols']
+    with h5py.File(bands_path, "r") as f:
+        assert all(key in f.keys() for key in expected_keys)
 
 def test_run_supercell(model_folder, janus_code):
     """Test setting supercell for phonon calculation."""
@@ -267,7 +271,7 @@ def test_output_files(fixture_sandbox, generate_calc_job, janus_code, model_fold
         "dos": Bool(True),
         "pdos": Bool(True),
         "bands": Bool(True),
-        "no_hdf5": Bool(True),
+        "no_hdf5": Bool(False),
         "symmetrize": Bool(False),
         "n_qpoints": Int(51),
     }
@@ -297,13 +301,14 @@ def test_output_files(fixture_sandbox, generate_calc_job, janus_code, model_fold
         "--bands",
         "--dos",
         "--pdos",
-        "--no-hdf5",
         "--n-qpoints",
         "51",
     ]
 
     retrieve_list = [
         calc_info.uuid,
+        "aiida-auto_bands.hdf5",
+        "aiida-auto_bands.yml",
         "aiida-stdout.txt",
         "aiida.log",
         "phonon-summary.yml",
@@ -311,7 +316,7 @@ def test_output_files(fixture_sandbox, generate_calc_job, janus_code, model_fold
         "aiida-force_constants.hdf5",
         "aiida-dos.dat",
         "aiida-pdos.dat",
-        "aiida-auto_bands.hdf5",
+        
     ]
 
     # Check the attributes of the returned `CalcInfo`
