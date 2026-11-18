@@ -123,6 +123,8 @@ class Phonons(BaseJanus):
         spec.output("force_constants", valid_type=SinglefileData)
         spec.output("dos", valid_type=SinglefileData)
         spec.output("pdos", valid_type=SinglefileData)
+        # Band structure file: YAML if no_hdf5 is set, otherwise HDF5. The
+        # parser picks the file at runtime; the port name must be fixed here.
         spec.output("band_structure", valid_type=SinglefileData)
 
         spec.default_output_node = "results_dict"
@@ -205,7 +207,8 @@ class Phonons(BaseJanus):
                 "aiida-force_constants.hdf5",
                 "aiida-dos.dat",
                 "aiida-pdos.dat",
-                "aiida-auto_bands.yml.xz",
+                "aiida-auto_bands.hdf5",
+                "aiida-auto_bands.yml",
             ]
         )
 

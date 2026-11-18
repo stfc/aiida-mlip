@@ -160,23 +160,37 @@ class PhononParser(BaseParser):
 
             self.out("force_constants", hdf5_node)
 
-        # for band structure the required file is aiida-auto_bands.yml.xz
-        # this needs to be changed for hdf5 once janus-core is updated
         if bands:
-            bnds_output = "aiida-auto_bands.yml.xz"
+            if nohdf5:
+                try:
+                    filedata = self.retrieved.base.repository.get_object_content(
+                        "aiida-auto_bands.yml", mode="rb"
+                    )
+                except FileNotFoundError:
+                    self.logger.info("exception in getting band structure filepath")
+                    return self.exit_codes.ERROR_MISSING_OUTPUT
 
-            try:
-                filedata = self.retrieved.base.repository.get_object_content(
-                    bnds_output, mode="rb"
-                )
-            except FileNotFoundError:
-                self.logger.info("exception in getting force constant filepath")
-                return self.exit_codes.ERROR_MISSING_OUTPUT
+                yml_path = remote_workdir / "aiida-auto_bands.yml"
 
-            bands_path = remote_workdir / bnds_output
+                yml_path.write_bytes(filedata)
+                yml_node = SinglefileData(file=yml_path)
 
-            bands_node = SinglefileData(file=bands_path)
+                self.out("band_structure", yml_node)
+            else:
+                try:
+                    filedata = self.retrieved.base.repository.get_object_content(
+                        "aiida-auto_bands.hdf5", mode="rb"
+                    )
+                except FileNotFoundError:
+                    self.logger.info("exception in getting band structure filepath")
 
-            self.out("band_structure", bands_node)
+                    return self.exit_codes.ERROR_MISSING_OUTPUT
+
+                hdf5_path = remote_workdir / "aiida-auto_bands.hdf5"
+
+                hdf5_path.write_bytes(filedata)
+                hdf5_node = SinglefileData(file=hdf5_path)
+
+                self.out("band_structure", hdf5_node)
 
         return ExitCode(0)
