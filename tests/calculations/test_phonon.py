@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 from aiida.common import InputValidationError, datastructures
 from aiida.engine import run, run_get_node
 from aiida.orm import Bool, Float, Int, Str, StructureData
@@ -216,6 +214,7 @@ def test_run_ph_bands(model_folder, janus_code):
             first_coordinates = f["path"][0][0]
 
     np.testing.assert_allclose(first_coordinates, [0.0, 0.0, 0.0])
+
 
 def test_run_supercell(model_folder, janus_code):
     """Test setting supercell for phonon calculation."""
