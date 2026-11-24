@@ -43,6 +43,12 @@ aiida-psuedo = [
 aiida-quantumespresso = [
     "aiida-quantumespresso<5.0.0,>=4.14.0",
 ]
+mcp = [
+    "mcp>=1.2.0,<2.0.0",
+]
+
+[project.scripts]
+aiida-mlip-mcp = "aiida_mlip.mcp.server:main"
 
 [project.urls]
 repository = "https://github.com/stfc/aiida-mlip/"
@@ -168,6 +174,9 @@ convention = "numpy"
 
 [tool.ruff.lint.pylint]
 max-args = 10
+
+[tool.ruff.lint.per-file-ignores]
+"aiida_mlip/mcp/*.py" = ["PLR0913"]
 
 [tool.ruff.lint.pyupgrade]
 keep-runtime-typing = false

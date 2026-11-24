@@ -10,3 +10,5 @@ User guide
     data
     calculations
     training
+    mcp_server
+    mcp_tutorial

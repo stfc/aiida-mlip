@@ -10,6 +10,7 @@ Subpackages
    aiida_mlip.calculations
    aiida_mlip.data
    aiida_mlip.helpers
+   aiida_mlip.mcp
    aiida_mlip.parsers
    aiida_mlip.workflows
 
@@ -18,7 +19,7 @@ Module contents
 
 .. automodule:: aiida_mlip
    :members:
-   :special-members:
    :private-members:
-   :undoc-members:
    :show-inheritance:
+   :special-members:
+   :undoc-members:

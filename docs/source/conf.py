@@ -223,6 +223,8 @@ html_use_opensearch = "https://stfc.github.io/aiida-mlip/"
 #   'nl', 'no', 'pt', 'ro', 'ru', 'sv', 'tr'
 html_search_language = "en"
 
+autodoc_mock_imports = ["mcp"]
+
 # Warnings to ignore when using the -n (nitpicky) option
 # We should ignore any python built-in exception, for instance
 nitpick_ignore = [
@@ -230,6 +232,8 @@ nitpick_ignore = [
     ("py:class", "QbFields"),
     ("py:class", "aiida_workgraph.workgraph.WorkGraph"),
     ("py:class", "AiidaLoggerType"),
+    ("py:class", "FastMCP"),
+    ("py:class", "mcp.server.fastmcp.FastMCP"),
 ]
 
 
